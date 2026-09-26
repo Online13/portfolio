@@ -10,6 +10,7 @@ const projects = defineCollection({
 		full_description: z.string(),
 		technologies: z.array(z.string()),
 		link: z.string().url(),
+		active: z.boolean().default(false),
 	}),
 });
 

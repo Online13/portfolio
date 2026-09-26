@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import ProjectCard from "./ProjectCard.astro";
 
-const projects = await getCollection("projects");
+const projects = await getCollection("projects", ({ data }) => data.active);
 ---
 
 <div class="w-full space-y-8">

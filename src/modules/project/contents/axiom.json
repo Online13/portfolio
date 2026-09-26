@@ -1,0 +1,9 @@
+{
+	"title": "Axiom",
+	"slug": "axiom",
+	"description": "Mobile-first component registry to kickstart React Native apps.",
+	"full_description": "Axiom is an open source system for building mobile experiences with React Native and Expo. It goes beyond components: behaviors, patterns and blocks cover gestures, loading states and full app sections. Code is copied into your project through a registry and a CLI, so you own it. Currently in pre-alpha.",
+	"technologies": ["React Native", "Expo", "TypeScript", "Astro"],
+	"link": "https://github.com/Online13/axiom",
+	"active": true
+}
