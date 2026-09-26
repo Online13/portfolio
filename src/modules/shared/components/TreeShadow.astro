@@ -1,0 +1,155 @@
+---
+// Sunlight filling the room, with the shadow of a cherry tree coming in from the top-left corner.
+// Rendered as a multiply overlay: lit areas stay white/warm, the shadow darkens the page.
+import { treeShadowConfig } from "@/modules/shared/lib/tree-shadow";
+
+const winds = [
+	{ id: "calm", label: "Calm" },
+	{ id: "breeze", label: "Breeze" },
+	{ id: "gusty", label: "Gusty" },
+	{ id: "storm", label: "Storm" },
+];
+---
+
+<canvas
+	id="tree-shadow"
+	aria-hidden="true"
+	class="fixed inset-0 w-screen h-screen pointer-events-none z-30 mix-blend-multiply"
+></canvas>
+
+<!-- The branch stays still with reduced motion, so the wind has nothing to change. -->
+<div
+	role="group"
+	aria-label="Wind"
+	class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex gap-1 p-1 rounded-full bg-white/70 backdrop-blur-sm shadow-lg text-sm motion-reduce:hidden"
+>
+	{
+		winds.map(({ id, label }) => (
+			<button
+				type="button"
+				data-wind={id}
+				aria-pressed={id === treeShadowConfig.windMode ? "true" : "false"}
+				class="px-3 py-1 rounded-full cursor-pointer text-gray-600 hover:text-black aria-pressed:bg-black aria-pressed:text-white"
+			>
+				{label}
+			</button>
+		))
+	}
+</div>
+
+<script>
+	import {
+		Mesh,
+		OrthographicCamera,
+		PlaneGeometry,
+		Scene,
+		ShaderMaterial,
+		Vector2,
+		Vector3,
+		WebGLRenderer,
+		WebGLRenderTarget,
+	} from "three";
+	import { createSakuraBranch, type WindMode } from "@/modules/shared/lib/sakura-branch";
+	import {
+		lightTones,
+		timeOfDay,
+		treeShadowChunk,
+		treeShadowConfig as config,
+	} from "@/modules/shared/lib/tree-shadow";
+
+	const canvas = document.getElementById("tree-shadow") as HTMLCanvasElement;
+	const renderer = new WebGLRenderer({ canvas, alpha: false, antialias: false });
+	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
+	// The branch silhouette, redrawn each frame as the wind moves it.
+	const branch = createSakuraBranch(config.seed, config.wind, config.windMode);
+
+	const windButtons = document.querySelectorAll<HTMLButtonElement>("[data-wind]");
+	for (const button of windButtons) {
+		button.addEventListener("click", () => {
+			branch.setWind(button.dataset.wind as WindMode);
+			for (const other of windButtons) other.setAttribute("aria-pressed", String(other === button));
+		});
+	}
+	const branchCamera = new OrthographicCamera(0, config.aspect, 0, -1, -1, 1);
+	const silhouette = new WebGLRenderTarget(Math.round(1024 * config.aspect), 1024, { samples: 4 });
+
+	const initial = lightTones[timeOfDay(new Date().getHours())];
+	const uniforms = {
+		uResolution: { value: new Vector2() },
+		uTree: { value: silhouette.texture },
+		uOrigin: { value: new Vector2(...config.origin) },
+		uSize: { value: new Vector2() },
+		uStrength: { value: config.strength },
+		uSoftness: { value: config.softness },
+		uRoom: { value: new Vector3(...initial.room) },
+		uSun: { value: new Vector3(...initial.sun) },
+	};
+	const target = {
+		uRoom: new Vector3(...initial.room),
+		uSun: new Vector3(...initial.sun),
+	};
+	const tones = ["uRoom", "uSun"] as const;
+	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+	const scene = new Scene();
+	scene.add(
+		new Mesh(
+			new PlaneGeometry(2, 2),
+			new ShaderMaterial({
+				uniforms,
+				vertexShader: "void main() { gl_Position = vec4(position, 1.0); }",
+				fragmentShader: /* glsl */ `
+					uniform vec2 uResolution;
+					${treeShadowChunk}
+					void main() {
+						vec2 p = gl_FragCoord.xy / uResolution.y;
+						gl_FragColor = vec4(treeShadowColor(p, gl_FragCoord.xy), 1.0);
+					}
+				`,
+			}),
+		),
+	);
+	const camera = new OrthographicCamera();
+
+	function draw(seconds: number) {
+		branch.update(seconds);
+		renderer.setRenderTarget(silhouette);
+		renderer.render(branch.scene, branchCamera);
+		renderer.setRenderTarget(null);
+		renderer.render(scene, camera);
+	}
+
+	function resize() {
+		renderer.setSize(window.innerWidth, window.innerHeight, false);
+		renderer.getDrawingBufferSize(uniforms.uResolution.value);
+		// Keep the tree in its corner on narrow screens.
+		const height = Math.min(config.size, (config.maxWidth * window.innerWidth) / window.innerHeight / config.aspect);
+		uniforms.uSize.value.set(height * config.aspect, height);
+		draw(performance.now() / 1000);
+	}
+	resize();
+	window.addEventListener("resize", resize);
+
+	// Follow the browser's clock.
+	setInterval(() => {
+		const tone = lightTones[timeOfDay(new Date().getHours())];
+		target.uRoom.set(...tone.room);
+		target.uSun.set(...tone.sun);
+		if (reducedMotion) {
+			for (const key of tones) uniforms[key].value.copy(target[key]);
+			draw(0);
+		}
+	}, 60_000);
+
+	if (!reducedMotion) {
+		let last = 0;
+		renderer.setAnimationLoop((time) => {
+			// Ease toward the current time of day (a few seconds).
+			const ease = 1 - Math.exp(-((time - last) / 1000) * 0.8);
+			last = time;
+			for (const key of tones) uniforms[key].value.lerp(target[key], ease);
+			draw(time / 1000);
+		});
+	}
+</script>
