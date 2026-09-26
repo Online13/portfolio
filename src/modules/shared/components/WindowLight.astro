@@ -1,0 +1,129 @@
+---
+// Sunlight falling through a gridded window onto the page.
+// Rendered as a multiply overlay: lit areas stay white/warm, the rest is shaded.
+const times = [
+	{ id: "morning", label: "Morning" },
+	{ id: "noon", label: "Noon" },
+	{ id: "afternoon", label: "Afternoon" },
+	{ id: "night", label: "Night" },
+];
+---
+
+<canvas
+	id="window-light"
+	aria-hidden="true"
+	class="fixed inset-0 w-screen h-screen pointer-events-none z-30 mix-blend-multiply"
+></canvas>
+
+<div
+	role="group"
+	aria-label="Time of day"
+	class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex gap-1 p-1 rounded-full bg-white/70 backdrop-blur-sm shadow-lg text-sm"
+>
+	{
+		times.map(({ id, label }) => (
+			<button
+				type="button"
+				data-time={id}
+				aria-pressed={id === "afternoon" ? "true" : "false"}
+				class="px-3 py-1 rounded-full cursor-pointer text-gray-600 hover:text-black aria-pressed:bg-black aria-pressed:text-white"
+			>
+				{label}
+			</button>
+		))
+	}
+</div>
+
+<script>
+	import {
+		Mesh,
+		OrthographicCamera,
+		PlaneGeometry,
+		Scene,
+		ShaderMaterial,
+		Vector2,
+		Vector3,
+		WebGLRenderer,
+	} from "three";
+	import {
+		lightTones,
+		type TimeOfDay,
+		windowLightChunk,
+		windowLightConfig,
+		windowLightUniforms,
+	} from "@/modules/shared/lib/window-light";
+
+	const canvas = document.getElementById("window-light") as HTMLCanvasElement;
+	const renderer = new WebGLRenderer({ canvas, alpha: false, antialias: false });
+	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
+	const initial = lightTones.afternoon;
+	const uniforms = {
+		...windowLightUniforms(windowLightConfig),
+		uResolution: { value: new Vector2() },
+		uRoom: { value: new Vector3(...initial.room) },
+		uBounce: { value: new Vector3(...initial.bounce) },
+		uSun: { value: new Vector3(...initial.sun) },
+	};
+	const target = {
+		uRoom: new Vector3(...initial.room),
+		uBounce: new Vector3(...initial.bounce),
+		uSun: new Vector3(...initial.sun),
+	};
+	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+	const scene = new Scene();
+	scene.add(
+		new Mesh(
+			new PlaneGeometry(2, 2),
+			new ShaderMaterial({
+				uniforms,
+				vertexShader: "void main() { gl_Position = vec4(position, 1.0); }",
+				fragmentShader: /* glsl */ `
+					uniform vec2 uResolution;
+					${windowLightChunk}
+					void main() {
+						vec2 p = gl_FragCoord.xy / uResolution.y;
+						gl_FragColor = vec4(windowLightColor(p, gl_FragCoord.xy), 1.0);
+					}
+				`,
+			}),
+		),
+	);
+	const camera = new OrthographicCamera();
+
+	function resize() {
+		renderer.setSize(window.innerWidth, window.innerHeight, false);
+		renderer.getDrawingBufferSize(uniforms.uResolution.value);
+		renderer.render(scene, camera);
+	}
+	resize();
+	window.addEventListener("resize", resize);
+
+	const buttons = document.querySelectorAll<HTMLButtonElement>("[data-time]");
+	buttons.forEach((button) =>
+		button.addEventListener("click", () => {
+			const tone = lightTones[button.dataset.time as TimeOfDay];
+			target.uRoom.set(...tone.room);
+			target.uBounce.set(...tone.bounce);
+			target.uSun.set(...tone.sun);
+			buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+			if (reducedMotion) {
+				for (const key of ["uRoom", "uBounce", "uSun"] as const) uniforms[key].value.copy(target[key]);
+				renderer.render(scene, camera);
+			}
+		}),
+	);
+
+	if (!reducedMotion) {
+		let last = 0;
+		renderer.setAnimationLoop((time) => {
+			// Ease toward the selected time of day (~1s).
+			const ease = 1 - Math.exp(-((time - last) / 1000) * 4);
+			last = time;
+			for (const key of ["uRoom", "uBounce", "uSun"] as const) uniforms[key].value.lerp(target[key], ease);
+			uniforms.uTime.value = time / 1000;
+			renderer.render(scene, camera);
+		});
+	}
+</script>
