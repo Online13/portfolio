@@ -3,23 +3,17 @@
 // Rendered as a multiply overlay: lit areas stay white/warm, the shadow darkens the page.
 import { treeShadowConfig } from "@/modules/shared/lib/tree-shadow";
 
-const winds = [
-	{ id: "calm", label: "Calm" },
-	{ id: "breeze", label: "Breeze" },
-	{ id: "gusty", label: "Gusty" },
-	{ id: "storm", label: "Storm" },
-];
-
 const wheels = [
 	{ id: "hours", label: "Hours", count: 24 },
 	{ id: "minutes", label: "Minutes", count: 60 },
 ];
 ---
 
+<!-- Its background is the light set by MainLayout's head script, shown until the first frame. -->
 <canvas
 	id="tree-shadow"
 	aria-hidden="true"
-	class="fixed inset-0 w-screen h-screen pointer-events-none z-30 mix-blend-multiply"
+	class="fixed inset-0 w-screen h-screen pointer-events-none z-30 mix-blend-multiply bg-(--light-sun)"
 ></canvas>
 
 <!-- The browser's clock; clicking it lets you pick another time to preview the light. -->
@@ -30,8 +24,9 @@ const wheels = [
 		aria-expanded="false"
 		aria-controls="clock-picker"
 		aria-label="Change the time of the light"
-		class="cursor-pointer tabular-nums hover:text-black"
+		class="peer cursor-pointer tabular-nums hover:text-black"
 	></button>
+	<p aria-hidden="true" class="-mt-2 text-xs text-gray-400 peer-aria-expanded:hidden">Click the time to change it</p>
 	<!-- Two wheels (hours, minutes): scroll, drag, click a number, or use the arrow keys. The centered row is the value. -->
 	<div id="clock-picker" hidden class="flex items-center gap-3">
 		<div class="relative flex tabular-nums">
@@ -60,25 +55,6 @@ const wheels = [
 	</div>
 </div>
 
-<!-- The branch stays still with reduced motion, so the wind has nothing to change. -->
-<div
-	role="group"
-	aria-label="Wind"
-	class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex gap-1 p-1 rounded-full bg-white/70 backdrop-blur-sm shadow-lg text-sm motion-reduce:hidden"
->
-	{
-		winds.map(({ id, label }) => (
-			<button
-				type="button"
-				data-wind={id}
-				aria-pressed={id === treeShadowConfig.windMode ? "true" : "false"}
-				class="px-3 py-1 rounded-full cursor-pointer text-gray-600 hover:text-black aria-pressed:bg-black aria-pressed:text-white"
-			>
-				{label}
-			</button>
-		))
-	}
-</div>
 
 <script>
 	import {
@@ -92,7 +68,8 @@ const wheels = [
 		WebGLRenderer,
 		WebGLRenderTarget,
 	} from "three";
-	import { createSakuraBranch, type WindMode } from "@/modules/shared/lib/sakura-branch";
+	import { createSakuraBranch } from "@/modules/shared/lib/sakura-branch";
+	import { createWeather, flows } from "@/modules/shared/lib/weather";
 	import {
 		lightTones,
 		timeOfDay,
@@ -107,29 +84,31 @@ const wheels = [
 	// The branch silhouette, redrawn each frame as the wind moves it.
 	const branch = createSakuraBranch(config.seed, config.wind, config.windMode);
 
-	const windButtons = document.querySelectorAll<HTMLButtonElement>("[data-wind]");
-	for (const button of windButtons) {
-		button.addEventListener("click", () => {
-			branch.setWind(button.dataset.wind as WindMode);
-			for (const other of windButtons) other.setAttribute("aria-pressed", String(other === button));
-		});
-	}
-	// While a gust blows (see WindGust) the branch storms, catching it at once, then eases back to the chosen weather.
-	window.addEventListener("wind-gust-start", () => branch.setWind("storm", 8));
-	window.addEventListener("wind-gust-end", () => {
-		const chosen = document.querySelector<HTMLButtonElement>('[data-wind][aria-pressed="true"]');
-		branch.setWind((chosen?.dataset.wind ?? config.windMode) as WindMode);
+	// The weather follows what happens on the page (see weather.ts).
+	const weather = createWeather((mode, rate) => branch.setWind(mode, rate));
+	// Scrolling blows while it lasts: the page, or anything scrolling in it (the resume).
+	document.addEventListener("scroll", () => weather.trigger(flows.scroll), { capture: true, passive: true });
+	// Pointing at something that reacts stirs a breeze.
+	document.addEventListener("pointerover", (event) => {
+		if ((event.target as Element).closest("a[href], button, .trigger")) weather.trigger(flows.hover);
 	});
+	// Following a link, or coming back from one (the browser's back button), stirs up a storm, caught at once.
+	document.addEventListener("click", (event) => {
+		if ((event.target as Element).closest("a[href]")) weather.trigger(flows.link);
+	});
+	window.addEventListener("hashchange", () => weather.trigger(flows.link));
 	const branchCamera = new OrthographicCamera(0, config.aspect, 0, -1, -1, 1);
 	const silhouette = new WebGLRenderTarget(Math.round(1024 * config.aspect), 1024, { samples: 4 });
 
+	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	const initial = lightTones[timeOfDay(new Date().getHours())];
 	const uniforms = {
 		uResolution: { value: new Vector2() },
 		uTree: { value: silhouette.texture },
 		uOrigin: { value: new Vector2(...config.origin) },
 		uSize: { value: new Vector2() },
-		uStrength: { value: config.strength },
+		// Faded in by the animation loop, so the shadow settles onto the already lit page.
+		uStrength: { value: reducedMotion ? config.strength : 0 },
 		uSoftness: { value: config.softness },
 		uRoom: { value: new Vector3(...initial.room) },
 		uSun: { value: new Vector3(...initial.sun) },
@@ -139,7 +118,6 @@ const wheels = [
 		uSun: new Vector3(...initial.sun),
 	};
 	const tones = ["uRoom", "uSun"] as const;
-	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 	const scene = new Scene();
 	scene.add(
@@ -265,8 +243,13 @@ const wheels = [
 	});
 
 	if (!reducedMotion) {
+		const SHADOW_FADE_MS = 600;
 		let last = 0;
+		let firstFrame: number | undefined;
 		renderer.setAnimationLoop((time) => {
+			firstFrame ??= time;
+			const shown = Math.min(1, (time - firstFrame) / SHADOW_FADE_MS);
+			uniforms.uStrength.value = config.strength * shown * shown * (3 - 2 * shown);
 			// Ease toward the current time of day (a few seconds).
 			const ease = 1 - Math.exp(-((time - last) / 1000) * 0.8);
 			last = time;

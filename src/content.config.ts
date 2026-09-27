@@ -22,7 +22,10 @@ const articles = defineCollection({
 		title: z.string(),
 		slug: z.string(),
 		description: z.string(),
-		date: z.date(),
+		date: z.coerce.date(),
+		// Unfinished articles stay listed, flagged "(in progress)".
+		draft: z.boolean().default(false),
+		tags: z.array(z.string()).default([]),
 	}),
 });
 
@@ -33,9 +36,15 @@ const experiences = defineCollection({
 		company: z.string(),
 		start: z.coerce.date(),
 		end: z.coerce.date().optional(),
+		type: z.enum(["Full-time", "Consultant", "Freelance", "Internship"]).optional(),
+		location: z.string().optional(),
 		summary: z.string().optional(),
 		highlights: z.array(z.string()).default([]),
 		technologies: z.array(z.string()).default([]),
+		metrics: z.array(z.object({ value: z.string(), label: z.string() })).default([]),
+		projects: z
+			.array(z.object({ name: z.string(), description: z.string() }))
+			.default([]),
 	}),
 });
 
@@ -55,6 +64,7 @@ const certifications = defineCollection({
 		title: z.string(),
 		issuer: z.string().optional(),
 		date: z.coerce.date(),
+		href: z.string().url().optional(),
 	}),
 });
 

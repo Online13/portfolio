@@ -2,5 +2,21 @@
   "role": "Fullstack JS Developer",
   "company": "Team Tic",
   "start": "2023-12",
-  "end": "2024-04"
+  "end": "2024-04",
+  "type": "Consultant",
+  "location": "Antananarivo, Madagascar",
+  "summary": "Built a web application for Catholic Relief Services to manage the information contained in the PERSUAP document.",
+  "highlights": [
+    "Built the React and TypeScript front end and the Express API behind it",
+    "Modelled the PERSUAP document data in SQL Server",
+    "Added search and editing screens so staff can keep the information up to date",
+    "Delivered the full stack, from database schema to UI"
+  ],
+  "technologies": ["React", "TypeScript", "Express", "Node.js", "SQL Server"],
+  "projects": [
+    {
+      "name": "PERSUAP manager",
+      "description": "Web app for Catholic Relief Services to store, browse and update PERSUAP data instead of a static document."
+    }
+  ]
 }

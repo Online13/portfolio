@@ -2,5 +2,30 @@
   "role": "Software Auditor & Data Engineer",
   "company": "MNDPT",
   "start": "2022-08",
-  "end": "2023-03"
+  "end": "2023-03",
+  "type": "Internship",
+  "location": "Antananarivo, Madagascar",
+  "summary": "Internship at the Ministry of Digital Development, Posts and Telecommunications (MNDPT), auditing EDUTIC, the system the government uses to digitize higher education.",
+  "highlights": [
+    "Audited the EDUTIC system and reported on its weak points",
+    "Cleaned the EDUTIC database: duplicates, missing values and inconsistent records",
+    "Developed a matching algorithm to link related records in the database",
+    "Worked in Python with Pandas and scikit-learn"
+  ],
+  "technologies": [
+    "Python",
+    "Pandas",
+    "scikit-learn",
+    "SQL"
+  ],
+  "projects": [
+    {
+      "name": "EDUTIC audit",
+      "description": "Review of the government platform for higher education, with findings and recommendations."
+    },
+    {
+      "name": "Record matching",
+      "description": "Algorithm to match related records in the EDUTIC database."
+    }
+  ]
 }

@@ -27,9 +27,9 @@
 <script>
 	function syncFooterMargin() {
 		const footer = document.getElementById("site-footer");
-		const main = document.getElementById("main-content");
-		if (!footer || !main) return;
-		(main as HTMLElement).style.marginBottom = footer.offsetHeight + "px";
+		const page = document.getElementById("page");
+		if (!footer || !page) return;
+		page.style.marginBottom = footer.offsetHeight + "px";
 	}
 	syncFooterMargin();
 	window.addEventListener("resize", syncFooterMargin);

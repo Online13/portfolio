@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "cv": "astro build && node scripts/cv.mjs"
   },
   "dependencies": {
     "@lucide/astro": "^0.577.0",

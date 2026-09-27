@@ -1,35 +1,12 @@
 ---
 import SocialLink from "../../components/SocialLink.astro";
-import type { IconType } from "../../type";
 import SocialNetworkIcon from "./SocialNetworkIcon.astro";
-
-const LINKS: { to: string; type: IconType }[] = [
-  {
-    to: "https://github.com/Online13/",
-    type: "github",
-  },
-  {
-    to: "https://www.linkedin.com/in/nekena-rayane-ratiarivelo-2115751b9/",
-    type: "linkedin",
-  },
-  {
-    to: "https://wa.me/261341313373",
-    type: "whatsapp",
-  },
-  {
-    to: "https://web.facebook.com/Online.Nk13/",
-    type: "facebook",
-  },
-  {
-    to: "mailto:rratiarivelo@gmail.com",
-    type: "email",
-  },
-];
+import { SOCIAL_LINKS } from "./social-links";
 ---
 
 <div class="w-full flex items-center gap-2">
   {
-    LINKS.map((link, id) => (
+    SOCIAL_LINKS.map((link, id) => (
       <div>
         <SocialLink
           id={id}

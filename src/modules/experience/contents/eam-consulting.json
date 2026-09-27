@@ -2,5 +2,25 @@
   "role": "Mobile Developer",
   "company": "EAM Consulting",
   "start": "2023-02",
-  "end": "2025-02"
+  "end": "2025-02",
+  "type": "Consultant",
+  "location": "Antananarivo, Madagascar",
+  "summary": "Built and maintained a mobile app used to inventory public infrastructure across Madagascar for the Ministry of Public Works (MTP).",
+  "highlights": [
+    "Created the React Native app used by field agents to record roads, bridges and other infrastructure",
+    "Built data-entry forms with photos and GPS position for each surveyed asset",
+    "Made the app usable offline, with data sent to the server once a connection is back",
+    "Maintained and extended the app over two years as the ministry's needs changed"
+  ],
+  "technologies": ["React Native", "TypeScript", "SQLite"],
+  "metrics": [
+    { "value": "2 yrs", "label": "on the same product" },
+    { "value": "1", "label": "ministry client" }
+  ],
+  "projects": [
+    {
+      "name": "MTP infrastructure inventory",
+      "description": "Field app for the Ministry of Public Works to survey and catalogue the country's infrastructure."
+    }
+  ]
 }

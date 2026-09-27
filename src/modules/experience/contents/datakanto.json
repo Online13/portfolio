@@ -2,5 +2,21 @@
   "role": "Frontend Developer",
   "company": "Datakanto",
   "start": "2025-06",
-  "end": "2025-06"
+  "end": "2025-06",
+  "type": "Consultant",
+  "location": "Remote",
+  "summary": "Short consulting mission to build the Datakanto company website, from design to production.",
+  "highlights": [
+    "Designed the pages and turned the mockups into a static Astro site",
+    "Built responsive, reusable page sections so the team can add content without touching layout code",
+    "Set up the build and deployment of the site",
+    "Kept the pages light and fast to load on mobile connections"
+  ],
+  "technologies": ["Astro", "Node.js", "TypeScript", "Tailwind CSS"],
+  "projects": [
+    {
+      "name": "Company website",
+      "description": "Marketing site presenting Datakanto's services, designed, integrated and deployed in one month."
+    }
+  ]
 }

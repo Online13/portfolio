@@ -1,7 +1,6 @@
 ---
 import { getCollection } from "astro:content";
 import { ArrowUpRight } from "@lucide/astro";
-import Table from "@/components/Table.astro";
 import ProjectRow from "./ProjectRow.astro";
 
 const projects = await getCollection("projects", ({ data }) => data.active);
@@ -13,13 +12,13 @@ const projects = await getCollection("projects", ({ data }) => data.active);
 	</h2>
 	{
 		projects.length > 0 ? (
-			<Table columns={["Project", "Description", ""]}>
+			<table class="w-full text-left text-sm">
 				<tbody>
 					{projects.map((project) => (
 						<ProjectRow {...project.data} />
 					))}
 				</tbody>
-			</Table>
+			</table>
 		) : (
 			<div class="w-full flex flex-col gap-4 justify-center items-center min-h-52">
 				<svg
@@ -52,7 +51,7 @@ const projects = await getCollection("projects", ({ data }) => data.active);
 		href="https://github.com/Online13"
 		target="_blank"
 		rel="noreferrer"
-		class="group inline-flex items-center gap-1 text-sm text-gray-600 hover:text-black"
+		class="group inline-flex items-center gap-1 text-sm text-gray-600 hover:text-black hover:underline transition-colors"
 	>
 		More open source work on GitHub
 		<ArrowUpRight class="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

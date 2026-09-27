@@ -1,0 +1,12 @@
+---
+interface Props {
+	label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<section class="grid grid-cols-[100px_1fr] gap-8">
+	<h2 class="text-[13px] leading-relaxed text-muted pt-4">{label}</h2>
+	<div><slot /></div>
+</section>

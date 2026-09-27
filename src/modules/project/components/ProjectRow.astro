@@ -31,11 +31,11 @@ const {
 	data-title={title}
 	data-description={description}
 	data-role={role}
-	class="project-item group border-b border-gray-200 cursor-pointer"
+	class="project-item group border-b border-gray-200 cursor-pointer hover:bg-stone-500/10"
 >
-	<td class="py-3 pr-4 font-semibold text-black whitespace-nowrap">{title}</td>
+	<td class="py-3 pr-4 font-semibold text-black whitespace-nowrap group-hover:pl-4 transition-all duration-300">{title}</td>
 	<td class="py-3 pr-4 text-gray-700">{description}</td>
-	<td class="py-3 text-right text-gray-400 group-hover:text-gray-700">
+	<td class="py-3 text-right text-gray-400 group-hover:text-gray-700 group-hover:pr-4 transition-all duration-300">
 		<ArrowUpRight
 			class="inline w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
 		/>

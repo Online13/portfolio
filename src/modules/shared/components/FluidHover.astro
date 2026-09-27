@@ -1,0 +1,111 @@
+---
+// A list whose hover highlight glides to the item nearest the pointer, gaps included, instead of blinking
+// between items (after fluidfunctionalism.com/docs/fluid-hover). Mark each item with data-fluid-item.
+interface Props {
+	// "y" for vertical lists, "x" for horizontal strips, "xy" for grids.
+	axis?: "x" | "y" | "xy";
+	class?: string;
+}
+
+const { axis = "y", class: className } = Astro.props;
+---
+
+<div data-fluid-hover data-axis={axis} class:list={["relative isolate", className]}>
+	<span data-fluid-highlight aria-hidden="true" class="fluid-highlight"></span>
+	<slot />
+</div>
+
+<style>
+	/* Behind the items: -1 inside the container's own stacking context (isolate). */
+	.fluid-highlight {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: -1;
+		border-radius: var(--radius-md, 6px);
+		background: color-mix(in oklab, var(--color-stone-500, oklch(55.3% 0.013 58.071)) 10%, transparent);
+		opacity: 0;
+		pointer-events: none;
+		/* A fast spring, slight overshoot included. */
+		transition:
+			translate 320ms var(--fluid-spring),
+			width 320ms var(--fluid-spring),
+			height 320ms var(--fluid-spring),
+			opacity 150ms ease-out;
+		--fluid-spring: linear(0, 0.21 5%, 0.61 12%, 0.88 20%, 1.01 29%, 1.04 36%, 1.02 48%, 1);
+	}
+
+	[data-fluid-hover].is-hovered > .fluid-highlight {
+		opacity: 1;
+	}
+
+	/* Appearing: jump to the item, then only fade in. */
+	.fluid-highlight.is-placing {
+		transition: opacity 150ms ease-out;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.fluid-highlight {
+			transition: opacity 150ms ease-out;
+		}
+	}
+
+	@media print {
+		.fluid-highlight {
+			display: none;
+		}
+	}
+</style>
+
+<script>
+	type Axis = "x" | "y" | "xy";
+
+	// Distance from the pointer to the item's box along the axis, 0 when inside it.
+	function distance(rect: DOMRect, x: number, y: number, axis: Axis) {
+		const dx = Math.max(rect.left - x, 0, x - rect.right);
+		const dy = Math.max(rect.top - y, 0, y - rect.bottom);
+		return axis === "x" ? dx : axis === "y" ? dy : Math.hypot(dx, dy);
+	}
+
+	for (const container of document.querySelectorAll<HTMLElement>("[data-fluid-hover]")) {
+		const highlight = container.querySelector<HTMLElement>(":scope > [data-fluid-highlight]")!;
+		const axis = container.dataset.axis as Axis;
+		const items = container.querySelectorAll<HTMLElement>("[data-fluid-item]");
+		let active: HTMLElement | null = null;
+
+		function moveTo(item: HTMLElement) {
+			const origin = container.getBoundingClientRect();
+			const rect = item.getBoundingClientRect();
+			highlight.style.translate = `${rect.left - origin.left}px ${rect.top - origin.top}px`;
+			highlight.style.width = `${rect.width}px`;
+			highlight.style.height = `${rect.height}px`;
+		}
+
+		container.addEventListener("pointermove", (event) => {
+			if (event.pointerType === "touch") return;
+
+			let nearest: HTMLElement | null = null;
+			let best = Infinity;
+			for (const item of items) {
+				const d = distance(item.getBoundingClientRect(), event.clientX, event.clientY, axis);
+				if (d < best) [nearest, best] = [item, d];
+			}
+			if (!nearest || nearest === active) return;
+
+			const appearing = !active;
+			if (appearing) highlight.classList.add("is-placing");
+			moveTo(nearest);
+			if (appearing) {
+				highlight.offsetWidth; // commit the jump before re-enabling the glide
+				highlight.classList.remove("is-placing");
+			}
+			active = nearest;
+			container.classList.add("is-hovered");
+		});
+
+		container.addEventListener("pointerleave", () => {
+			active = null;
+			container.classList.remove("is-hovered");
+		});
+	}
+</script>

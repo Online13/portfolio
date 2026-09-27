@@ -1,0 +1,264 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import picture from "@/assets/images/picture.png";
+import { SOCIAL_LINKS } from "@/modules/about/social-links";
+import { getExperiences } from "@/modules/experience/experiences";
+import { formatMonth } from "@/modules/resume/dates";
+import FluidHover from "@/modules/shared/components/FluidHover.astro";
+import ResumeSection from "./ResumeSection.astro";
+
+// The resume sheet: shown in the home page's full-screen overlay, and the only thing printed from it (public/cv.pdf).
+
+const name = "Nekena Rayane Ratiarivelo";
+const title = "Software Engineer";
+const location = "Antananarivo, Madagascar";
+const about =
+	"Software engineer with 4+ years building web and mobile applications, recently focused on React Native. I have worked on digitalization projects for public and private sectors, from design through production, and care about scalable systems, clean architecture and performance. Available for remote collaborations.";
+// Rows left empty are not shown.
+const tools = [
+	{
+		label: "Frontend Web",
+		value: "TypeScript, JavaScript, React, Next.js, Astro, Vue.js, Tailwind CSS",
+	},
+	{ label: "Mobile", value: "React Native, Expo" },
+	{ label: "Desktop", value: "" },
+	{ label: "Backend", value: "Node.js, Express, FastAPI, Strapi, Python" },
+	{ label: "Software", value: "Figma" },
+	{
+		label: "Database",
+		value: "PostgreSQL, MongoDB, SQL Server, SQLite, Redis, Supabase",
+	},
+].filter(({ value }) => value);
+const languages = [
+	{ name: "Malagasy", level: "Native" },
+	{ name: "French", level: "Fluent" },
+	{ name: "English", level: "Intermediate" },
+];
+
+const contacts = [
+	{ href: "https://nekena-rayane.com", label: "Portfolio" },
+	...SOCIAL_LINKS.filter(({ type }) => type !== "facebook").map(
+		({ to, type, handle }) => ({
+			href: to,
+			label:
+				type === "github"
+					? "Github"
+					: type === "linkedin"
+						? "LinkedIn"
+						: handle,
+		}),
+	),
+];
+
+// Two highlights and the city alone keep each role to a few lines.
+const experiences = (await getExperiences()).map((role) => ({
+	...role,
+	city: role.location?.split(",")[0],
+	highlights: role.highlights.slice(0, 2),
+}));
+const projects = (await getCollection("projects"))
+	.filter(({ data }) => data.role)
+	.sort((a, b) => Number(b.data.active) - Number(a.data.active))
+	.map(({ data }) => data);
+const education = (await getCollection("education"))
+	.map(({ data }) => data)
+	.sort((a, b) => b.start - a.start);
+const certifications = (await getCollection("certifications"))
+	.map(({ data }) => data)
+	.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+const bullet =
+	"relative pl-4 text-sm leading-relaxed text-body before:absolute before:top-[0.6em] before:left-0 before:size-1 before:rounded-full before:bg-subtle";
+---
+
+<svg style="display: none" aria-hidden="true">
+	<symbol
+		id="resume-external"
+		viewBox="0 0 16 16"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.5"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<path d="M6 3.5h6.5V10M12.5 3.5L5 11"></path>
+	</symbol>
+</svg>
+<article class="resume-sheet text-pretty text-foreground antialiased">
+	<header>
+		<div class="flex items-center gap-5">
+			<Image
+				src={picture}
+				alt={name}
+				width={120}
+				height={120}
+				class="size-15 shrink-0 rounded-md object-cover grayscale"
+			/>
+			<div>
+				<h1 class="text-[19px] font-bold tracking-[0.06em] uppercase">
+					{name}
+				</h1>
+				<p class="mt-0.5 text-sm text-body">{title}</p>
+				<p class="text-[13px] text-subtle">{location}</p>
+			</div>
+		</div>
+		<p class="mt-5 text-sm leading-relaxed text-body">
+			{
+				contacts.map(({ href, label }, i) => (
+					<>
+						<a href={href} class="inline-flex items-center gap-1">
+							{label}
+							<svg class="size-3 shrink-0 text-subtle">
+								<use href="#resume-external" />
+							</svg>
+						</a>
+						{i < contacts.length - 1 && ", "}
+					</>
+				))
+			}
+		</p>
+	</header>
+
+	<hr class="my-4 border-separator" />
+
+	<div class="space-y-4">
+		<ResumeSection label="About">
+			<p class="text-sm leading-relaxed text-body p-4">{about}</p>
+		</ResumeSection>
+
+		<ResumeSection label="Experience">
+			<FluidHover class="space-y-4">
+				{
+					experiences.map((role) => (
+						<div class="grid grid-cols-[150px_1fr] gap-8 break-inside-avoid p-4" data-fluid-item>
+							<div>
+								<h3 class="text-sm font-medium">{role.role}</h3>
+								<p class="text-[13px] text-body">{role.company}</p>
+								<p class="text-[13px] text-subtle">
+									{[role.type, role.city].filter(Boolean).join(" · ")}
+								</p>
+								<p class="text-[13px] text-subtle tabular-nums">
+									{role.years}
+								</p>
+							</div>
+							<ul class="space-y-1.5">
+								{role.highlights.map((highlight) => (
+									<li class={bullet}>{highlight}</li>
+								))}
+							</ul>
+						</div>
+					))
+				}
+			</FluidHover>
+		</ResumeSection>
+
+		<ResumeSection label="Side projects">
+			<FluidHover>
+				{
+					projects.map((project) => (
+						<div class="break-inside-avoid p-4" data-fluid-item>
+							<div>
+								<a
+									href={project.link}
+									class="inline-flex items-center gap-1 text-sm font-medium"
+								>
+									{project.title}
+									<svg class="size-3 shrink-0 text-subtle">
+										<use href="#resume-external" />
+									</svg>
+								</a>
+							</div> 
+							<p class="text-sm leading-relaxed text-body">
+								<span class="text-[13px] leading-relaxed text-subtle">
+									{project.technologies.join(" · ")}
+								</span><br/>
+								{project.description}
+							</p>
+						</div>
+					))
+				}
+			</FluidHover>
+		</ResumeSection>
+
+		<ResumeSection label="Education">
+			<FluidHover>
+				{
+					education.map((entry) => (
+						<div class="break-inside-avoid p-4" data-fluid-item>
+							<div class="flex items-baseline gap-4">
+								<h3 class="text-sm font-medium">{entry.school}</h3>
+								<p class="text-[13px] text-subtle tabular-nums">
+									{entry.end
+										? `${entry.start} – ${entry.end}`
+										: entry.start}
+								</p>
+							</div>
+							<p class="text-sm leading-relaxed text-body">
+								{entry.degree}
+							</p>
+						</div>
+					))
+				}
+			</FluidHover>
+		</ResumeSection>
+
+		<ResumeSection label="Certifications">
+			<FluidHover axis="xy" class="grid grid-cols-[1fr_1fr]">
+				{
+					certifications.map((entry) => (
+						<div class="break-inside-avoid p-4" data-fluid-item>
+							{entry.href ? (
+								<a
+									href={entry.href}
+									class="inline-flex items-center gap-1 text-sm font-medium"
+								>
+									{entry.title}
+									<svg class="size-3 shrink-0 text-subtle">
+										<use href="#resume-external" />
+									</svg>
+								</a>
+							) : (
+								<h3 class="text-sm font-medium">{entry.title}</h3>
+							)}
+							<p class="text-[13px] text-subtle">
+								{[entry.issuer, formatMonth(entry.date)]
+									.filter(Boolean)
+									.join(" · ")}
+							</p>
+						</div>
+					))
+				}
+			</FluidHover>
+		</ResumeSection>
+
+		<ResumeSection label="Languages">
+			<p class="text-sm text-body p-4">
+				{
+					languages
+						.map(({ name, level }) => `${name} (${level})`)
+						.join(", ")
+				}
+			</p>
+		</ResumeSection>
+
+		<ResumeSection label="Tools">
+			<FluidHover class="flex flex-col break-inside-avoid">
+				{
+					tools.map(({ label, value }) => (
+						<div class="p-4" data-fluid-item>
+							<h3 class="text-sm font-medium">{label}</h3>
+							<p class="text-sm leading-relaxed text-body">{value}</p>
+						</div>
+					))
+				}
+			</FluidHover>
+		</ResumeSection>
+	</div>
+
+	<footer
+		class="mt-12 border-t border-separator pt-5 text-center text-[11px] tracking-wide text-subtle"
+	>
+		{name} · nekena-rayane.com · rratiarivelo@gmail.com
+	</footer>
+</article>

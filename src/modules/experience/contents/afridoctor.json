@@ -2,5 +2,24 @@
   "role": "Fullstack JS Developer",
   "company": "Afridoctor",
   "start": "2021-11",
-  "end": "2022-08"
+  "end": "2022-08",
+  "type": "Full-time",
+  "location": "Antananarivo, Madagascar",
+  "summary": "Worked on the AfriDoctor health platform with the in-house team, on the web app and a new mobile version.",
+  "highlights": [
+    "Maintained the site with the AfriDoctor team: bug fixes and small improvements",
+    "Built new features across the React front end and the Node.js GraphQL API",
+    "Developed a mobile version of the site in Flutter",
+    "Worked with MongoDB for the platform's data"
+  ],
+  "technologies": ["React", "Node.js", "GraphQL", "MongoDB", "Flutter"],
+  "metrics": [
+    { "value": "2", "label": "clients: web and mobile" }
+  ],
+  "projects": [
+    {
+      "name": "Mobile version",
+      "description": "Flutter app bringing the AfriDoctor site to phones."
+    }
+  ]
 }

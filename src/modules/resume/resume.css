@@ -1,0 +1,89 @@
+/* The resume sheet, laid out after micka.design/resume. Printing the home page prints only this sheet (public/cv.pdf). */
+@theme {
+	--color-foreground: #050505;
+	--color-body: #333;
+	--color-muted: #666;
+	--color-subtle: #999;
+	--color-separator: #0000001f;
+}
+
+/* Sized in px so it keeps its proportions under the site's 18px root. */
+.resume-sheet {
+	--spacing: 4px;
+	--text-sm: 14px;
+	--radius-md: 6px;
+	width: 100%;
+	max-width: 760px;
+	padding: 56px 40px;
+	background: #fff;
+}
+
+.resume-sheet,
+.resume-sheet * {
+	font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Hovering "Download PDF" shows the sheet as the paper it downloads. */
+#resume .resume-sheet {
+	border: 1px solid transparent;
+	border-radius: 4px;
+	transition: border-color 200ms ease-out, box-shadow 200ms ease-out;
+}
+
+#resume:has([data-resume-download]:is(:hover, :focus-visible)) .resume-sheet {
+	border-color: #e5e5e5;
+	box-shadow: 0 1px 3px #0000000f, 0 8px 24px -8px #0000001a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#resume .resume-sheet {
+		transition: none;
+	}
+}
+
+/* The page behind the open resume doesn't scroll. */
+html:has(#resume[open]) {
+	overflow: hidden;
+}
+
+@page {
+	size: letter portrait;
+	/* On the page itself so every sheet gets it, not just the first. */
+	margin: 14mm 0;
+}
+
+@media print {
+	html,
+	body {
+		background: #fff;
+		overflow: visible;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	body > :not(#page),
+	#page > :not(#resume),
+	#resume [data-resume-toolbar] {
+		display: none !important;
+	}
+
+	/* Printed whether the overlay is open or not. */
+	#resume {
+		display: block;
+		position: static;
+		height: auto;
+		overflow: visible;
+		opacity: 1;
+		translate: none;
+		max-width: none;
+		max-height: none;
+		padding: 0;
+	}
+
+	#resume .resume-sheet {
+		max-width: none;
+		padding: 0 16mm;
+		border: 0;
+		box-shadow: none;
+	}
+}

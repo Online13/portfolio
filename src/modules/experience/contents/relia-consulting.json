@@ -2,5 +2,21 @@
   "role": "Mobile Developer",
   "company": "RELIA Consulting",
   "start": "2024-09",
-  "end": "2024-12"
+  "end": "2024-12",
+  "type": "Consultant",
+  "location": "Remote",
+  "summary": "Built a social network app for a RELIA client, working with the RELIA team and other freelancers.",
+  "highlights": [
+    "Redesigned the existing application and set up its base architecture",
+    "Integrated the design system as shared React Native components",
+    "Reviewed the mobile team's pull requests",
+    "Shipped social features alongside the other developers on the project"
+  ],
+  "technologies": ["React Native", "TypeScript"],
+  "projects": [
+    {
+      "name": "Social network app",
+      "description": "Mobile social network for a RELIA client, rebuilt on a new architecture and design system."
+    }
+  ]
 }

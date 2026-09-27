@@ -2,5 +2,25 @@
   "role": "Software Engineer",
   "company": "Tenafli",
   "start": "2023-07",
-  "end": "2023-10"
+  "end": "2023-10",
+  "type": "Full-time",
+  "location": "Antananarivo, Madagascar",
+  "summary": "Took a mobile product from user research to a working app, with a Python microservices backend.",
+  "highlights": [
+    "Studied the existing system to understand the target users",
+    "Wrote a technical design document to choose the mobile libraries",
+    "Built the mobile app with React Native",
+    "Set up the server side in Python with FastAPI, as microservices"
+  ],
+  "technologies": ["React Native", "TypeScript", "FastAPI", "Python", "Microservices"],
+  "projects": [
+    {
+      "name": "Technical design document",
+      "description": "Comparison of mobile libraries and architecture choices that the app was then built on."
+    },
+    {
+      "name": "Mobile app and backend",
+      "description": "React Native client talking to FastAPI microservices."
+    }
+  ]
 }
