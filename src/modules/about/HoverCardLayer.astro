@@ -1,0 +1,151 @@
+---
+// The single card shared by every HoverCard in the parent element. It glides from one
+// trigger to the next and swaps its content, instead of each trigger owning a card.
+// Place it once inside a positioned parent that contains the triggers.
+---
+
+<div
+	id="hover-card-layer"
+	class="hover-card-layer absolute top-0 left-0 z-20 w-64 pb-2"
+	role="tooltip"
+	aria-hidden="true"
+>
+	<div
+		class="hover-card-box overflow-hidden rounded-md border border-gray-200 bg-white text-sm text-gray-600 shadow-lg shadow-black/5"
+	>
+		<div class="hover-card-content p-3"></div>
+	</div>
+</div>
+
+<style>
+	.hover-card-layer {
+		/* Anchor the card's bottom-center on the trigger; `translate` then moves it. */
+		transform: translate(-50%, -100%);
+		transform-origin: 50% 100%;
+		opacity: 0;
+		scale: 0.96;
+		pointer-events: none;
+		transition:
+			opacity 180ms cubic-bezier(0.4, 0, 1, 1),
+			scale 220ms cubic-bezier(0.4, 0, 1, 1),
+			translate 520ms var(--ease-spring);
+	}
+
+	.hover-card-layer.is-open {
+		opacity: 1;
+		scale: 1;
+		pointer-events: auto;
+		transition:
+			opacity 240ms cubic-bezier(0.22, 1, 0.36, 1),
+			scale 520ms var(--ease-spring),
+			translate 520ms var(--ease-spring);
+	}
+
+	.hover-card-box {
+		transition: height 420ms var(--ease-spring);
+	}
+
+	/* First placement after being hidden: jump into position, don't glide from the old one. */
+	.hover-card-layer.is-placing,
+	.hover-card-layer.is-placing .hover-card-box {
+		transition: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hover-card-layer,
+		.hover-card-layer.is-open {
+			scale: 1;
+			transition: opacity 150ms linear;
+		}
+
+		.hover-card-box {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	const HIDE_DELAY = 120;
+	const GAP = 8;
+
+	const layer = document.getElementById("hover-card-layer")!;
+	const box = layer.querySelector<HTMLElement>(".hover-card-box")!;
+	const content = layer.querySelector<HTMLElement>(".hover-card-content")!;
+	const container = layer.parentElement!;
+	const triggers = container.querySelectorAll<HTMLElement>("[data-hover-card]");
+	const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+	let active: HTMLElement | null = null;
+	let hideTimer: number | undefined;
+
+	function place(trigger: HTMLElement) {
+		// First line box, so a trigger that wraps anchors on its first line.
+		const rect = trigger.getClientRects()[0] ?? trigger.getBoundingClientRect();
+		const origin = container.getBoundingClientRect();
+		const half = layer.offsetWidth / 2;
+		const x = Math.min(
+			Math.max(rect.left + rect.width / 2 - origin.left, half),
+			Math.max(origin.width - half, half),
+		);
+		const y = rect.top - origin.top - GAP;
+		layer.style.translate = `${x}px ${y}px`;
+	}
+
+	function show(trigger: HTMLElement) {
+		clearTimeout(hideTimer);
+		if (trigger === active) return;
+
+		const wasOpen = layer.classList.contains("is-open");
+		const template = trigger.querySelector("template")!;
+		content.replaceChildren(template.content.cloneNode(true));
+		if (wasOpen && !reduceMotion.matches) {
+			content.animate(
+				[
+					{ opacity: 0, filter: "blur(2px)" },
+					{ opacity: 1, filter: "blur(0)" },
+				],
+				{ duration: 280, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+			);
+		}
+
+		if (!wasOpen) layer.classList.add("is-placing");
+		box.style.height = `${content.offsetHeight}px`;
+		place(trigger);
+		if (!wasOpen) {
+			layer.offsetWidth; // commit the jump before re-enabling transitions
+			layer.classList.remove("is-placing");
+		}
+
+		active?.removeAttribute("aria-describedby");
+		trigger.setAttribute("aria-describedby", layer.id);
+		active = trigger;
+		layer.classList.add("is-open");
+		layer.setAttribute("aria-hidden", "false");
+	}
+
+	function hide() {
+		active?.removeAttribute("aria-describedby");
+		active = null;
+		layer.classList.remove("is-open");
+		layer.setAttribute("aria-hidden", "true");
+	}
+
+	function scheduleHide() {
+		clearTimeout(hideTimer);
+		hideTimer = window.setTimeout(hide, HIDE_DELAY);
+	}
+
+	for (const trigger of triggers) {
+		trigger.addEventListener("pointerenter", () => show(trigger));
+		trigger.addEventListener("pointerleave", scheduleHide);
+		trigger.addEventListener("focus", () => show(trigger));
+		trigger.addEventListener("blur", scheduleHide);
+	}
+
+	layer.addEventListener("pointerenter", () => clearTimeout(hideTimer));
+	layer.addEventListener("pointerleave", scheduleHide);
+	document.addEventListener("keydown", (event) => {
+		if (event.key === "Escape") hide();
+	});
+	window.addEventListener("resize", () => active && place(active));
+</script>

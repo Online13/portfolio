@@ -1,4 +1,6 @@
 ---
+import HoverCard from "./HoverCard.astro";
+import HoverCardLayer from "./HoverCardLayer.astro";
 import SocialNetworkLinks from "./SocialNetworkLinks.astro";
 
 const startMonth = 11;
@@ -16,7 +18,8 @@ const experienceYears =
 	<h1 class="text-2xl font-bold">Nekena Rayane</h1>
 	<p class="text-gray-700">Software engineer / React Native enthusiast</p>
 </div>
-<div class="space-y-4 text-gray-600">
+<div class="relative space-y-4 text-gray-600">
+	<HoverCardLayer />
 	<div class="max-w-130 w-full">
 		<span class="max-w-140">
 			<b>Hi</b>, I'm <img
@@ -24,32 +27,35 @@ const experienceYears =
 				alt="profile picture"
 				class="inline shrink-0 w-6 h-6 bg-center bg-cover"
 			/>
-			<b>Rayane</b>. Born and based in Antananarivo, Madagascar. Curious by
+			<b>Rayane</b>. Born and based in <HoverCard label="Antananarivo, Madagascar"
+				>Antananarivo, Madagascar</HoverCard
+			>. Curious by
 			nature, I enjoy exploring how things are built and making them better.
 		</span>
 	</div>
 	<div class="max-w-130 w-full">
 		<span class="max-w-140">
-			I'm a <b>software engineer</b> with {experienceYears} years of experience{
-				" "
-			}
-			<b>building web and mobile applications</b>. I focus on scalable
+			I'm a <b>software engineer</b> with <HoverCard label="Experience"
+				>{experienceYears} years of experience</HoverCard
+			>{" "}
+			<HoverCard label="Web & mobile">building web and mobile applications</HoverCard
+			>. I focus on scalable
 			systems, clean architecture, and performance.
 		</span>
 	</div>
 	<div class="max-w-130 w-full">
 		<span class="max-w-140">
-			Recently, I've been focusing on mobile applications with <b
-				>React Native</b
-			>. I work as a consultant at <b>Itwedo</b> and build a personal project on
+			Recently, I've been focusing on mobile applications with <HoverCard
+				label="React Native">React Native</HoverCard
+			>. I work as a consultant at <HoverCard label="Itwedo">Itwedo</HoverCard> and build a personal project on
 			the side.
 		</span>
 	</div>
 	<div class="max-w-130 w-full">
 		<span class="max-w-140">
 			Before that, I worked on <b>digitalization projects</b> for both public and
-			private sectors, and contributed to <b
-				>frontend refactoring on large-scale applications</b
+			private sectors, and contributed to <HoverCard label="Frontend refactoring"
+				>frontend refactoring on large-scale applications</HoverCard
 			>.
 		</span>
 	</div>

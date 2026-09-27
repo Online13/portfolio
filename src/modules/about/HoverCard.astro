@@ -1,0 +1,32 @@
+---
+// Inline text that shows the shared HoverCardLayer card above itself on hover or focus.
+// Card content goes in the "card" slot; the trigger text is the default slot.
+interface Props {
+	label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<span data-hover-card tabindex="0">
+	<b class="trigger underline decoration-dotted decoration-gray-400 underline-offset-4"
+		><slot /></b
+	>
+	<template>
+		<slot name="card">
+			<span class="block font-semibold text-gray-900">{label}</span>
+			<span class="block text-gray-500">Content coming soon.</span>
+		</slot>
+	</template>
+</span>
+
+<style>
+	[data-hover-card]:focus-visible {
+		outline: none;
+	}
+
+	[data-hover-card]:focus-visible .trigger {
+		text-decoration-style: dashed;
+		text-decoration-color: currentColor;
+	}
+</style>
