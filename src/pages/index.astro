@@ -5,28 +5,128 @@ import AboutSection from "@/modules/about/AboutSection.astro";
 import BlogSection from "@/modules/blog/components/BlogSection.astro";
 import ActiveProjectSection from "@/modules/project/components/ActiveProjectSection.astro";
 import ProjectDetailModal from "@/modules/project/components/ProjectDetailModal.astro";
+import ResumePanel from "@/modules/resume/ResumePanel.astro";
 import Footer from "@/modules/shared/components/Footer.astro";
 import TreeShadow from "@/modules/shared/components/TreeShadow.astro";
+
+// Opening the resume (#resume) moves the content column to the left and slides the resume panel in
+// from the right, into the right half. Below lg there is no room beside it, so the panel covers the page.
+// The one leaving goes first: the column leads on open, the panel on close.
+const motion =
+	"transition-transform duration-1000 ease-spring motion-reduce:transition-none";
 ---
 
 <MainLayout title="Rayane">
-	<div
-		id="main-content"
-		class="w-full relative z-20 bg-white flex flex-col items-center"
-	>
-		<div class="flex justify-center pb-12">
-			<div
-				class="w-full flex flex-col items-center max-w-160 pt-30 relative pb-4"
-			>
-				<div class="w-full space-y-16 relative">
-					<AboutSection />
-					<ActiveProjectSection />
-					<BlogSection />
+	<div id="resume-layout" class="group/resume">
+		<!-- Opened on #resume or #resume/<role>: show it right away instead of animating after load. -->
+		<script is:inline>
+			const [page, role] = location.hash.slice(1).split("/");
+			const layout = document.currentScript.parentElement;
+			if (page === "resume") layout.dataset.open = "";
+			if (page === "resume" && role) layout.dataset.detail = "";
+		</script>
+		<div
+			id="main-content"
+			class="w-full relative z-20 bg-white flex flex-col items-center"
+		>
+			<div class="flex justify-center pb-12">
+				<div
+					class:list={[
+						"w-full flex flex-col items-center max-w-160 pt-30 relative pb-4",
+						motion,
+						"delay-80 group-data-open/resume:delay-0 lg:group-data-open/resume:-translate-x-[25vw]",
+					]}
+				>
+					<div class="w-full space-y-16 relative">
+						<AboutSection />
+						<ActiveProjectSection />
+						<BlogSection />
+					</div>
 				</div>
 			</div>
 		</div>
+		<aside
+			id="resume-panel"
+			aria-label="Resume"
+			inert
+			class:list={[
+				"fixed top-0 right-0 z-25 h-screen w-full lg:w-1/2 bg-white lg:border-l lg:border-gray-200 overflow-hidden",
+				motion,
+				"translate-x-full group-data-open/resume:translate-x-0 group-data-open/resume:delay-80",
+				// Fills the strip the spring's overshoot uncovers on the right edge.
+				"shadow-[4rem_0_0_var(--color-white)]",
+			]}
+		>
+			<ResumePanel />
+		</aside>
 	</div>
 	<Footer />
 	<ProjectDetailModal />
 	<TreeShadow />
 </MainLayout>
+
+<script>
+	const layout = document.getElementById("resume-layout")!;
+	const main = document.getElementById("main-content")!;
+	const panel = document.getElementById("resume-panel")!;
+	const resumeView = panel.querySelector<HTMLElement>("[data-resume-view]")!;
+	const detailView = panel.querySelector<HTMLElement>("[data-detail-view]")!;
+	// Below lg the panel covers the page, so the content behind it is out of reach.
+	const covering = window.matchMedia("(width < 64rem)");
+
+	// No visible scrollbar on the panel while it or its views move; the gutter stays reserved so the text doesn't shift.
+	let move = 0;
+	async function trackMove() {
+		const current = ++move;
+		layout.dataset.moving = "";
+		await Promise.allSettled(
+			panel.getAnimations({ subtree: true }).map((animation) => animation.finished),
+		);
+		if (current === move) delete layout.dataset.moving;
+	}
+
+	// #resume opens the panel, #resume/<id> also opens that role's detail.
+	let shownRole = "";
+	function show(animate: boolean) {
+		const [page, id] = location.hash.slice(1).split("/");
+		const open = page === "resume";
+		const detail = open && id
+			? panel.querySelector<HTMLElement>(`[data-experience="${CSS.escape(id)}"]`)
+			: null;
+		const previousRole = shownRole;
+		// The last detail stays rendered while it slides out; it is only swapped when another opens.
+		if (detail) {
+			for (const article of detailView.querySelectorAll<HTMLElement>("[data-experience]")) {
+				article.hidden = article !== detail;
+			}
+			if (id !== shownRole) detailView.scrollTop = 0;
+			shownRole = id;
+		}
+		layout.toggleAttribute("data-open", open);
+		layout.toggleAttribute("data-detail", !!detail);
+		panel.inert = !open;
+		resumeView.inert = !!detail;
+		detailView.inert = !detail;
+		main.inert = open && covering.matches;
+		if (!animate) return;
+		trackMove();
+		const focusTarget = detail
+			? detail.querySelector<HTMLElement>("[data-detail-close]")
+			: open
+				? (resumeView.querySelector<HTMLElement>(`a[href="#resume/${previousRole}"]`) ??
+					resumeView.querySelector<HTMLElement>("[data-resume-close]"))
+				: main.querySelector<HTMLElement>("[data-resume-open]");
+		focusTarget?.focus({ preventScroll: true });
+	}
+
+	// Closing leaves #resume without following "#", which would scroll the page back to the top.
+	panel.querySelector("[data-resume-close]")?.addEventListener("click", (event) => {
+		event.preventDefault();
+		history.pushState(null, "", location.pathname + location.search);
+		show(true);
+	});
+
+	show(false);
+	window.addEventListener("hashchange", () => show(true));
+	covering.addEventListener("change", () => show(false));
+</script>

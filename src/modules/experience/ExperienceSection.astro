@@ -1,0 +1,136 @@
+---
+import { getExperiences } from "./experiences";
+
+const now = new Date();
+const experiences = await getExperiences(now);
+
+// Time runs down the page, newest at the top. Positions are in months from the present;
+// month `i` covers [top - i - 1, top - i], and the top edge sits partway through the current month.
+const index = (date: Date) => date.getUTCFullYear() * 12 + date.getUTCMonth();
+const daysInMonth = new Date(
+	Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0),
+).getUTCDate();
+const top = index(now) + now.getUTCDate() / daysInMonth;
+const oldest = experiences.at(-1)!.start;
+const height = top - index(oldest);
+
+// Height kept for a label (two lines of text), in months.
+const labelMonths = 4;
+const laneWidth = 1; // rem
+const axisWidth = 3.5; // rem
+
+// Overlapping roles sit side by side: each takes the first lane free when it starts.
+const laneEnds: number[] = [];
+const placed = experiences.toReversed().map((role) => {
+	const start = index(role.start);
+	const end = role.end ? index(role.end) : index(now);
+	let lane = laneEnds.findIndex((laneEnd) => laneEnd < start);
+	if (lane === -1) lane = laneEnds.push(0) - 1;
+	laneEnds[lane] = end;
+	return {
+		...role,
+		lane,
+		barTop: role.end ? top - end - 1 : 0,
+		barBottom: top - start,
+	};
+});
+
+// Labels start level with the end of their bar, pushed down just enough not to overlap the one above.
+let nextFree = 0;
+const roles = placed
+	.sort((a, b) => a.barTop - b.barTop)
+	.map((role) => {
+		const labelTop = Math.max(role.barTop, nextFree);
+		nextFree = labelTop + labelMonths;
+		return { ...role, labelTop };
+	});
+
+const years = Array.from(
+	{ length: now.getUTCFullYear() - oldest.getUTCFullYear() + 1 },
+	(_, i) => {
+		const year = now.getUTCFullYear() - i;
+		return { year, at: Math.min(top - year * 12, height) };
+	},
+);
+
+const labelsLeft = axisWidth + laneEnds.length * laneWidth + 0.75;
+const y = (months: number) => `top: calc(var(--month) * ${months})`;
+---
+
+<div class="w-full space-y-6">
+	<h2 class="text-lg font-semibold text-black">Experience</h2>
+	<div
+		class="relative"
+		style={`--month: 0.75rem; height: calc(var(--month) * ${Math.max(height, nextFree)})`}
+	>
+		<div aria-hidden="true">
+			<div
+				class="absolute top-0 border-l border-gray-300"
+				style={`left: ${axisWidth}rem; height: calc(var(--month) * ${height})`}
+			/>
+			{
+				Array.from({ length: Math.floor(height) + 1 }, (_, month) => (
+					<span
+						class="absolute h-px w-1 -translate-x-full bg-gray-300"
+						style={`left: ${axisWidth}rem; ${y(height - month)}`}
+					/>
+				))
+			}
+			{
+				years.map(({ year, at }) => (
+					<>
+						<span
+							class="absolute left-0 -translate-y-full pb-0.5 text-sm text-gray-400 tabular-nums"
+							style={y(at)}
+						>
+							{year}
+						</span>
+						<span
+							class="absolute left-0 h-px bg-gray-200"
+							style={`width: ${axisWidth}rem; ${y(at)}`}
+						/>
+					</>
+				))
+			}
+			<span class="absolute top-0 left-0 -translate-y-1/2 text-sm text-black">
+				Now
+			</span>
+		</div>
+		<ol>
+			{
+				roles.map((role) => (
+					<li class="group pointer-events-none absolute inset-0">
+						<div
+							class:list={[
+								"absolute w-1.5 rounded-full transition-colors",
+								role.current
+									? "bg-black"
+									: "bg-gray-300 group-hover:bg-gray-600 group-focus-within:bg-gray-600",
+							]}
+							style={`left: ${axisWidth + 0.5 + role.lane * laneWidth}rem; ${y(role.barTop)}; height: calc(var(--month) * ${role.barBottom - role.barTop} - 2px)`}
+							aria-hidden="true"
+						/>
+						<a
+							href={`#resume/${role.id}`}
+							class="pointer-events-auto absolute right-0 block rounded-sm text-sm leading-5 focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-gray-300"
+							style={`left: ${labelsLeft}rem; ${y(role.labelTop)}`}
+						>
+							<span class="block truncate font-semibold text-black group-hover:underline">
+								{role.current && (
+									<span
+										class="mr-1.5 inline-block size-1.5 rounded-full bg-emerald-500 align-middle"
+										aria-hidden="true"
+									/>
+								)}
+								{role.role}
+							</span>
+							<span class="block truncate text-gray-600">
+								{role.company} <span class="text-gray-400">· {role.duration}</span>
+							</span>
+						</a>
+					</li>
+				))
+			}
+		</ol>
+	</div>
+</div>

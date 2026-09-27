@@ -1,0 +1,47 @@
+---
+import { getCollection } from "astro:content";
+import ResumeTable from "@/modules/resume/ResumeTable.astro";
+import { formatDuration, formatMonth, groupByYear } from "@/modules/resume/dates";
+
+const education = (await getCollection("education")).sort(
+	(a, b) => b.data.start - a.data.start,
+);
+const certifications = (await getCollection("certifications")).sort(
+	(a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const educationGroups = groupByYear(education, ({ data }) => data.start).map(
+	({ label, entries }) => ({
+		label,
+		entries: entries.map(({ data: { degree, school, start, end } }) => ({
+			title: degree,
+			subtitle: school,
+			date: end ? `${start} — ${end}` : `${start}`,
+			detail: end ? formatDuration((end - start) * 12) : undefined,
+		})),
+	}),
+);
+
+// The year is already in the group column, so each row only shows the month.
+const certificationGroups = groupByYear(certifications, ({ data }) =>
+	data.date.getUTCFullYear(),
+).map(({ label, entries }) => ({
+	label,
+	entries: entries.map(({ data: { title, issuer, date } }) => ({
+		title,
+		subtitle: issuer,
+		date: formatMonth(date, false),
+	})),
+}));
+---
+
+<div class="w-full space-y-4">
+	<h2 class="flex items-center text-lg font-semibold text-black">Education</h2>
+	<ResumeTable heading="Degree" groups={educationGroups} />
+</div>
+<div class="w-full space-y-4">
+	<h2 class="flex items-center text-lg font-semibold text-black">
+		Certifications
+	</h2>
+	<ResumeTable heading="Certification" groups={certificationGroups} />
+</div>

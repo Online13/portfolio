@@ -3,6 +3,8 @@
 
 @theme {
   --font-cabin: "Cabin", sans-serif;
+  /* Damped spring: picks up speed, overshoots by ~4%, then settles. Used for the site's motion. */
+  --ease-spring: linear(0, 0.034, 0.119, 0.233, 0.358, 0.483, 0.599, 0.703, 0.791, 0.864, 0.921, 0.964, 0.995, 1.016, 1.029, 1.036, 1.038, 1.037, 1.034, 1.03, 1.025, 1.021, 1.016, 1.012, 1.008, 1.006, 1.003, 1.002, 1, 0.999, 0.999, 0.999, 1);
 }
 
 html {

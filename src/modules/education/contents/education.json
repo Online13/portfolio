@@ -1,0 +1,15 @@
+[
+	{
+		"id": "master-misa",
+		"degree": "Master in Computer Mathematics and Applied Statistics (MISA)",
+		"school": "University of Antananarivo",
+		"start": 2020,
+		"end": 2023
+	},
+	{
+		"id": "delf-b2",
+		"degree": "DELF B2, French language diploma",
+		"school": "Alliance Française",
+		"start": 2018
+	}
+]

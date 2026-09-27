@@ -1,0 +1,10 @@
+[
+	{"id": "nextjs-seo", "title": "Next.js SEO Fundamentals", "date": "2025-05"},
+	{"id": "nextjs-app-router", "title": "Next.js App Router Fundamentals", "date": "2025-05"},
+	{"id": "typescript-codingame", "title": "TypeScript Certification", "issuer": "CodinGame", "date": "2024-02"},
+	{"id": "nvidia-dli", "title": "Deep Learning Certificate", "issuer": "NVIDIA Deep Learning Institute", "date": "2022-12"},
+	{"id": "hackerrank-software-engineer", "title": "Software Engineer", "issuer": "HackerRank", "date": "2026-09"},
+	{"id": "hackerrank-frontend-react", "title": "Frontend Developer (React)", "issuer": "HackerRank", "date": "2023-11"},
+	{"id": "hackerrank-javascript-intermediate", "title": "JavaScript (Intermediate)", "issuer": "HackerRank", "date": "2023-11"},
+	{"id": "hackerrank-node-basic", "title": "Node.js (Basic)", "issuer": "HackerRank", "date": "2023-11"}
+]
