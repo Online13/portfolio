@@ -1,0 +1,37 @@
+---
+type Column = string | { label: string; class?: string };
+
+interface Props {
+	columns: Column[];
+}
+
+// Rows go through the slot, inside one <tbody> per group of rows.
+const { columns } = Astro.props;
+const last = columns.length - 1;
+---
+
+<table class="w-full text-left text-sm">
+	<thead>
+		<tr class="border-b border-gray-300 text-gray-500">
+			{
+				columns.map((column, i) => {
+					const { label, class: className } =
+						typeof column === "string" ? { label: column } : column;
+					return (
+						<th
+							scope="col"
+							class:list={[
+								"py-2 font-normal",
+								i === last ? "text-right" : "pr-4",
+								className,
+							]}
+						>
+							{label}
+						</th>
+					);
+				})
+			}
+		</tr>
+	</thead>
+	<slot />
+</table>

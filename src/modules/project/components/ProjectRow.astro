@@ -1,0 +1,50 @@
+---
+import { ArrowUpRight } from "@lucide/astro";
+
+interface Props {
+	slug: string;
+	description: string;
+	title: string;
+	link: string;
+	full_description: string;
+	technologies: string[];
+	role?: string;
+	highlights: string[];
+}
+
+const {
+	slug,
+	title,
+	description,
+	full_description,
+	technologies,
+	link,
+	role,
+	highlights,
+} = Astro.props;
+---
+
+<tr
+	id={`project-${slug}`}
+	data-slug={slug}
+	data-link={link}
+	data-title={title}
+	data-description={description}
+	data-role={role}
+	class="project-item group border-b border-gray-200 cursor-pointer"
+>
+	<td class="py-3 pr-4 font-semibold text-black whitespace-nowrap">{title}</td>
+	<td class="py-3 pr-4 text-gray-700">{description}</td>
+	<td class="py-3 text-right text-gray-400 group-hover:text-gray-700">
+		<ArrowUpRight
+			class="inline w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+		/>
+		<template class="project-full-desc">{full_description}</template>
+		<ul class="projet-technos" style="display: none;">
+			{technologies.map((tech) => <li>{tech}</li>)}
+		</ul>
+		<ul class="project-highlights" style="display: none;">
+			{highlights.map((highlight) => <li>{highlight}</li>)}
+		</ul>
+	</td>
+</tr>

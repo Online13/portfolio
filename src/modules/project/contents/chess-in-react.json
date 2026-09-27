@@ -4,5 +4,7 @@
 	"description": "A simple chess game built with React.",
 	"full_description": "This is a basic chess game implemented in React, showcasing the use of functional components and state management.",
 	"technologies": ["React", "Typescript", "Tailwind"],
-	"link": "https://github.com/Online13/Chess-in-React"
+	"link": "https://github.com/Online13/Chess-in-React",
+	"role": "Creator",
+	"highlights": ["Reusable chess logic with a clear, maintainable architecture"]
 }

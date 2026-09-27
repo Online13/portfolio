@@ -46,6 +46,16 @@
 			</p>
 		</header>
 
+		<section id="modal-role-section" class="space-y-2">
+			<h4
+				class="font-mono text-xs font-semibold uppercase tracking-wider text-neutral-400"
+			>
+				Role
+			</h4>
+
+			<p id="modal-role" class="text-sm text-neutral-800"></p>
+		</section>
+
 		<section class="space-y-2">
 			<h4
 				class="font-mono text-xs font-semibold uppercase tracking-wider text-neutral-400"
@@ -56,6 +66,20 @@
 			<p id="modal-detail" class="text-sm leading-relaxed text-neutral-600">
 				<!-- Full markdown description goes here. -->
 			</p>
+		</section>
+
+		<section id="modal-highlights-section" class="space-y-2">
+			<h4
+				class="font-mono text-xs font-semibold uppercase tracking-wider text-neutral-400"
+			>
+				Highlights
+			</h4>
+
+			<ul
+				id="modal-highlights"
+				class="list-disc space-y-1 pl-4 text-sm text-neutral-600"
+			>
+			</ul>
 		</section>
 
 		<section class="space-y-2.5">
@@ -124,6 +148,8 @@
 		full_description: string;
 		technologies: string[];
 		link: string;
+		role: string;
+		highlights: string[];
 	}
 
 	function openModal(project: Project) {
@@ -141,6 +167,23 @@
 		if (modalTitle) modalTitle.textContent = project.title;
 		if (modalDescription) modalDescription.textContent = project.description;
 		if (modalDetail) modalDetail.textContent = project.full_description;
+		const modalRole = document.getElementById("modal-role");
+		const modalHighlights = document.getElementById("modal-highlights");
+		document
+			.getElementById("modal-role-section")
+			?.classList.toggle("hidden", !project.role);
+		document
+			.getElementById("modal-highlights-section")
+			?.classList.toggle("hidden", project.highlights.length === 0);
+		if (modalRole) modalRole.textContent = project.role;
+		if (modalHighlights) {
+			modalHighlights.innerHTML = "";
+			project.highlights.forEach((highlight) => {
+				const item = document.createElement("li");
+				item.textContent = highlight;
+				modalHighlights.appendChild(item);
+			});
+		}
 		if (modalTechs) {
 			modalTechs.innerHTML = "";
 			project.technologies.forEach((tech) => {
@@ -203,12 +246,15 @@
 			full_description: "",
 			technologies: [],
 			link: "",
+			role: "",
+			highlights: [],
 		};
 
 		project.slug = item.dataset.slug || "";
 		project.link = item.dataset.link || "";
 		project.title = item.dataset.title || "";
 		project.description = item.dataset.description || "";
+		project.role = item.dataset.role || "";
 
 		const fullDescElmt = item.querySelector(".project-full-desc");
 		if (fullDescElmt && fullDescElmt instanceof HTMLElement) {
@@ -220,6 +266,10 @@
 		(technos || []).forEach((tech) => {
 			const value = tech.textContent.trim();
 			project.technologies.push(value);
+		});
+
+		item.querySelectorAll(".project-highlights li").forEach((highlight) => {
+			project.highlights.push(highlight.textContent.trim());
 		});
 
 		item.addEventListener("click", async () => {
