@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+import profile from "@/assets/images/profile.webp";
 import HoverCard from "./HoverCard.astro";
 import HoverCardLayer from "./HoverCardLayer.astro";
 import SocialNetworkLinks from "./SocialNetworkLinks.astro";
@@ -22,9 +24,11 @@ const experienceYears =
 	<HoverCardLayer />
 	<div class="max-w-130 w-full">
 		<span class="max-w-140">
-			<b>Hi</b>, I'm <img
-				src="https://rayane-nekena.is-a.dev/assets/profile-8952f84b.webp"
+			<b>Hi</b>, I'm <Image
+				src={profile}
 				alt="profile picture"
+				width={48}
+				height={48}
 				class="inline shrink-0 w-6 h-6 bg-center bg-cover"
 			/>
 			<b>Rayane</b>. Born and based in <HoverCard label="Antananarivo, Madagascar"

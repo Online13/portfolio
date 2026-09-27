@@ -2,8 +2,31 @@
 import Footer from "@/modules/shared/components/Footer.astro";
 import TreeShadow from "@/modules/shared/components/TreeShadow.astro";
 import { lightTones, timeOfDay } from "@/modules/shared/lib/tree-shadow";
+import { SOCIAL_LINKS } from "@/modules/about/social-links";
 
-const { title } = Astro.props;
+type Props = { title?: string; description?: string; noindex?: boolean };
+
+const NAME = "Nekena Rayane";
+const {
+  title,
+  description = "Nekena Rayane Ratiarivelo, software engineer based in Antananarivo, Madagascar. Web and mobile applications with React Native, available for remote collaborations.",
+  noindex = false,
+} = Astro.props;
+const fullTitle = title ? `${title} | ${NAME}` : `${NAME} | Software engineer`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL("/og.png", Astro.site);
+
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Nekena Rayane Ratiarivelo",
+  alternateName: NAME,
+  jobTitle: "Software engineer",
+  url: Astro.site,
+  image: ogImage,
+  address: { "@type": "PostalAddress", addressLocality: "Antananarivo", addressCountry: "MG" },
+  sameAs: SOCIAL_LINKS.filter((link) => ["github", "linkedin", "facebook"].includes(link.type)).map((link) => link.to),
+};
 
 // The light's full-sun color for each local hour, for the head script below.
 const sunByHour = Array.from({ length: 24 }, (_, hour) =>
@@ -14,10 +37,33 @@ const sunByHour = Array.from({ length: 24 }, (_, hour) =>
 <html lang="en" class="w-full">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title} | Postfolio</title>
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Nekena Rayane Ratiarivelo" />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={NAME} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${NAME}, software engineer`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(person)} />}
     <!-- The room is lit from the first paint: TreeShadow's canvas shows this color until WebGL draws over it. -->
     <script is:inline define:vars={{ sunByHour }}>
       document.documentElement.style.setProperty("--light-sun", `rgb(${sunByHour[new Date().getHours()]})`);
