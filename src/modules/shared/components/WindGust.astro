@@ -1,0 +1,384 @@
+---
+// A gust of wind drawn the anime / video game way when the button is pressed: colorless strands of
+// uneven thickness sweep across the middle of the screen in loose bundles, each following a particle
+// carried by a turbulent wind field, with fine dust carried along. The wind itself is not drawn: like
+// hot air above a road, it only shows by shifting the page behind it. Inside each strand the page
+// shimmers, pushed around by a noise that flows downwind (a broad slow swell plus fine fast ripples),
+// strongest at the core and fading to nothing at the edges, with the colors splitting very slightly. The outline shows only by a faint Fresnel rim,
+// a little brighter on the side facing the sun (top-left, like the tree shadow).
+// The shimmer needs an SVG filter as backdrop-filter, which only Chromium renders; elsewhere only the
+// rim and the dust show. The gust also shakes the branch (see TreeShadow).
+
+// How far the shimmer shifts the page at most, in px; the three channels shift a little differently,
+// which fringes what moves with a hint of color.
+const bending = 18;
+const channels = [
+	{ scale: bending * 0.94, matrix: "1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" },
+	{ scale: bending, matrix: "0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" },
+	{ scale: bending * 1.06, matrix: "0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" },
+];
+---
+
+<svg aria-hidden="true" class="absolute size-0">
+	<filter
+		id="wind-refraction"
+		filterUnits="userSpaceOnUse"
+		primitiveUnits="userSpaceOnUse"
+		color-interpolation-filters="sRGB"
+	>
+		<!-- The displacement map, drawn by the script on every frame. -->
+		<feImage id="wind-refraction-map" preserveAspectRatio="none" result="rough"></feImage>
+		<feGaussianBlur in="rough" stdDeviation="3" result="map"></feGaussianBlur>
+		{
+			channels.map(({ scale, matrix }, i) => (
+				<>
+					<feDisplacementMap in="SourceGraphic" in2="map" scale={scale} xChannelSelector="R" yChannelSelector="G" result={`bent${i}`} />
+					<feColorMatrix in={`bent${i}`} type="matrix" values={matrix} result={`channel${i}`} />
+				</>
+			))
+		}
+		<feBlend in="channel0" in2="channel1" mode="screen" result="channels01"></feBlend>
+		<feBlend in="channels01" in2="channel2" mode="screen"></feBlend>
+	</filter>
+</svg>
+
+<!-- The page seen through the strands, cut to their shape on every frame. -->
+<div
+	id="wind-gust-glass"
+	aria-hidden="true"
+	class="fixed inset-0 pointer-events-none z-40"
+	style="backdrop-filter: url(#wind-refraction); clip-path: path('M0 0')"
+></div>
+<!-- The rims of the strands and the dust, over the shimmer. -->
+<canvas id="wind-gust-light" aria-hidden="true" class="fixed inset-0 w-screen h-screen pointer-events-none z-40"></canvas>
+
+<!-- Dev only: the full path of each strand, drawn before the gust follows it. -->
+{
+	import.meta.env.DEV && (
+		<svg id="wind-gust-paths" aria-hidden="true" class="fixed inset-0 w-screen h-screen pointer-events-none z-40" fill="none" />
+	)
+}
+
+<!-- Without motion there is no gust to show. -->
+<div class="fixed bottom-4 right-4 z-40 flex gap-1 p-1 rounded-full bg-white/70 backdrop-blur-sm shadow-lg text-sm motion-reduce:hidden">
+	{
+		import.meta.env.DEV && (
+			<button
+				type="button"
+				id="wind-gust-show-paths"
+				aria-pressed="true"
+				class="px-3 py-1 rounded-full cursor-pointer text-gray-600 hover:text-black aria-pressed:bg-black aria-pressed:text-white"
+			>
+				Paths
+			</button>
+		)
+	}
+	<button type="button" id="wind-gust" class="px-3 py-1 rounded-full cursor-pointer text-gray-600 hover:text-black">
+		Gust
+	</button>
+</div>
+
+<script>
+	type Point = [number, number];
+	type Streak = {
+		path: Point[]; // the particle's trajectory, at even time steps
+		width: number;
+		swell: number; // phase of the thickness variation
+		delay: number; // seconds after the press
+		duration: number; // seconds for the strand to draw in and fade out along its path
+	};
+	type Mote = { x: number; y: number; vx: number; vy: number; born: number; life: number; size: number };
+
+	const bundleCount = 5;
+	// Toward the light, in screen coordinates (y down): the sun sits at the top-left.
+	const light: Point = [-0.45, -0.9];
+	const length = 0.55; // share of its path a strand covers at once
+
+	const glass = document.getElementById("wind-gust-glass")!;
+	const canvas = document.getElementById("wind-gust-light") as HTMLCanvasElement;
+	const ctx = canvas.getContext("2d")!;
+	const filter = document.getElementById("wind-refraction")!;
+	const mapImage = document.getElementById("wind-refraction-map")!;
+	// The displacement map is smooth, so a quarter of the resolution is plenty and keeps encoding it cheap.
+	const mapScale = 0.25;
+	const map = document.createElement("canvas");
+	const mapCtx = map.getContext("2d")!;
+	let width = 0;
+	let height = 0;
+
+	function resize() {
+		const ratio = Math.min(window.devicePixelRatio, 2);
+		width = window.innerWidth;
+		height = window.innerHeight;
+		canvas.width = width * ratio;
+		canvas.height = height * ratio;
+		ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+		ctx.lineCap = "round";
+		map.width = Math.ceil(width * mapScale);
+		map.height = Math.ceil(height * mapScale);
+		mapCtx.setTransform(mapScale, 0, 0, mapScale, 0, 0);
+		for (const element of [filter, mapImage]) {
+			element.setAttribute("x", "0");
+			element.setAttribute("y", "0");
+			element.setAttribute("width", String(width));
+			element.setAttribute("height", String(height));
+		}
+	}
+	resize();
+	window.addEventListener("resize", resize);
+
+	// A closed outline, as path data.
+	const outline = (points: Point[]) =>
+		"M" + points.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join("L") + "Z";
+
+	const random = (min: number, max: number) => min + Math.random() * (max - min);
+
+	// The wind of one gust: a steady flow to the right (speed 1) stirred by eddies. The eddies come from a
+	// stream function ψ, a sum of a few plane waves; the velocity (∂ψ/∂y, -∂ψ/∂x) is then divergence-free,
+	// like real air: it swirls without piling up or thinning out anywhere.
+	type Eddy = { kx: number; ky: number; phase: number; strength: number };
+
+	function createWind(): Eddy[] {
+		return Array.from({ length: 5 }, () => {
+			const wavelength = random(250, 800);
+			const angle = random(0, Math.PI * 2);
+			const k = (2 * Math.PI) / wavelength;
+			return { kx: k * Math.cos(angle), ky: k * Math.sin(angle), phase: random(0, Math.PI * 2), strength: random(0.2, 0.4) };
+		});
+	}
+
+	// ψ = Σ (strength / k) sin(k·p + phase), so each eddy adds a velocity of `strength` at most.
+	function velocity(wind: Eddy[], [x, y]: Point): Point {
+		let u = 1;
+		let v = 0;
+		for (const { kx, ky, phase, strength } of wind) {
+			const k = Math.hypot(kx, ky);
+			const c = strength * Math.cos(kx * x + ky * y + phase);
+			u += (c * ky) / k;
+			v -= (c * kx) / k;
+		}
+		return [u, v];
+	}
+
+	// The path of a particle let go at `from`, integrated with the midpoint method (RK2).
+	function trajectory(wind: Eddy[], from: Point, steps: number): Point[] {
+		const dt = 6; // about 6 px per step
+		const path = [from];
+		let p = from;
+		for (let i = 0; i < steps; i++) {
+			const [u, v] = velocity(wind, p);
+			const [mu, mv] = velocity(wind, [p[0] + (u * dt) / 2, p[1] + (v * dt) / 2]);
+			p = [p[0] + mu * dt, p[1] + mv * dt];
+			path.push(p);
+		}
+		return path;
+	}
+
+	// A bundle of 1 to 3 strands let go side by side: the eddies pull them apart on their own.
+	function createBundle(wind: Eddy[], index: number): Streak[] {
+		const x = random(-0.1, 0.35) * width;
+		const y = height / 2 + (index / (bundleCount - 1) - 0.5) * height * 0.45 + random(-25, 25);
+		const steps = Math.round((random(0.45, 0.7) * width) / 6);
+		const delay = random(0, 0.25);
+		const duration = random(0.6, 0.85);
+		return Array.from({ length: 1 + Math.floor(Math.random() * 3) }, (_, i) => ({
+			path: trajectory(wind, [x + random(-10, 10), y + i * random(10, 20)], steps),
+			width: random(26, 42),
+			swell: random(0, Math.PI * 2),
+			delay: delay + i * random(0.02, 0.05),
+			duration,
+		}));
+	}
+
+	// The strand's path at `s` (0 to 1). Samples are even in time, so the strand slows where the wind does.
+	function point({ path }: Streak, s: number): Point {
+		const f = Math.min(Math.max(s, 0), 1) * (path.length - 1);
+		const i = Math.min(Math.floor(f), path.length - 2);
+		const t = f - i;
+		return [path[i][0] + (path[i + 1][0] - path[i][0]) * t, path[i][1] + (path[i + 1][1] - path[i][1]) * t];
+	}
+
+	// A ribbon from `tail` to `head`, pointed at both ends and swelling unevenly in between.
+	// Along it: the center line, the unit normal pointing toward the light, and the half-width.
+	function ribbon(streak: Streak, tail: number, head: number, halfWidth: number) {
+		const samples = 64;
+		const along = (i: number) => tail + ((head - tail) * i) / samples;
+		const center = Array.from({ length: samples + 1 }, (_, i) => point(streak, along(i)));
+		const normals: Point[] = [];
+		const halfWidths: number[] = [];
+		center.forEach((_, i) => {
+			const [ax, ay] = center[Math.max(0, i - 1)];
+			const [bx, by] = center[Math.min(samples, i + 1)];
+			const norm = Math.hypot(bx - ax, by - ay) || 1;
+			const normal: Point = [(by - ay) / norm, -(bx - ax) / norm];
+			const facing = normal[0] * light[0] + normal[1] * light[1] >= 0 ? 1 : -1;
+			normals.push([normal[0] * facing, normal[1] * facing]);
+			const s = along(i);
+			const taper = Math.sin(Math.PI * (i / samples) ** 0.7) ** 0.7;
+			const swell = 0.55 + 0.3 * Math.sin(s * 11 + streak.swell) + 0.15 * Math.sin(s * 29 + streak.swell * 2);
+			halfWidths.push(halfWidth * taper * swell);
+		});
+		const side = (k: number) => center.map(([x, y], i): Point => [x + normals[i][0] * halfWidths[i] * k, y + normals[i][1] * halfWidths[i] * k]);
+		return { center, normals, halfWidths, lit: side(1), shaded: side(-1) };
+	}
+	type Ribbon = ReturnType<typeof ribbon>;
+
+	function stroke(points: Point[]) {
+		ctx.beginPath();
+		for (const [x, y] of points) ctx.lineTo(x, y);
+		ctx.stroke();
+	}
+
+	// How squarely the tube faces the light at sample `i`: 0 edge-on, 1 facing it.
+	const facing = ({ normals }: Ribbon, i: number) => normals[i][0] * light[0] + normals[i][1] * light[1];
+
+	// Across a strand, from its shaded edge (-1) to its lit edge (1).
+	const across = ({ center, normals, halfWidths }: Ribbon, i: number, u: number): Point => [
+		center[i][0] + normals[i][0] * halfWidths[i] * u,
+		center[i][1] + normals[i][1] * halfWidths[i] * u,
+	];
+
+	// The air stirred at `p` at time `t`, as a shift in -1..1 on each axis: a broad slow swell and fine fast
+	// ripples, both flowing downwind. It lives in page coordinates, so strands that cross share the same air.
+	function shimmer([x, y]: Point, t: number): Point {
+		const broad = (a: number) => Math.sin(0.018 * x - 12 * t + a + 1.5 * Math.sin(0.011 * y + 1.7 * t + a));
+		const fine = (a: number) => Math.sin(0.11 * x + 0.06 * y - 75 * t + a);
+		return [0.7 * broad(0) + 0.3 * fine(1), 0.7 * broad(2.1) + 0.3 * fine(4.2)];
+	}
+
+	// The shimmer, in the displacement map: red and green encode where each pixel of the strand looks,
+	// 128 meaning straight through. It is strongest at the core and fades out toward both edges, so the
+	// strand has no hard outline.
+	const bands = 6;
+	function refract(strand: Ribbon, t: number, strength: number) {
+		for (let i = 0; i < strand.center.length - 1; i++) {
+			for (let band = 0; band < bands; band++) {
+				const from = -1 + (2 * band) / bands;
+				const to = from + 2 / bands;
+				const u = (from + to) / 2;
+				const amount = strength * Math.cos((Math.PI * u) / 2) ** 2;
+				const [dx, dy] = shimmer(across(strand, i, u), t);
+				mapCtx.fillStyle = `rgb(${Math.round(128 + 127 * dx * amount)}, ${Math.round(128 + 127 * dy * amount)}, 128)`;
+				const corners = [across(strand, i, from), across(strand, i + 1, from), across(strand, i + 1, to), across(strand, i, to)];
+				mapCtx.beginPath();
+				for (const [x, y] of corners) mapCtx.lineTo(x, y);
+				mapCtx.fill();
+			}
+		}
+	}
+
+	// The Fresnel rim: seen edge-on, the strand catches a little light along both edges and none across its
+	// core. A faint cool line marks each edge against the white page, and a white highlight runs just inside
+	// the edge facing the light, brighter where it faces it squarely.
+	function rim(strand: Ribbon, alpha: number) {
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = `rgba(110, 125, 150, ${0.12 * alpha})`;
+		stroke(strand.lit);
+		stroke(strand.shaded);
+		for (let i = 0; i < strand.center.length - 1; i++) {
+			const intensity = Math.max(0, facing(strand, i)) ** 2;
+			ctx.lineWidth = 1 + 0.5 * intensity;
+			ctx.strokeStyle = `rgba(255, 255, 255, ${(0.2 + 0.5 * intensity) * alpha})`;
+			stroke([across(strand, i, 0.9), across(strand, i + 1, 0.9)]);
+		}
+	}
+
+	let streaks: Streak[] = [];
+	let wind: Eddy[] = [];
+	let motes: Mote[] = [];
+	let start = 0;
+	let frame = 0;
+	let blowing = false; // between the first strand setting off and the last speck of dust fading
+
+	// Tells the tree (see TreeShadow) when the wind actually blows, so it storms for exactly as long.
+	function setBlowing(next: boolean) {
+		if (next === blowing) return;
+		blowing = next;
+		window.dispatchEvent(new Event(next ? "wind-gust-start" : "wind-gust-end"));
+	}
+
+	function draw(now: number) {
+		const t = (now - start) / 1000;
+		const shapes: string[] = [];
+		ctx.clearRect(0, 0, width, height);
+		mapCtx.fillStyle = "rgb(128, 128, 128)";
+		mapCtx.fillRect(0, 0, width, height);
+
+		if (t >= 0) setBlowing(true);
+		let pending = false;
+		for (const streak of streaks) {
+			const progress = (t - streak.delay) / streak.duration;
+			if (progress < 0) {
+				pending = true;
+				continue;
+			}
+			if (progress > 1) continue;
+			pending = true;
+
+			// The strand draws itself in along its path, then its tail catches up with the head.
+			const eased = 1 - (1 - progress) ** 1.8;
+			const head = Math.min(1, eased * (1 + length));
+			const tail = Math.max(0, eased * (1 + length) - length);
+			if (head - tail < 0.01) continue;
+			const strand = ribbon(streak, tail, head, streak.width);
+			shapes.push(outline([...strand.lit, ...[...strand.shaded].reverse()]));
+			const fade = Math.min(1, progress * 5, (1 - progress) * 5);
+			refract(strand, t, fade);
+			rim(strand, fade);
+
+			// Now and then a speck of dust near the head, carried off by the same wind.
+			if (head < 1 && Math.random() < 0.3) {
+				const [x, y] = across(strand, strand.center.length - 1 - Math.floor(random(0, 16)), random(-0.8, 0.8));
+				const [u, v] = velocity(wind, [x, y]);
+				const speed = random(350, 700);
+				motes.push({ x, y, vx: u * speed, vy: v * speed, born: t, life: random(0.4, 0.9), size: random(0.8, 1.8) });
+			}
+		}
+
+		// The dust, drawn as a short streak along its motion so its speed shows.
+		ctx.lineCap = "round";
+		motes = motes.filter((mote) => t - mote.born < mote.life);
+		for (const mote of motes) {
+			const age = t - mote.born;
+			const x = mote.x + mote.vx * age;
+			const y = mote.y + mote.vy * age;
+			ctx.lineWidth = mote.size;
+			ctx.strokeStyle = `rgba(120, 115, 110, ${0.45 * Math.sin((Math.PI * age) / mote.life)})`;
+			stroke([[x - mote.vx * 0.025, y - mote.vy * 0.025], [x, y]]);
+		}
+
+		mapImage.setAttribute("href", map.toDataURL());
+		glass.style.clipPath = `path('${shapes.join("") || "M0 0"}')`;
+		if (pending || motes.length > 0) frame = requestAnimationFrame(draw);
+		else setBlowing(false);
+	}
+
+	// Dev only: show or hide the paths.
+	const paths = document.getElementById("wind-gust-paths");
+	const showPaths = document.getElementById("wind-gust-show-paths");
+	// An <svg> has no `hidden` property, only the attribute.
+	showPaths?.addEventListener("click", () => {
+		const hidden = paths!.toggleAttribute("hidden");
+		showPaths.setAttribute("aria-pressed", String(!hidden));
+	});
+
+	// A new press starts the gust over.
+	document.getElementById("wind-gust")!.addEventListener("click", () => {
+		wind = createWind();
+		streaks = Array.from({ length: bundleCount }, (_, i) => createBundle(wind, i)).flat();
+		motes = [];
+		start = performance.now();
+		if (paths) {
+			paths.innerHTML = streaks
+				.map((streak) => {
+					const points = Array.from({ length: 101 }, (_, i) => point(streak, i / 100).map((v) => v.toFixed(1)).join(" "));
+					return `<polyline points="${points.join(",")}" stroke="red" stroke-width="1" stroke-dasharray="4 4" />`;
+				})
+				.join("");
+			// Give the paths a moment on screen before the gust follows them.
+			if (!paths.hasAttribute("hidden")) start += 800;
+		}
+		cancelAnimationFrame(frame);
+		frame = requestAnimationFrame(draw);
+	});
+</script>

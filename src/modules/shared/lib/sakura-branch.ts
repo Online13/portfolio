@@ -223,6 +223,7 @@ export function createSakuraBranch(seed: number, wind: number, initialMode: Wind
 	let clock = 0;
 	let mode = windModes[initialMode];
 	let gust = mode.base;
+	let response = 1.5; // how fast the branch settles into the current mode
 
 	function update(time: number) {
 		// Capped so a long pause (hidden tab) doesn't skip ahead.
@@ -230,9 +231,9 @@ export function createSakuraBranch(seed: number, wind: number, initialMode: Wind
 		lastTime = time;
 		// Calm spells and strong gusts alternate every few seconds, never quite repeating.
 		const weather = 0.5 * Math.sin(time * 0.37) + 0.3 * Math.sin(time * 0.61 + 2) + 0.2 * Math.sin(time * 1.3 + 4);
-		// Eased, so switching modes picks up or dies down over a second or two.
+		// Eased, so switching modes picks up or dies down over a second or two (by default).
 		const target = mode.base + mode.gusts * Math.max(0, weather) ** 1.5;
-		gust += (target - gust) * (1 - Math.exp(-dt * 1.5));
+		gust += (target - gust) * (1 - Math.exp(-dt * response));
 		clock += dt * (0.6 + 0.8 * gust);
 
 		// Each gust travels across the branch from the left.
@@ -278,8 +279,10 @@ export function createSakuraBranch(seed: number, wind: number, initialMode: Wind
 	return {
 		scene,
 		update,
-		setWind: (next: WindMode) => {
+		// `rate` sets how quickly the branch follows: 1.5 takes a second or two, higher is sharper.
+		setWind: (next: WindMode, rate = 1.5) => {
 			mode = windModes[next];
+			response = rate;
 		},
 	};
 }

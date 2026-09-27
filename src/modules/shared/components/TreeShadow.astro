@@ -114,6 +114,12 @@ const wheels = [
 			for (const other of windButtons) other.setAttribute("aria-pressed", String(other === button));
 		});
 	}
+	// While a gust blows (see WindGust) the branch storms, catching it at once, then eases back to the chosen weather.
+	window.addEventListener("wind-gust-start", () => branch.setWind("storm", 8));
+	window.addEventListener("wind-gust-end", () => {
+		const chosen = document.querySelector<HTMLButtonElement>('[data-wind][aria-pressed="true"]');
+		branch.setWind((chosen?.dataset.wind ?? config.windMode) as WindMode);
+	});
 	const branchCamera = new OrthographicCamera(0, config.aspect, 0, -1, -1, 1);
 	const silhouette = new WebGLRenderTarget(Math.round(1024 * config.aspect), 1024, { samples: 4 });
 
