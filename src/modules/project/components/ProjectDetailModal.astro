@@ -2,10 +2,7 @@
 
 ---
 
-<div
-	id="project-modal"
-	class="hidden fixed z-20 inset-0 w-screen h-screen"
->
+<div id="project-modal" class="hidden fixed z-20 inset-0 w-screen h-screen">
 	<div
 		id="modal-overlay"
 		class="bg-black/5 backdrop-blur-sm fixed inset-0 w-screen h-screen z-10 cursor-pointer"
@@ -131,13 +128,21 @@
 	}
 
 	@keyframes modal-enter {
-		from { transform: translateX(110%); }
-		to { transform: translateX(0); }
+		from {
+			transform: translateX(110%);
+		}
+		to {
+			transform: translateX(0);
+		}
 	}
 
 	@keyframes modal-leave {
-		from { transform: translateX(0); }
-		to { transform: translateX(110%); }
+		from {
+			transform: translateX(0);
+		}
+		to {
+			transform: translateX(110%);
+		}
 	}
 </style>
 <script>
@@ -210,10 +215,14 @@
 			modalCard?.classList.add("is-entering");
 
 			if (closeBtn) {
-				closeBtn.addEventListener("click", () => closeModal(modal), { once: true });
+				closeBtn.addEventListener("click", () => closeModal(modal), {
+					once: true,
+				});
 			}
 			if (modalOverlay) {
-				modalOverlay.addEventListener("click", () => closeModal(modal), { once: true });
+				modalOverlay.addEventListener("click", () => closeModal(modal), {
+					once: true,
+				});
 			}
 		}
 	}
@@ -231,7 +240,7 @@
 				modal.classList.add("hidden");
 				modalCard.classList.remove("is-leaving");
 			},
-			{ once: true }
+			{ once: true },
 		);
 	}
 
