@@ -3,32 +3,48 @@ import { SOCIAL_LINKS } from "@/data";
 
 export type Props = { title?: string; description?: string; noindex?: boolean };
 
-const NAME = "Nekena Rayane";
+const NAME = "Nekena Rayane Ratiarivelo";
+const SHORT_NAME = "Nekena Rayane";
 const {
   title,
-  description = "Nekena Rayane, software engineer in Antananarivo. Web and mobile apps with React Native, open to remote collaborations.",
+  description = `Portfolio of ${NAME}, a Software Engineer based in Madagascar building web and mobile applications with React Native, React and TypeScript.`,
   noindex = false,
 } = Astro.props;
-const fullTitle = title ? `${title} | ${NAME}` : `${NAME} | Software engineer`;
+const fullTitle = title ? `${title} | ${NAME}` : `${NAME} | Software Engineer`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL("/og.png", Astro.site);
 
-const person = {
+const home = new URL("/", Astro.site).href;
+const personId = `${home}#person`;
+const structuredData = {
   "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Nekena Rayane Ratiarivelo",
-  alternateName: NAME,
-  jobTitle: "Software engineer",
-  url: Astro.site,
-  image: ogImage,
-  address: { "@type": "PostalAddress", addressLocality: "Antananarivo", addressCountry: "MG" },
-  sameAs: SOCIAL_LINKS.filter((link) => ["github", "linkedin", "facebook"].includes(link.type)).map((link) => link.to),
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": personId,
+      name: NAME,
+      alternateName: SHORT_NAME,
+      jobTitle: "Software Engineer",
+      url: home,
+      image: ogImage,
+      homeLocation: { "@type": "Place", name: "Antananarivo, Madagascar" },
+      sameAs: SOCIAL_LINKS.filter((link) => ["github", "linkedin", "facebook"].includes(link.type)).map((link) => link.to),
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${home}#website`,
+      url: home,
+      name: NAME,
+      alternateName: SHORT_NAME,
+      publisher: { "@id": personId },
+    },
+  ],
 };
 ---
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
-<meta name="author" content="Nekena Rayane Ratiarivelo" />
+<meta name="author" content={NAME} />
 {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
 <link rel="sitemap" href="/sitemap.xml" />
 
@@ -47,4 +63,4 @@ const person = {
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
 
-{!noindex && <script type="application/ld+json" set:html={JSON.stringify(person)} />}
+{!noindex && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
