@@ -1,5 +1,6 @@
 ---
 import Footer from "@/components/Footer.astro";
+import Clock from "@/modules/clock/components/Clock.astro";
 import TreeShadow from "@/modules/tree-shadow/components/TreeShadow.astro";
 import PostHog from "@/services/analytics/PostHog.astro";
 import { lightTones, timeOfDay } from "@/modules/tree-shadow/lib/tree-shadow";
@@ -42,5 +43,6 @@ const sunByHour = Array.from({ length: 24 }, (_, hour) =>
     </div>
     <Footer />
     <TreeShadow />
+    <Clock />
   </body>
 </html>

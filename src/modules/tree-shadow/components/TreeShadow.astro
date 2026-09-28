@@ -1,12 +1,6 @@
 ---
 // Sunlight filling the room, with the shadow of a cherry tree coming in from the top-left corner.
 // Rendered as a multiply overlay: lit areas stay white/warm, the shadow darkens the page.
-import { treeShadowConfig } from "@/modules/tree-shadow/lib/tree-shadow";
-
-const wheels = [
-	{ id: "hours", label: "Hours", count: 24 },
-	{ id: "minutes", label: "Minutes", count: 60 },
-];
 ---
 
 <!-- Its background is the light set by MainLayout's head script, shown until the first frame. -->
@@ -15,46 +9,6 @@ const wheels = [
 	aria-hidden="true"
 	class="fixed inset-0 w-screen h-screen pointer-events-none z-30 mix-blend-multiply bg-(--light-sun)"
 ></canvas>
-
-<!-- The browser's clock; clicking it lets you pick another time to preview the light. -->
-<div class="fixed top-4 left-8 z-40 flex flex-col items-start gap-2 text-sm text-gray-600">
-	<button
-		id="clock"
-		type="button"
-		aria-expanded="false"
-		aria-controls="clock-picker"
-		aria-label="Change the time of the light"
-		class="peer cursor-pointer tabular-nums hover:text-black"
-	></button>
-	<p aria-hidden="true" class="-mt-2 text-xs text-gray-400 peer-aria-expanded:hidden">Click the time to change it</p>
-	<!-- Two wheels (hours, minutes): scroll, drag, click a number, or use the arrow keys. The centered row is the value. -->
-	<div id="clock-picker" hidden class="flex items-center gap-3">
-		<div class="relative flex tabular-nums">
-			<div aria-hidden="true" class="absolute inset-x-0 top-8 h-8 rounded-md bg-black/5"></div>
-			{
-				wheels.map(({ id, label, count }) => (
-					<div
-						data-wheel={id}
-						role="spinbutton"
-						tabindex="0"
-						aria-label={label}
-						aria-valuemin="0"
-						aria-valuemax={count - 1}
-						class="relative h-24 w-10 overflow-y-scroll snap-y snap-mandatory py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden mask-y-from-60% outline-none focus-visible:ring-1 focus-visible:ring-gray-300 rounded-md"
-					>
-						{Array.from({ length: count }, (_, i) => (
-							<div data-value={i} class="h-8 snap-center flex items-center justify-center cursor-pointer">
-								{String(i).padStart(2, "0")}
-							</div>
-						))}
-					</div>
-				))
-			}
-		</div>
-		<button id="clock-now" type="button" class="cursor-pointer underline hover:text-black">Now</button>
-	</div>
-</div>
-
 
 <script>
 	import {
@@ -70,6 +24,7 @@ const wheels = [
 	} from "three";
 	import { createSakuraBranch } from "@/modules/tree-shadow/lib/sakura-branch";
 	import { createWeather, flows } from "@/modules/tree-shadow/lib/weather";
+	import { CLOCK_CHANGE, type ClockChange } from "@/modules/clock/lib/events";
 	import {
 		lightTones,
 		timeOfDay,
@@ -77,30 +32,18 @@ const wheels = [
 		treeShadowConfig as config,
 	} from "@/modules/tree-shadow/lib/tree-shadow";
 
+	const SHADOW_FADE_MS = 600;
 	const canvas = document.getElementById("tree-shadow") as HTMLCanvasElement;
 	const renderer = new WebGLRenderer({ canvas, alpha: false, antialias: false });
-	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 	// The branch silhouette, redrawn each frame as the wind moves it.
 	const branch = createSakuraBranch(config.seed, config.wind, config.windMode);
-
-	// The weather follows what happens on the page (see weather.ts).
-	const weather = createWeather((mode, rate) => branch.setWind(mode, rate));
-	// Scrolling blows while it lasts: the page, or anything scrolling in it (the resume).
-	document.addEventListener("scroll", () => weather.trigger(flows.scroll), { capture: true, passive: true });
-	// Pointing at something that reacts stirs a breeze.
-	document.addEventListener("pointerover", (event) => {
-		if ((event.target as Element).closest("a[href], button, .trigger")) weather.trigger(flows.hover);
-	});
-	// Following a link, or coming back from one (the browser's back button), stirs up a storm, caught at once.
-	document.addEventListener("click", (event) => {
-		if ((event.target as Element).closest("a[href]")) weather.trigger(flows.link);
-	});
-	window.addEventListener("hashchange", () => weather.trigger(flows.link));
 	const branchCamera = new OrthographicCamera(0, config.aspect, 0, -1, -1, 1);
 	const silhouette = new WebGLRenderTarget(Math.round(1024 * config.aspect), 1024, { samples: 4 });
+	// The weather follows what happens on the page (see weather.ts).
+	const weather = createWeather(setBranchWind);
 
-	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	const initial = lightTones[timeOfDay(new Date().getHours())];
 	const uniforms = {
 		uResolution: { value: new Vector2() },
@@ -119,8 +62,7 @@ const wheels = [
 	};
 	const tones = ["uRoom", "uSun"] as const;
 
-	const scene = new Scene();
-	scene.add(
+	const scene = new Scene().add(
 		new Mesh(
 			new PlaneGeometry(2, 2),
 			new ShaderMaterial({
@@ -139,6 +81,14 @@ const wheels = [
 	);
 	const camera = new OrthographicCamera();
 
+	let shownTone = timeOfDay(new Date().getHours());
+	let lastFrame = 0;
+	let firstFrame: number | undefined;
+
+	function setBranchWind(...wind: Parameters<typeof branch.setWind>) {
+		branch.setWind(...wind);
+	}
+
 	function draw(seconds: number) {
 		branch.update(seconds);
 		renderer.setRenderTarget(silhouette);
@@ -155,67 +105,42 @@ const wheels = [
 		uniforms.uSize.value.set(height * config.aspect, height);
 		draw(performance.now() / 1000);
 	}
-	resize();
+
+	function animateFrame(time: number) {
+		firstFrame ??= time;
+		const shown = Math.min(1, (time - firstFrame) / SHADOW_FADE_MS);
+		uniforms.uStrength.value = config.strength * shown * shown * (3 - 2 * shown);
+		// Ease toward the current time of day (a few seconds).
+		const ease = 1 - Math.exp(-((time - lastFrame) / 1000) * 0.8);
+		lastFrame = time;
+		for (const key of tones) uniforms[key].value.lerp(target[key], ease);
+		draw(time / 1000);
+	}
+
+	// Scrolling blows while it lasts: the page, or anything scrolling in it (the resume).
+	document.addEventListener("scroll", function blowOnScroll() {
+		weather.trigger(flows.scroll);
+	}, { capture: true, passive: true });
+
+	// Pointing at something that reacts stirs a breeze.
+	document.addEventListener("pointerover", function breezeOnHover(event: PointerEvent) {
+		if ((event.target as Element).closest("a[href], button, .trigger")) weather.trigger(flows.hover);
+	});
+
+	// Following a link, or coming back from one (the browser's back button), stirs up a storm, caught at once.
+	document.addEventListener("click", function stormOnLinkClick(event: MouseEvent) {
+		if ((event.target as Element).closest("a[href]")) weather.trigger(flows.link);
+	});
+
+	window.addEventListener("hashchange", function stormOnNavigation() {
+		weather.trigger(flows.link);
+	});
+
 	window.addEventListener("resize", resize);
 
-	// Follow the browser's clock, or the time picked to preview the light.
-	const clock = document.getElementById("clock") as HTMLButtonElement;
-	const picker = document.getElementById("clock-picker") as HTMLDivElement;
-	const [hoursWheel, minutesWheel] = document.querySelectorAll<HTMLElement>("[data-wheel]");
-	let picked: string | null = null; // "hh:mm"
-	let shownTone = timeOfDay(new Date().getHours());
-
-	const pad = (n: number) => String(n).padStart(2, "0");
-	function now() {
-		const date = new Date();
-		return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
-	}
-
-	// A wheel's value is the row snapped to its center.
-	const rowHeight = (wheel: HTMLElement) => wheel.firstElementChild!.clientHeight;
-	const wheelValue = (wheel: HTMLElement) => Math.round(wheel.scrollTop / rowHeight(wheel));
-	function setWheel(wheel: HTMLElement, value: number, behavior: ScrollBehavior = "instant") {
-		const count = wheel.children.length;
-		value = Math.min(count - 1, Math.max(0, value));
-		wheel.scrollTo({ top: value * rowHeight(wheel), behavior });
-		wheel.setAttribute("aria-valuenow", String(value));
-		wheel.setAttribute("aria-valuetext", pad(value));
-	}
-
-	for (const wheel of [hoursWheel, minutesWheel]) {
-		wheel.addEventListener("scroll", () => {
-			const time = `${pad(wheelValue(hoursWheel))}:${pad(wheelValue(minutesWheel))}`;
-			wheel.setAttribute("aria-valuenow", String(wheelValue(wheel)));
-			wheel.setAttribute("aria-valuetext", pad(wheelValue(wheel)));
-			// Syncing the wheels to the live clock scrolls them too; that is not a pick.
-			if (time === (picked ?? now())) return;
-			picked = time;
-			updateTime();
-		});
-		wheel.addEventListener("click", (event) => {
-			const row = (event.target as HTMLElement).closest<HTMLElement>("[data-value]");
-			if (row) setWheel(wheel, Number(row.dataset.value), "smooth");
-		});
-		wheel.addEventListener("keydown", (event) => {
-			const step = { ArrowUp: -1, ArrowDown: 1, PageUp: -5, PageDown: 5 }[event.key];
-			const jump = { Home: 0, End: wheel.children.length - 1 }[event.key];
-			if (step === undefined && jump === undefined) return;
-			event.preventDefault();
-			setWheel(wheel, jump ?? wheelValue(wheel) + step!, "smooth");
-		});
-	}
-
-	function syncWheels(time: string) {
-		setWheel(hoursWheel, Number(time.slice(0, 2)));
-		setWheel(minutesWheel, Number(time.slice(3)));
-	}
-
-	function updateTime() {
-		const time = picked ?? now();
-		clock.textContent = time;
-		// Hidden wheels have no size to scroll; they are synced when opened.
-		if (!picked && !picker.hidden) syncWheels(time);
-		const tod = timeOfDay(Number(time.slice(0, 2)));
+	// The light follows the time the clock shows.
+	window.addEventListener(CLOCK_CHANGE, function followClockTone(event: Event) {
+		const tod = timeOfDay((event as ClockChange).detail.hours);
 		if (tod === shownTone) return;
 		shownTone = tod;
 		const tone = lightTones[tod];
@@ -225,36 +150,9 @@ const wheels = [
 			for (const key of tones) uniforms[key].value.copy(target[key]);
 			draw(0);
 		}
-	}
-	updateTime();
-	setInterval(updateTime, 1000);
-
-	clock.addEventListener("click", () => {
-		picker.hidden = !picker.hidden;
-		clock.setAttribute("aria-expanded", String(!picker.hidden));
-		if (picker.hidden) return;
-		syncWheels(picked ?? now());
-		hoursWheel.focus();
-	});
-	document.getElementById("clock-now")!.addEventListener("click", () => {
-		picked = null;
-		syncWheels(now());
-		updateTime();
 	});
 
-	if (!reducedMotion) {
-		const SHADOW_FADE_MS = 600;
-		let last = 0;
-		let firstFrame: number | undefined;
-		renderer.setAnimationLoop((time) => {
-			firstFrame ??= time;
-			const shown = Math.min(1, (time - firstFrame) / SHADOW_FADE_MS);
-			uniforms.uStrength.value = config.strength * shown * shown * (3 - 2 * shown);
-			// Ease toward the current time of day (a few seconds).
-			const ease = 1 - Math.exp(-((time - last) / 1000) * 0.8);
-			last = time;
-			for (const key of tones) uniforms[key].value.lerp(target[key], ease);
-			draw(time / 1000);
-		});
-	}
+	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+	resize();
+	if (!reducedMotion) renderer.setAnimationLoop(animateFrame);
 </script>

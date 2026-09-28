@@ -1,0 +1,186 @@
+---
+// Emits CLOCK_CHANGE for the light to follow (see TreeShadow).
+const wheels = [
+	{ id: "hours", label: "Hours", count: 24 },
+	{ id: "minutes", label: "Minutes", count: 60 },
+];
+---
+
+<!-- The browser's clock; clicking it lets you pick another time to preview the light. -->
+<div
+	class="fixed top-4 left-8 z-40 flex flex-col items-start gap-2 text-sm text-gray-600"
+>
+	<button
+		id="clock"
+		type="button"
+		aria-expanded="false"
+		aria-controls="clock-picker"
+		aria-label="Change the time of the light"
+		class="peer cursor-pointer tabular-nums hover:text-black"></button>
+	<p
+		aria-hidden="true"
+		class="-mt-2 text-xs text-gray-400 peer-aria-expanded:hidden"
+	>
+		Click the time to change it
+	</p>
+	<!-- Two wheels (hours, minutes): scroll, drag, click a number, or use the arrow keys. The centered row is the value. -->
+	<div id="clock-picker" hidden class="flex items-center gap-3">
+		<div class="relative flex tabular-nums">
+			<div
+				aria-hidden="true"
+				class="absolute inset-x-0 top-8 h-8 rounded-md bg-black/5"
+			>
+			</div>
+			{
+				wheels.map(({ id, label, count }) => (
+					<div
+						data-wheel={id}
+						role="spinbutton"
+						tabindex="0"
+						aria-label={label}
+						aria-valuemin="0"
+						aria-valuemax={count - 1}
+						class="relative h-24 w-10 overflow-y-scroll snap-y snap-mandatory py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden mask-y-from-60% outline-none focus-visible:ring-1 focus-visible:ring-gray-300 rounded-md"
+					>
+						{Array.from({ length: count }, (_, i) => (
+							<div
+								data-value={i}
+								class="h-8 snap-center flex items-center justify-center cursor-pointer"
+							>
+								{String(i).padStart(2, "0")}
+							</div>
+						))}
+					</div>
+				))
+			}
+		</div>
+		<button
+			id="clock-now"
+			type="button"
+			class="cursor-pointer underline hover:text-black">Now</button
+		>
+	</div>
+</div>
+
+<script>
+	import { CLOCK_CHANGE } from "@/modules/clock/lib/events";
+
+	// Show the browser's clock, or the time picked to preview the light.
+	const clock = document.getElementById("clock") as HTMLButtonElement;
+	const picker = document.getElementById("clock-picker") as HTMLDivElement;
+	const nowButton = document.getElementById("clock-now") as HTMLButtonElement;
+	const [hoursWheel, minutesWheel] =
+		document.querySelectorAll<HTMLElement>("[data-wheel]");
+	const wheels = [hoursWheel, minutesWheel];
+	const keySteps: Record<string, number> = {
+		ArrowUp: -1,
+		ArrowDown: 1,
+		PageUp: -5,
+		PageDown: 5,
+	};
+	let picked: string | null = null; // "hh:mm"
+	let shown = "";
+
+	function pad(n: number) {
+		return String(n).padStart(2, "0");
+	}
+
+	function now() {
+		const date = new Date();
+		return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+	}
+
+	function rowHeight(wheel: HTMLElement) {
+		return wheel.firstElementChild!.clientHeight;
+	}
+
+	// A wheel's value is the row snapped to its center.
+	function wheelValue(wheel: HTMLElement) {
+		return Math.round(wheel.scrollTop / rowHeight(wheel));
+	}
+
+	function labelWheel(wheel: HTMLElement, value: number) {
+		wheel.setAttribute("aria-valuenow", String(value));
+		wheel.setAttribute("aria-valuetext", pad(value));
+	}
+
+	function setWheel(
+		wheel: HTMLElement,
+		value: number,
+		behavior: ScrollBehavior = "instant",
+	) {
+		const count = wheel.children.length;
+		value = Math.min(count - 1, Math.max(0, value));
+		wheel.scrollTo({ top: value * rowHeight(wheel), behavior });
+		labelWheel(wheel, value);
+	}
+
+	function syncWheels(time: string) {
+		setWheel(hoursWheel, Number(time.slice(0, 2)));
+		setWheel(minutesWheel, Number(time.slice(3)));
+	}
+
+	function updateTime() {
+		const time = picked ?? now();
+		clock.textContent = time;
+		// Hidden wheels have no size to scroll; they are synced when opened.
+		if (!picked && !picker.hidden) syncWheels(time);
+		if (time === shown) return;
+		shown = time;
+		const detail = {
+			hours: Number(time.slice(0, 2)),
+			minutes: Number(time.slice(3)),
+		};
+		window.dispatchEvent(new CustomEvent(CLOCK_CHANGE, { detail }));
+	}
+
+	for (const wheel of wheels) {
+		wheel.addEventListener("scroll", function pickScrolledTime(event: Event) {
+			const wheel = event.currentTarget as HTMLElement;
+			const time = `${pad(wheelValue(hoursWheel))}:${pad(wheelValue(minutesWheel))}`;
+			labelWheel(wheel, wheelValue(wheel));
+			// Syncing the wheels to the live clock scrolls them too; that is not a pick.
+			if (time === (picked ?? now())) return;
+			picked = time;
+			updateTime();
+		});
+		wheel.addEventListener(
+			"click",
+			function scrollToClickedRow(event: MouseEvent) {
+				const wheel = event.currentTarget as HTMLElement;
+				const row = (event.target as HTMLElement).closest<HTMLElement>(
+					"[data-value]",
+				);
+				if (row) setWheel(wheel, Number(row.dataset.value), "smooth");
+			},
+		);
+		wheel.addEventListener(
+			"keydown",
+			function stepWheelWithKeys(event: KeyboardEvent) {
+				const wheel = event.currentTarget as HTMLElement;
+				const step = keySteps[event.key];
+				const jump = { Home: 0, End: wheel.children.length - 1 }[event.key];
+				if (step === undefined && jump === undefined) return;
+				event.preventDefault();
+				setWheel(wheel, jump ?? wheelValue(wheel) + step, "smooth");
+			},
+		);
+	}
+
+	clock.addEventListener("click", function togglePicker() {
+		picker.hidden = !picker.hidden;
+		clock.setAttribute("aria-expanded", String(!picker.hidden));
+		if (picker.hidden) return;
+		syncWheels(picked ?? now());
+		hoursWheel.focus();
+	});
+
+	nowButton.addEventListener("click", function backToLiveClock() {
+		picked = null;
+		syncWheels(now());
+		updateTime();
+	});
+
+	updateTime();
+	setInterval(updateTime, 1000);
+</script>
