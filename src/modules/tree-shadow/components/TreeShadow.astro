@@ -1,7 +1,7 @@
 ---
 // Sunlight filling the room, with the shadow of a cherry tree coming in from the top-left corner.
 // Rendered as a multiply overlay: lit areas stay white/warm, the shadow darkens the page.
-import { treeShadowConfig } from "@/modules/shared/lib/tree-shadow";
+import { treeShadowConfig } from "@/modules/tree-shadow/lib/tree-shadow";
 
 const wheels = [
 	{ id: "hours", label: "Hours", count: 24 },
@@ -68,14 +68,14 @@ const wheels = [
 		WebGLRenderer,
 		WebGLRenderTarget,
 	} from "three";
-	import { createSakuraBranch } from "@/modules/shared/lib/sakura-branch";
-	import { createWeather, flows } from "@/modules/shared/lib/weather";
+	import { createSakuraBranch } from "@/modules/tree-shadow/lib/sakura-branch";
+	import { createWeather, flows } from "@/modules/tree-shadow/lib/weather";
 	import {
 		lightTones,
 		timeOfDay,
 		treeShadowChunk,
 		treeShadowConfig as config,
-	} from "@/modules/shared/lib/tree-shadow";
+	} from "@/modules/tree-shadow/lib/tree-shadow";
 
 	const canvas = document.getElementById("tree-shadow") as HTMLCanvasElement;
 	const renderer = new WebGLRenderer({ canvas, alpha: false, antialias: false });

@@ -1,0 +1,20 @@
+---
+import type { IconType } from "@/type";
+import EmailIcon from "@/modules/about/icons/EmailIcon.astro";
+import FacebookIcon from "@/modules/about/icons/FacebookIcon.astro";
+import GithubIcon from "@/modules/about/icons/GithubIcon.astro";
+import LinkedinIcon from "@/modules/about/icons/LinkedinIcon.astro";
+import WhatsappIcon from "@/modules/about/icons/WhatsappIcon.astro";
+
+interface Props {
+  type: IconType;
+}
+
+const { type } = Astro.props;
+---
+
+{type === "github" && <GithubIcon />}
+{type === "linkedin" && <LinkedinIcon />}
+{type === "whatsapp" && <WhatsappIcon />}
+{type === "facebook" && <FacebookIcon />}
+{type === "email" && <EmailIcon />}

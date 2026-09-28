@@ -39,7 +39,7 @@ import Resume from "./Resume.astro";
 </dialog>
 
 <script>
-	import { track } from "@/modules/shared/lib/analytics";
+	import { track } from "@/services/analytics";
 
 	const dialog = document.getElementById("resume") as HTMLDialogElement;
 	const page = dialog.parentElement!;

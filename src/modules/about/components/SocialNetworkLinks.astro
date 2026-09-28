@@ -1,7 +1,7 @@
 ---
-import SocialLink from "../../components/SocialLink.astro";
+import SocialLink from "@/components/SocialLink.astro";
 import SocialNetworkIcon from "./SocialNetworkIcon.astro";
-import { SOCIAL_LINKS } from "./social-links";
+import { SOCIAL_LINKS } from "@/modules/about/constants/social-links";
 ---
 
 <div class="w-full flex items-center gap-2">
@@ -22,7 +22,7 @@ import { SOCIAL_LINKS } from "./social-links";
 </div>
 
 <script>
-  import { track } from "@/modules/shared/lib/analytics";
+  import { track } from "@/services/analytics";
 
   for (const link of document.querySelectorAll<HTMLElement>("[data-network]")) {
     link.addEventListener("click", () => track("social_link_clicked", { network: link.dataset.network }));

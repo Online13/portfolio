@@ -1,4 +1,4 @@
-import type { IconType } from "../../type";
+import type { IconType } from "@/type";
 
 export type SocialLink = { to: string; type: IconType; label: string; handle: string };
 

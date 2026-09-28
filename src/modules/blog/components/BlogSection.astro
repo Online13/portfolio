@@ -1,6 +1,6 @@
 ---
 import ArticleItem from "@/modules/blog/components/ArticleItem.astro";
-import { getArticles } from "@/modules/blog/lib/articles";
+import { getArticles } from "@/services/content";
 
 const articles = await getArticles();
 ---
@@ -11,7 +11,7 @@ const articles = await getArticles();
 		articles.length > 0 ? (
 			<div>
 				{articles.map((article) => (
-					<ArticleItem {...article.data} />
+					<ArticleItem {...article} />
 				))}
 			</div>
 		) : (

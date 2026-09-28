@@ -4,16 +4,9 @@ import profile from "@/assets/images/profile.webp";
 import HoverCard from "./HoverCard.astro";
 import HoverCardLayer from "./HoverCardLayer.astro";
 import SocialNetworkLinks from "./SocialNetworkLinks.astro";
+import { getExperienceYears } from "@/services/content";
 
-const startMonth = 11;
-const startYear = 2021;
-
-const now = new Date();
-const currentMonth = now.getMonth() + 1;
-const currentYear = now.getFullYear();
-
-const experienceYears =
-	currentYear - startYear + (currentMonth >= startMonth ? 0 : -1);
+const experienceYears = getExperienceYears();
 ---
 
 <div class="w-full relative group space-y-1">

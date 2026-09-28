@@ -1,11 +1,10 @@
 ---
 import { Image } from "astro:assets";
-import { getCollection } from "astro:content";
 import picture from "@/assets/images/picture.png";
-import { SOCIAL_LINKS } from "@/modules/about/social-links";
-import { getExperiences } from "@/modules/experience/experiences";
-import { formatMonth } from "@/modules/resume/dates";
-import FluidHover from "@/modules/shared/components/FluidHover.astro";
+import { SOCIAL_LINKS } from "@/modules/about/constants/social-links";
+import { getCertifications, getEducation, getExperiences, getProjects } from "@/services/content";
+import { formatMonth } from "@/modules/resume/utils/dates";
+import FluidHover from "@/components/FluidHover.astro";
 import ResumeSection from "./ResumeSection.astro";
 
 // The resume sheet: shown in the home page's full-screen overlay, and the only thing printed from it (public/cv.pdf).
@@ -57,19 +56,12 @@ const experiences = (await getExperiences()).map((role) => ({
 	city: role.location?.split(",")[0],
 	highlights: role.highlights.slice(0, 2),
 }));
-const projects = (await getCollection("projects"))
-	.filter(({ data }) => data.role)
-	.sort((a, b) => Number(b.data.active) - Number(a.data.active))
-	.map(({ data }) => data);
-const education = (await getCollection("education"))
-	.map(({ data }) => data)
-	.sort((a, b) => b.start - a.start);
-const certifications = (await getCollection("certifications"))
-	.map(({ data }) => data)
-	.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-const bullet =
-	"relative pl-4 text-sm leading-relaxed text-body before:absolute before:top-[0.6em] before:left-0 before:size-1 before:rounded-full before:bg-subtle";
+const projects = (await getProjects())
+	.filter((project) => project.role)
+	.sort((a, b) => Number(b.active) - Number(a.active));
+const education = await getEducation();
+const certifications = await getCertifications();
+---
 ---
 
 <svg style="display: none" aria-hidden="true">
@@ -131,7 +123,10 @@ const bullet =
 			<FluidHover class="space-y-4">
 				{
 					experiences.map((role) => (
-						<div class="grid grid-cols-[150px_1fr] gap-8 break-inside-avoid p-4" data-fluid-item>
+						<div
+							class="grid grid-cols-[150px_1fr] gap-8 break-inside-avoid p-4"
+							data-fluid-item
+						>
 							<div>
 								<h3 class="text-sm font-medium">{role.role}</h3>
 								<p class="text-[13px] text-body">{role.company}</p>
@@ -144,7 +139,9 @@ const bullet =
 							</div>
 							<ul class="space-y-1.5">
 								{role.highlights.map((highlight) => (
-									<li class={bullet}>{highlight}</li>
+									<li class="relative pl-4 text-sm leading-relaxed text-body before:absolute before:top-[0.6em] before:left-0 before:size-1 before:rounded-full before:bg-subtle">
+										{highlight}
+									</li>
 								))}
 							</ul>
 						</div>
@@ -168,11 +165,14 @@ const bullet =
 										<use href="#resume-external" />
 									</svg>
 								</a>
-							</div> 
+							</div>
 							<p class="text-sm leading-relaxed text-body">
-								<span class="text-[13px] leading-relaxed text-subtle">
-									{project.technologies.join(" · ")}
-								</span><br/>
+								<>
+									<span class="text-[13px] leading-relaxed text-subtle">
+										{project.technologies.join(" · ")}
+									</span>
+									<br />
+								</>
 								{project.description}
 							</p>
 						</div>
