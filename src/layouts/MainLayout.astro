@@ -1,4 +1,5 @@
 ---
+import { Font } from "astro:assets";
 import Footer from "@/components/Footer.astro";
 import Clock from "@/modules/clock/components/Clock.astro";
 import TreeShadow from "@/modules/tree-shadow/components/TreeShadow.astro";
@@ -23,24 +24,20 @@ const sunByHour = Array.from({ length: 24 }, (_, hour) =>
     <meta name="theme-color" content="#ffffff" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <Font cssVariable="--font-cabin" preload={[{ style: "normal" }]} />
+    <Font cssVariable="--font-inter" />
 
     <PostHog />
     <!-- The room is lit from the first paint: TreeShadow's canvas shows this color until WebGL draws over it. -->
     <script is:inline define:vars={{ sunByHour }}>
       document.documentElement.style.setProperty("--light-sun", `rgb(${sunByHour[new Date().getHours()]})`);
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body class="w-full">
     <!-- An opaque sheet over the fixed footer, which shows once scrolled past it (see Footer). -->
-    <div id="page" class="relative z-20 bg-white">
+    <main id="page" class="relative z-20 bg-white">
       <slot />
-    </div>
+    </main>
     <Footer />
     <TreeShadow />
     <Clock />

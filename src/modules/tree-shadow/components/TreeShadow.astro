@@ -34,125 +34,141 @@
 
 	const SHADOW_FADE_MS = 600;
 	const canvas = document.getElementById("tree-shadow") as HTMLCanvasElement;
-	const renderer = new WebGLRenderer({ canvas, alpha: false, antialias: false });
-	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-	// The branch silhouette, redrawn each frame as the wind moves it.
-	const branch = createSakuraBranch(config.seed, config.wind, config.windMode);
-	const branchCamera = new OrthographicCamera(0, config.aspect, 0, -1, -1, 1);
-	const silhouette = new WebGLRenderTarget(Math.round(1024 * config.aspect), 1024, { samples: 4 });
-	// The weather follows what happens on the page (see weather.ts).
-	const weather = createWeather(setBranchWind);
-
-	const initial = lightTones[timeOfDay(new Date().getHours())];
-	const uniforms = {
-		uResolution: { value: new Vector2() },
-		uTree: { value: silhouette.texture },
-		uOrigin: { value: new Vector2(...config.origin) },
-		uSize: { value: new Vector2() },
-		// Faded in by the animation loop, so the shadow settles onto the already lit page.
-		uStrength: { value: reducedMotion ? config.strength : 0 },
-		uSoftness: { value: config.softness },
-		uRoom: { value: new Vector3(...initial.room) },
-		uSun: { value: new Vector3(...initial.sun) },
-	};
-	const target = {
-		uRoom: new Vector3(...initial.room),
-		uSun: new Vector3(...initial.sun),
-	};
-	const tones = ["uRoom", "uSun"] as const;
-
-	const scene = new Scene().add(
-		new Mesh(
-			new PlaneGeometry(2, 2),
-			new ShaderMaterial({
-				uniforms,
-				vertexShader: "void main() { gl_Position = vec4(position, 1.0); }",
-				fragmentShader: /* glsl */ `
-					uniform vec2 uResolution;
-					${treeShadowChunk}
-					void main() {
-						vec2 p = gl_FragCoord.xy / uResolution.y;
-						gl_FragColor = vec4(treeShadowColor(p, gl_FragCoord.xy), 1.0);
-					}
-				`,
-			}),
-		),
-	);
-	const camera = new OrthographicCamera();
-
-	let shownTone = timeOfDay(new Date().getHours());
-	let lastFrame = 0;
-	let firstFrame: number | undefined;
-
-	function setBranchWind(...wind: Parameters<typeof branch.setWind>) {
-		branch.setWind(...wind);
+	// Without a GPU, WebGL runs on the CPU (SwiftShader, llvmpipe), where each frame blocks the page for hundreds of
+	// milliseconds. The page then keeps the canvas's plain light, without the shadow. Probed on a throwaway canvas:
+	// a context on the real one would cover the light with an empty buffer.
+	function hasHardwareWebGL() {
+		const gl = document.createElement("canvas").getContext("webgl2", { failIfMajorPerformanceCaveat: true });
+		if (!gl) return false;
+		const info = gl.getExtension("WEBGL_debug_renderer_info");
+		const name = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+		gl.getExtension("WEBGL_lose_context")?.loseContext();
+		return !/swiftshader|llvmpipe|software/i.test(name);
 	}
 
-	function draw(seconds: number) {
-		branch.update(seconds);
-		renderer.setRenderTarget(silhouette);
-		renderer.render(branch.scene, branchCamera);
-		renderer.setRenderTarget(null);
-		renderer.render(scene, camera);
-	}
+	function start(renderer: WebGLRenderer) {
+		const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-	function resize() {
-		renderer.setSize(window.innerWidth, window.innerHeight, false);
-		renderer.getDrawingBufferSize(uniforms.uResolution.value);
-		// Keep the tree in its corner on narrow screens.
-		const height = Math.min(config.size, (config.maxWidth * window.innerWidth) / window.innerHeight / config.aspect);
-		uniforms.uSize.value.set(height * config.aspect, height);
-		draw(performance.now() / 1000);
-	}
+		// The branch silhouette, redrawn each frame as the wind moves it.
+		const branch = createSakuraBranch(config.seed, config.wind, config.windMode);
+		const branchCamera = new OrthographicCamera(0, config.aspect, 0, -1, -1, 1);
+		const silhouette = new WebGLRenderTarget(Math.round(1024 * config.aspect), 1024, { samples: 4 });
+		// The weather follows what happens on the page (see weather.ts).
+		const weather = createWeather(setBranchWind);
 
-	function animateFrame(time: number) {
-		firstFrame ??= time;
-		const shown = Math.min(1, (time - firstFrame) / SHADOW_FADE_MS);
-		uniforms.uStrength.value = config.strength * shown * shown * (3 - 2 * shown);
-		// Ease toward the current time of day (a few seconds).
-		const ease = 1 - Math.exp(-((time - lastFrame) / 1000) * 0.8);
-		lastFrame = time;
-		for (const key of tones) uniforms[key].value.lerp(target[key], ease);
-		draw(time / 1000);
-	}
+		const initial = lightTones[timeOfDay(new Date().getHours())];
+		const uniforms = {
+			uResolution: { value: new Vector2() },
+			uTree: { value: silhouette.texture },
+			uOrigin: { value: new Vector2(...config.origin) },
+			uSize: { value: new Vector2() },
+			// Faded in by the animation loop, so the shadow settles onto the already lit page.
+			uStrength: { value: reducedMotion ? config.strength : 0 },
+			uSoftness: { value: config.softness },
+			uRoom: { value: new Vector3(...initial.room) },
+			uSun: { value: new Vector3(...initial.sun) },
+		};
+		const target = {
+			uRoom: new Vector3(...initial.room),
+			uSun: new Vector3(...initial.sun),
+		};
+		const tones = ["uRoom", "uSun"] as const;
 
-	// Scrolling blows while it lasts: the page, or anything scrolling in it (the resume).
-	document.addEventListener("scroll", function blowOnScroll() {
-		weather.trigger(flows.scroll);
-	}, { capture: true, passive: true });
+		const scene = new Scene().add(
+			new Mesh(
+				new PlaneGeometry(2, 2),
+				new ShaderMaterial({
+					uniforms,
+					vertexShader: "void main() { gl_Position = vec4(position, 1.0); }",
+					fragmentShader: /* glsl */ `
+						uniform vec2 uResolution;
+						${treeShadowChunk}
+						void main() {
+							vec2 p = gl_FragCoord.xy / uResolution.y;
+							gl_FragColor = vec4(treeShadowColor(p, gl_FragCoord.xy), 1.0);
+						}
+					`,
+				}),
+			),
+		);
+		const camera = new OrthographicCamera();
 
-	// Pointing at something that reacts stirs a breeze.
-	document.addEventListener("pointerover", function breezeOnHover(event: PointerEvent) {
-		if ((event.target as Element).closest("a[href], button, .trigger")) weather.trigger(flows.hover);
-	});
+		let shownTone = timeOfDay(new Date().getHours());
+		let lastFrame = 0;
+		let firstFrame: number | undefined;
 
-	// Following a link, or coming back from one (the browser's back button), stirs up a storm, caught at once.
-	document.addEventListener("click", function stormOnLinkClick(event: MouseEvent) {
-		if ((event.target as Element).closest("a[href]")) weather.trigger(flows.link);
-	});
-
-	window.addEventListener("hashchange", function stormOnNavigation() {
-		weather.trigger(flows.link);
-	});
-
-	window.addEventListener("resize", resize);
-
-	// The light follows the time the clock shows.
-	window.addEventListener(CLOCK_CHANGE, function followClockTone(event: Event) {
-		const tod = timeOfDay((event as ClockChange).detail.hours);
-		if (tod === shownTone) return;
-		shownTone = tod;
-		const tone = lightTones[tod];
-		target.uRoom.set(...tone.room);
-		target.uSun.set(...tone.sun);
-		if (reducedMotion) {
-			for (const key of tones) uniforms[key].value.copy(target[key]);
-			draw(0);
+		function setBranchWind(...wind: Parameters<typeof branch.setWind>) {
+			branch.setWind(...wind);
 		}
-	});
 
-	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-	resize();
-	if (!reducedMotion) renderer.setAnimationLoop(animateFrame);
+		function draw(seconds: number) {
+			branch.update(seconds);
+			renderer.setRenderTarget(silhouette);
+			renderer.render(branch.scene, branchCamera);
+			renderer.setRenderTarget(null);
+			renderer.render(scene, camera);
+		}
+
+		function resize() {
+			renderer.setSize(window.innerWidth, window.innerHeight, false);
+			renderer.getDrawingBufferSize(uniforms.uResolution.value);
+			// Keep the tree in its corner on narrow screens.
+			const height = Math.min(config.size, (config.maxWidth * window.innerWidth) / window.innerHeight / config.aspect);
+			uniforms.uSize.value.set(height * config.aspect, height);
+			draw(performance.now() / 1000);
+		}
+
+		function animateFrame(time: number) {
+			firstFrame ??= time;
+			const shown = Math.min(1, (time - firstFrame) / SHADOW_FADE_MS);
+			uniforms.uStrength.value = config.strength * shown * shown * (3 - 2 * shown);
+			// Ease toward the current time of day (a few seconds).
+			const ease = 1 - Math.exp(-((time - lastFrame) / 1000) * 0.8);
+			lastFrame = time;
+			for (const key of tones) uniforms[key].value.lerp(target[key], ease);
+			draw(time / 1000);
+		}
+
+		// Scrolling blows while it lasts: the page, or anything scrolling in it (the resume).
+		document.addEventListener("scroll", function blowOnScroll() {
+			weather.trigger(flows.scroll);
+		}, { capture: true, passive: true });
+
+		// Pointing at something that reacts stirs a breeze.
+		document.addEventListener("pointerover", function breezeOnHover(event: PointerEvent) {
+			if ((event.target as Element).closest("a[href], button, .trigger")) weather.trigger(flows.hover);
+		});
+
+		// Following a link, or coming back from one (the browser's back button), stirs up a storm, caught at once.
+		document.addEventListener("click", function stormOnLinkClick(event: MouseEvent) {
+			if ((event.target as Element).closest("a[href]")) weather.trigger(flows.link);
+		});
+
+		window.addEventListener("hashchange", function stormOnNavigation() {
+			weather.trigger(flows.link);
+		});
+
+		window.addEventListener("resize", resize);
+
+		// The light follows the time the clock shows.
+		window.addEventListener(CLOCK_CHANGE, function followClockTone(event: Event) {
+			const tod = timeOfDay((event as ClockChange).detail.hours);
+			if (tod === shownTone) return;
+			shownTone = tod;
+			const tone = lightTones[tod];
+			target.uRoom.set(...tone.room);
+			target.uSun.set(...tone.sun);
+			if (reducedMotion) {
+				for (const key of tones) uniforms[key].value.copy(target[key]);
+				draw(0);
+			}
+		});
+
+		renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+		resize();
+		if (!reducedMotion) renderer.setAnimationLoop(animateFrame);
+	}
+
+	if (hasHardwareWebGL()) start(new WebGLRenderer({ canvas, alpha: false, antialias: false }));
 </script>

@@ -11,6 +11,7 @@ import { SOCIAL_LINKS } from "@/data";
         <SocialLink
           id={id}
           to={link.to}
+          label={link.label}
           data-network={link.type}
           class={link.type === "linkedin" ? "hover:-rotate-18" : undefined}
         >

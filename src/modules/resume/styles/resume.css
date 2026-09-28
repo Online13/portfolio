@@ -20,7 +20,7 @@
 
 .resume-sheet,
 .resume-sheet * {
-	font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+	font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Hovering "Download PDF" shows the sheet as the paper it downloads. */

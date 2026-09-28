@@ -15,15 +15,16 @@ const wheels = [
 		type="button"
 		aria-expanded="false"
 		aria-controls="clock-picker"
-		aria-label="Change the time of the light"
+		aria-describedby="clock-hint"
 		class="peer cursor-pointer tabular-nums hover:text-black"></button>
 	<p
-		aria-hidden="true"
+		id="clock-hint"
 		class="-mt-2 text-xs text-gray-400 peer-aria-expanded:hidden"
 	>
 		Click the time to change it
 	</p>
-	<!-- Two wheels (hours, minutes): scroll, drag, click a number, or use the arrow keys. The centered row is the value. -->
+	<!-- Two wheels (hours, minutes): scroll, drag, click a number, or use the arrow keys. The centered row is the value.
+	     Their rows are built on first open, so the page's HTML isn't padded with 84 numbers. -->
 	<div id="clock-picker" hidden class="flex items-center gap-3">
 		<div class="relative flex tabular-nums">
 			<div
@@ -41,16 +42,7 @@ const wheels = [
 						aria-valuemin="0"
 						aria-valuemax={count - 1}
 						class="relative h-24 w-10 overflow-y-scroll snap-y snap-mandatory py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden mask-y-from-60% outline-none focus-visible:ring-1 focus-visible:ring-gray-300 rounded-md"
-					>
-						{Array.from({ length: count }, (_, i) => (
-							<div
-								data-value={i}
-								class="h-8 snap-center flex items-center justify-center cursor-pointer"
-							>
-								{String(i).padStart(2, "0")}
-							</div>
-						))}
-					</div>
+					/>
 				))
 			}
 		</div>
@@ -115,6 +107,23 @@ const wheels = [
 		labelWheel(wheel, value);
 	}
 
+	function fillWheels() {
+		for (const wheel of wheels) {
+			if (wheel.children.length) continue;
+			const count = Number(wheel.getAttribute("aria-valuemax")) + 1;
+			wheel.append(
+				...Array.from({ length: count }, (_, i) => {
+					const row = document.createElement("div");
+					row.dataset.value = String(i);
+					row.className =
+						"h-8 snap-center flex items-center justify-center cursor-pointer";
+					row.textContent = pad(i);
+					return row;
+				}),
+			);
+		}
+	}
+
 	function syncWheels(time: string) {
 		setWheel(hoursWheel, Number(time.slice(0, 2)));
 		setWheel(minutesWheel, Number(time.slice(3)));
@@ -171,6 +180,7 @@ const wheels = [
 		picker.hidden = !picker.hidden;
 		clock.setAttribute("aria-expanded", String(!picker.hidden));
 		if (picker.hidden) return;
+		fillWheels();
 		syncWheels(picked ?? now());
 		hoursWheel.focus();
 	});
