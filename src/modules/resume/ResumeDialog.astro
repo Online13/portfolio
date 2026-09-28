@@ -39,6 +39,8 @@ import Resume from "./Resume.astro";
 </dialog>
 
 <script>
+	import { track } from "@/modules/shared/lib/analytics";
+
 	const dialog = document.getElementById("resume") as HTMLDialogElement;
 	const page = dialog.parentElement!;
 
@@ -51,6 +53,7 @@ import Resume from "./Resume.astro";
 			if (sibling !== dialog) (sibling as HTMLElement).inert = open;
 		}
 		if (open) {
+			track("resume_opened");
 			dialog.scrollTop = 0;
 			dialog.querySelector<HTMLElement>("[data-resume-close]")!.focus({ preventScroll: true });
 		} else page.querySelector<HTMLElement>('a[href="#resume"]')?.focus({ preventScroll: true });
@@ -66,6 +69,7 @@ import Resume from "./Resume.astro";
 	};
 
 	dialog.querySelector("[data-resume-close]")!.addEventListener("click", close);
+	dialog.querySelector("[data-resume-download]")!.addEventListener("click", () => track("resume_downloaded"));
 	document.addEventListener("keydown", (event) => {
 		if (event.key === "Escape" && dialog.open) close();
 	});

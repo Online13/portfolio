@@ -1,16 +1,18 @@
 ---
 interface Props {
   id?: number;
+  "data-network"?: string;
   to: string;
   class?: string;
 }
 
-const { to, class: className = "", id = 0 } = Astro.props;
+const { to, class: className = "", id = 0, ...rest } = Astro.props;
 ---
 
 <a
   href={to}
   target="_blank"
+  {...rest}
   class:list={[
     "group w-full flex justify-center items-center rounded-lg hover:bg-stone-500/10 hover:scale-125 transition-transform duration-200 py-2 px-2",
     className,

@@ -1,6 +1,7 @@
 ---
 import Footer from "@/modules/shared/components/Footer.astro";
 import TreeShadow from "@/modules/shared/components/TreeShadow.astro";
+import PostHog from "@/modules/shared/components/PostHog.astro";
 import { lightTones, timeOfDay } from "@/modules/shared/lib/tree-shadow";
 import { SOCIAL_LINKS } from "@/modules/about/social-links";
 
@@ -63,6 +64,7 @@ const sunByHour = Array.from({ length: 24 }, (_, hour) =>
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
+    <PostHog />
     {!noindex && <script type="application/ld+json" set:html={JSON.stringify(person)} />}
     <!-- The room is lit from the first paint: TreeShadow's canvas shows this color until WebGL draws over it. -->
     <script is:inline define:vars={{ sunByHour }}>

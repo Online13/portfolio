@@ -11,6 +11,7 @@ import { SOCIAL_LINKS } from "./social-links";
         <SocialLink
           id={id}
           to={link.to}
+          data-network={link.type}
           class={link.type === "linkedin" ? "hover:-rotate-18" : undefined}
         >
           <SocialNetworkIcon type={link.type} />
@@ -19,3 +20,11 @@ import { SOCIAL_LINKS } from "./social-links";
     ))
   }
 </div>
+
+<script>
+  import { track } from "@/modules/shared/lib/analytics";
+
+  for (const link of document.querySelectorAll<HTMLElement>("[data-network]")) {
+    link.addEventListener("click", () => track("social_link_clicked", { network: link.dataset.network }));
+  }
+</script>
