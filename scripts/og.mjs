@@ -25,10 +25,10 @@ const html = `
 		<!-- Call to action. -->
 		<div style="margin-top: 32px; display: flex; align-items: center;">
 			<div style="display: flex; align-items: center; padding: 12px 22px; border-radius: 9999px; background-color: #0f172a; color: #ffffff; font-size: 18px; font-weight: 600;">
-				Let's work together
+				Get in touch
 				<img src="${dataUrl("image/svg+xml", arrow)}" width="18" height="18" style="margin-left: 10px;" />
 			</div>
-			<div style="margin-left: 18px; font-size: 18px; font-weight: 600; color: #475569;">nekena-rayane.com</div>
+			<div style="margin-left: 18px; font-size: 18px; font-weight: 600; color: #475569;">Visit nekena-rayane.com</div>
 		</div>
 	</div>
 </div>`;
