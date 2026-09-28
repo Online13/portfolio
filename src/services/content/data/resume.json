@@ -1,0 +1,19 @@
+{
+	"name": "Nekena Rayane Ratiarivelo",
+	"title": "Software Engineer",
+	"location": "Antananarivo, Madagascar",
+	"about": "Software engineer with 4+ years building web and mobile applications, recently focused on React Native. I have worked on digitalization projects for public and private sectors, from design through production, and care about scalable systems, clean architecture and performance. Available for remote collaborations.",
+	"tools": [
+		{ "label": "Frontend Web", "value": "TypeScript, JavaScript, React, Next.js, Astro, Vue.js, Tailwind CSS" },
+		{ "label": "Mobile", "value": "React Native, Expo" },
+		{ "label": "Desktop", "value": "" },
+		{ "label": "Backend", "value": "Node.js, Express, FastAPI, Strapi, Python" },
+		{ "label": "Software", "value": "Figma" },
+		{ "label": "Database", "value": "PostgreSQL, MongoDB, SQL Server, SQLite, Redis, Supabase" }
+	],
+	"languages": [
+		{ "name": "Malagasy", "level": "Native" },
+		{ "name": "French", "level": "Fluent" },
+		{ "name": "English", "level": "Intermediate" }
+	]
+}

@@ -1,67 +1,25 @@
 ---
 import { Image } from "astro:assets";
 import picture from "@/assets/images/picture.png";
-import { SOCIAL_LINKS } from "@/modules/about/constants/social-links";
-import { getCertifications, getEducation, getExperiences, getProjects } from "@/services/content";
+import { getResume } from "@/services/content";
 import { formatMonth } from "@/modules/resume/utils/dates";
 import FluidHover from "@/components/FluidHover.astro";
 import ResumeSection from "./ResumeSection.astro";
 
 // The resume sheet: shown in the home page's full-screen overlay, and the only thing printed from it (public/cv.pdf).
-
-const name = "Nekena Rayane Ratiarivelo";
-const title = "Software Engineer";
-const location = "Antananarivo, Madagascar";
-const about =
-	"Software engineer with 4+ years building web and mobile applications, recently focused on React Native. I have worked on digitalization projects for public and private sectors, from design through production, and care about scalable systems, clean architecture and performance. Available for remote collaborations.";
-// Rows left empty are not shown.
-const tools = [
-	{
-		label: "Frontend Web",
-		value: "TypeScript, JavaScript, React, Next.js, Astro, Vue.js, Tailwind CSS",
-	},
-	{ label: "Mobile", value: "React Native, Expo" },
-	{ label: "Desktop", value: "" },
-	{ label: "Backend", value: "Node.js, Express, FastAPI, Strapi, Python" },
-	{ label: "Software", value: "Figma" },
-	{
-		label: "Database",
-		value: "PostgreSQL, MongoDB, SQL Server, SQLite, Redis, Supabase",
-	},
-].filter(({ value }) => value);
-const languages = [
-	{ name: "Malagasy", level: "Native" },
-	{ name: "French", level: "Fluent" },
-	{ name: "English", level: "Intermediate" },
-];
-
-const contacts = [
-	{ href: "https://nekena-rayane.com", label: "Portfolio" },
-	...SOCIAL_LINKS.filter(({ type }) => type !== "facebook").map(
-		({ to, type, handle }) => ({
-			href: to,
-			label:
-				type === "github"
-					? "Github"
-					: type === "linkedin"
-						? "LinkedIn"
-						: handle,
-		}),
-	),
-];
-
-// Two highlights and the city alone keep each role to a few lines.
-const experiences = (await getExperiences()).map((role) => ({
-	...role,
-	city: role.location?.split(",")[0],
-	highlights: role.highlights.slice(0, 2),
-}));
-const projects = (await getProjects())
-	.filter((project) => project.role)
-	.sort((a, b) => Number(b.active) - Number(a.active));
-const education = await getEducation();
-const certifications = await getCertifications();
----
+const {
+	name,
+	title,
+	location,
+	about,
+	tools,
+	languages,
+	contacts,
+	experiences,
+	projects,
+	education,
+	certifications,
+} = await getResume();
 ---
 
 <svg style="display: none" aria-hidden="true">
