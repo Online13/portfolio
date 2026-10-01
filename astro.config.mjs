@@ -6,6 +6,15 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://nekena-rayane.com',
+  // English at /, French at /fr/.
+  i18n: {
+    locales: ['en', 'fr'],
+    defaultLocale: 'en',
+  },
+  // fr/404.astro builds to fr/404.html, the not-found page Cloudflare serves under /fr/.
+  build: {
+    format: 'preserve',
+  },
   // Self-hosted at build time: no render-blocking request to Google Fonts.
   fonts: [
     {

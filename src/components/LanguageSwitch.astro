@@ -1,0 +1,40 @@
+---
+import { homePath, LOCALES, t, toLocale } from "@/services/i18n";
+
+const locale = toLocale(Astro.currentLocale);
+const { label, names } = t(locale).language;
+---
+
+<!-- Each language is its own page (/ and /fr/); outside #page, so it is never printed. -->
+<nav
+	aria-label={label}
+	class="fixed top-4 right-8 z-40 flex items-center gap-1 text-sm text-gray-600"
+>
+	{
+		LOCALES.map((option, i) => (
+			<>
+				{i > 0 && <span aria-hidden="true" class="text-gray-300">/</span>}
+				<a
+					href={homePath(option)}
+					hreflang={option}
+					lang={option}
+					title={names[option]}
+					aria-current={option === locale ? "page" : undefined}
+					data-language-switch
+					class="uppercase hover:text-black aria-[current=page]:font-semibold aria-[current=page]:text-black"
+				>
+					{option}
+				</a>
+			</>
+		))
+	}
+</nav>
+
+<script>
+	// Keep the open resume (#resume) open in the other language.
+	for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-language-switch]")) {
+		link.addEventListener("click", () => {
+			link.hash = location.hash;
+		});
+	}
+</script>

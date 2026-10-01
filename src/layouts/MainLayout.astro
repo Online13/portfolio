@@ -1,13 +1,17 @@
 ---
 import { Font } from "astro:assets";
 import Footer from "@/components/Footer.astro";
+import LanguageSwitch from "@/components/LanguageSwitch.astro";
 import Clock from "@/modules/clock/components/Clock.astro";
 import TreeShadow from "@/modules/tree-shadow/components/TreeShadow.astro";
 import PostHog from "@/services/analytics/PostHog.astro";
 import { lightTones, timeOfDay } from "@/modules/tree-shadow/lib/tree-shadow";
 import Seo, { type Props as SeoProps } from "@/services/seo/Seo.astro";
+import { LANGUAGE_TAGS, toLocale } from "@/services/i18n";
 
 type Props = SeoProps;
+
+const locale = toLocale(Astro.currentLocale);
 
 // The light's full-sun color for each local hour, for the head script below.
 const sunByHour = Array.from({ length: 24 }, (_, hour) =>
@@ -15,7 +19,7 @@ const sunByHour = Array.from({ length: 24 }, (_, hour) =>
 );
 ---
 
-<html lang="en" class="w-full">
+<html lang={LANGUAGE_TAGS[locale]} class="w-full">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -41,5 +45,6 @@ const sunByHour = Array.from({ length: 24 }, (_, hour) =>
     <Footer />
     <TreeShadow />
     <Clock />
+    <LanguageSwitch />
   </body>
 </html>
