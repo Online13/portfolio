@@ -1,8 +1,11 @@
 ---
+import { t, toLocale } from "@/services/i18n";
+
 // Emits CLOCK_CHANGE for the light to follow (see TreeShadow).
+const text = t(toLocale(Astro.currentLocale)).clock;
 const wheels = [
-	{ id: "hours", label: "Hours", count: 24 },
-	{ id: "minutes", label: "Minutes", count: 60 },
+	{ id: "hours", label: text.hours, count: 24 },
+	{ id: "minutes", label: text.minutes, count: 60 },
 ];
 ---
 
@@ -21,7 +24,7 @@ const wheels = [
 		id="clock-hint"
 		class="-mt-2 text-xs text-gray-400 peer-aria-expanded:hidden"
 	>
-		Click the time to change it
+		{text.hint}
 	</p>
 	<!-- Two wheels (hours, minutes): scroll, drag, click a number, or use the arrow keys. The centered row is the value.
 	     Their rows are built on first open, so the page's HTML isn't padded with 84 numbers. -->
@@ -49,7 +52,7 @@ const wheels = [
 		<button
 			id="clock-now"
 			type="button"
-			class="cursor-pointer underline hover:text-black">Now</button
+			class="cursor-pointer underline hover:text-black">{text.now}</button
 		>
 	</div>
 </div>

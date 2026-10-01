@@ -1,11 +1,14 @@
 ---
 // Inline text that shows the shared HoverCardLayer card above itself on hover or focus.
 // Card content goes in the "card" slot; the trigger text is the default slot.
+import { t, toLocale } from "@/services/i18n";
+
 interface Props {
 	label: string;
 }
 
 const { label } = Astro.props;
+const text = t(toLocale(Astro.currentLocale)).hoverCard;
 ---
 
 <span data-hover-card tabindex="0">
@@ -15,7 +18,7 @@ const { label } = Astro.props;
 	<template>
 		<slot name="card">
 			<span class="block font-semibold text-gray-900">{label}</span>
-			<span class="block text-gray-500">Content coming soon.</span>
+			<span class="block text-gray-500">{text.soon}</span>
 		</slot>
 	</template>
 </span>

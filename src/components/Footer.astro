@@ -1,4 +1,7 @@
 ---
+import { t, toLocale } from "@/services/i18n";
+
+const text = t(toLocale(Astro.currentLocale)).footer;
 ---
 
 <footer
@@ -9,17 +12,17 @@
 		<div class="w-full space-y-4 pt-12">
 			<div class="w-full flex flex-col">
 				<h2 class="text-2xl font-semibold">
-					Through code, simple ideas become something <u>alive</u>,
+					{text.taglineStart} <u>{text.taglineEmphasis}</u>,
 					<br />
 					<span class="text-gray-300">
-						built into software that feels clear, useful, and human.
+						{text.taglineEnd}
 					</span>
 				</h2>
 			</div>
 		</div>
 		<div class="pt-20">
 			<p class="text-sm">
-				© This site was designed and developed by @Rayane
+				{text.credit}
 			</p>
 		</div>
 	</div>

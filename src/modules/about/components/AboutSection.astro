@@ -5,64 +5,104 @@ import HoverCard from "./HoverCard.astro";
 import HoverCardLayer from "./HoverCardLayer.astro";
 import SocialNetworkLinks from "./SocialNetworkLinks.astro";
 import { getExperienceYears } from "@/services/content";
+import { t, toLocale } from "@/services/i18n";
 
+const locale = toLocale(Astro.currentLocale);
+const text = t(locale).about;
 const experienceYears = getExperienceYears();
+// The small portrait inside the first sentence.
+const profileImage = {
+	src: profile,
+	alt: text.profileAlt,
+	width: 48,
+	height: 48,
+	class: "inline shrink-0 w-6 h-6 bg-center bg-cover",
+};
 ---
 
 <div class="w-full relative group space-y-1">
 	<h1 class="text-2xl font-bold">Nekena Rayane Ratiarivelo</h1>
-	<p class="text-gray-700">Software engineer / React Native enthusiast</p>
+	<p class="text-gray-700">{text.subtitle}</p>
 </div>
 <div class="relative space-y-4 text-gray-600">
 	<HoverCardLayer />
-	<div class="max-w-130 w-full">
-		<span class="max-w-140">
-			<b>Hi</b>, I'm <Image
-				src={profile}
-				alt="profile picture"
-				width={48}
-				height={48}
-				class="inline shrink-0 w-6 h-6 bg-center bg-cover"
-			/>
-			<b>Rayane</b>. Born and based in <HoverCard label="Antananarivo, Madagascar"
-				>Antananarivo, Madagascar</HoverCard
-			>. Curious by
-			nature, I enjoy exploring how things are built and making them better.
-		</span>
-	</div>
-	<div class="max-w-130 w-full">
-		<span class="max-w-140">
-			I'm a <b>software engineer</b> with <HoverCard label="Experience"
-				>{experienceYears} years of experience</HoverCard
-			>{" "}
-			<HoverCard label="Web & mobile">building web and mobile applications</HoverCard
-			>. I focus on scalable
-			systems, clean architecture, and performance.
-		</span>
-	</div>
-	<div class="max-w-130 w-full">
-		<span class="max-w-140">
-			Recently, I've been focusing on mobile applications with <HoverCard
-				label="React Native">React Native</HoverCard
-			>. I work as a consultant at <HoverCard label="Itwedo">Itwedo</HoverCard> and build a personal project on
-			the side.
-		</span>
-	</div>
-	<div class="max-w-130 w-full">
-		<span class="max-w-140">
-			Before that, I worked on <b>digitalization projects</b> for both public and
-			private sectors, and contributed to <HoverCard label="Frontend refactoring"
-				>frontend refactoring on large-scale applications</HoverCard
-			>.
-		</span>
-	</div>
+	{
+		locale === "fr" ? (
+			<>
+				<div class="max-w-130 w-full">
+					<span class="max-w-140">
+						<b>Bonjour</b>, je suis{" "}
+						<Image {...profileImage} />
+						<b>Rayane</b>. Né et basé à{" "}
+						<HoverCard label="Antananarivo, Madagascar">Antananarivo, Madagascar</HoverCard>. Curieux de
+						nature, j'aime comprendre comment les choses sont construites et les améliorer.
+					</span>
+				</div>
+				<div class="max-w-130 w-full">
+					<span class="max-w-140">
+						Je suis <b>ingénieur logiciel</b>, avec{" "}
+						<HoverCard label="Expérience">{experienceYears} ans d'expérience</HoverCard> dans la{" "}
+						<HoverCard label="Web & mobile">création d'applications web et mobiles</HoverCard>. Je
+						m'attache aux systèmes évolutifs, à une architecture propre et à la performance.
+					</span>
+				</div>
+				<div class="max-w-130 w-full">
+					<span class="max-w-140">
+						Ces derniers temps, je me concentre sur les applications mobiles avec{" "}
+						<HoverCard label="React Native">React Native</HoverCard>. Je travaille comme consultant chez{" "}
+						<HoverCard label="Itwedo">Itwedo</HoverCard> et développe un projet personnel à côté.
+					</span>
+				</div>
+				<div class="max-w-130 w-full">
+					<span class="max-w-140">
+						Auparavant, j'ai travaillé sur des <b>projets de digitalisation</b> pour les secteurs public et
+						privé, et contribué à la{" "}
+						<HoverCard label="Refonte frontend">refonte frontend d'applications à grande échelle</HoverCard>.
+					</span>
+				</div>
+			</>
+		) : (
+			<>
+				<div class="max-w-130 w-full">
+					<span class="max-w-140">
+						<b>Hi</b>, I'm <Image {...profileImage} />
+						<b>Rayane</b>. Born and based in{" "}
+						<HoverCard label="Antananarivo, Madagascar">Antananarivo, Madagascar</HoverCard>. Curious by
+						nature, I enjoy exploring how things are built and making them better.
+					</span>
+				</div>
+				<div class="max-w-130 w-full">
+					<span class="max-w-140">
+						I'm a <b>software engineer</b> with{" "}
+						<HoverCard label="Experience">{experienceYears} years of experience</HoverCard>{" "}
+						<HoverCard label="Web & mobile">building web and mobile applications</HoverCard>. I focus on
+						scalable systems, clean architecture, and performance.
+					</span>
+				</div>
+				<div class="max-w-130 w-full">
+					<span class="max-w-140">
+						Recently, I've been focusing on mobile applications with{" "}
+						<HoverCard label="React Native">React Native</HoverCard>. I work as a consultant at{" "}
+						<HoverCard label="Itwedo">Itwedo</HoverCard> and build a personal project on the side.
+					</span>
+				</div>
+				<div class="max-w-130 w-full">
+					<span class="max-w-140">
+						Before that, I worked on <b>digitalization projects</b> for both public and private sectors, and
+						contributed to{" "}
+						<HoverCard label="Frontend refactoring">frontend refactoring on large-scale applications</HoverCard>.
+					</span>
+				</div>
+			</>
+		)
+	}
 	<p>
-		Available for <b>remote collaborations</b>.{" "}
+		{locale === "fr" ? <>Disponible pour des <b>collaborations à distance</b>.</> : <>Available for <b>remote collaborations</b>.</>}{" "}
 		<a
 			href="#resume"
 			class="group/link text-black hover:underline hover:underline-offset-4 hover:decoration-solid"
 		>
-			<span>View full resume</span>
+			<span>{text.resumeLink}</span>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 20 20"
@@ -77,7 +117,7 @@ const experienceYears = getExperienceYears();
 		</a>
 	</p>
 	<div class="grid gap-2 text-black">
-		<p class="text-gray-500">Find me on :</p>
+		<p class="text-gray-500">{text.findMe}</p>
 		<SocialNetworkLinks />
 	</div>
 </div>
