@@ -1,22 +1,52 @@
 {
-  "role": "Mobile Developer",
+  "role": {
+    "en": "Mobile Developer",
+    "fr": "Développeur Mobile"
+  },
   "company": "RELIA Consulting",
   "start": "2024-09",
   "end": "2024-12",
   "type": "Consultant",
-  "location": "Remote",
-  "summary": "Built a social network app for a RELIA client, working with the RELIA team and other freelancers.",
+  "location": {
+    "en": "Remote",
+    "fr": "À distance"
+  },
+  "summary": {
+    "en": "Built a social network app for a RELIA client, working with the RELIA team and other freelancers.",
+    "fr": "Création d'une application de réseau social pour un client de RELIA, avec l'équipe RELIA et d'autres freelances."
+  },
   "highlights": [
-    "Redesigned the existing application and set up its base architecture",
-    "Integrated the design system as shared React Native components",
-    "Reviewed the mobile team's pull requests",
-    "Shipped social features alongside the other developers on the project"
+    {
+      "en": "Redesigned the existing application and set up its base architecture",
+      "fr": "Refonte de l'application existante et mise en place de son architecture de base"
+    },
+    {
+      "en": "Integrated the design system as shared React Native components",
+      "fr": "Intégration du design system sous forme de composants React Native partagés"
+    },
+    {
+      "en": "Reviewed the mobile team's pull requests",
+      "fr": "Revue des pull requests de l'équipe mobile"
+    },
+    {
+      "en": "Shipped social features alongside the other developers on the project",
+      "fr": "Livraison de fonctionnalités sociales aux côtés des autres développeurs du projet"
+    }
   ],
-  "technologies": ["React Native", "TypeScript"],
+  "technologies": [
+    "React Native",
+    "TypeScript"
+  ],
   "projects": [
     {
-      "name": "Social network app",
-      "description": "Mobile social network for a RELIA client, rebuilt on a new architecture and design system."
+      "name": {
+        "en": "Social network app",
+        "fr": "Application de réseau social"
+      },
+      "description": {
+        "en": "Mobile social network for a RELIA client, rebuilt on a new architecture and design system.",
+        "fr": "Réseau social mobile pour un client de RELIA, reconstruit sur une nouvelle architecture et un nouveau design system."
+      }
     }
   ]
 }

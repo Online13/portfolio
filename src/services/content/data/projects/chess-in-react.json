@@ -1,10 +1,28 @@
 {
 	"title": "Chess in React",
 	"slug": "chess-in-react",
-	"description": "A simple chess game built with React.",
-	"full_description": "This is a basic chess game implemented in React, showcasing the use of functional components and state management.",
-	"technologies": ["React", "Typescript", "Tailwind"],
+	"description": {
+		"en": "A simple chess game built with React.",
+		"fr": "Un jeu d'échecs simple développé avec React."
+	},
+	"full_description": {
+		"en": "This is a basic chess game implemented in React, showcasing the use of functional components and state management.",
+		"fr": "Un jeu d'échecs basique développé en React, qui illustre l'utilisation des composants fonctionnels et de la gestion d'état."
+	},
+	"technologies": [
+		"React",
+		"Typescript",
+		"Tailwind"
+	],
 	"link": "https://github.com/Online13/Chess-in-React",
-	"role": "Creator",
-	"highlights": ["Reusable chess logic with a clear, maintainable architecture"]
+	"role": {
+		"en": "Creator",
+		"fr": "Créateur"
+	},
+	"highlights": [
+		{
+			"en": "Reusable chess logic with a clear, maintainable architecture",
+			"fr": "Logique d'échecs réutilisable, avec une architecture claire et maintenable"
+		}
+	]
 }

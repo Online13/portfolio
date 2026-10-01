@@ -1,12 +1,15 @@
 ---
 import ArticleItem from "@/modules/blog/components/ArticleItem.astro";
 import { getArticles } from "@/services/content";
+import { t, toLocale } from "@/services/i18n";
 
-const articles = await getArticles();
+const locale = toLocale(Astro.currentLocale);
+const text = t(locale).blog;
+const articles = await getArticles(locale);
 ---
 
 <div class="w-full space-y-8">
-	<h2 class="flex items-center text-lg font-semibold text-black">Blog</h2>
+	<h2 class="flex items-center text-lg font-semibold text-black">{text.heading}</h2>
 	{
 		articles.length > 0 ? (
 			<div>
@@ -25,7 +28,7 @@ const articles = await getArticles();
 				>
 					<path d="M5,22H19a3,3,0,0,0,3-3V9a3,3,0,0,0-3-3H17V4a2,2,0,0,0-2-2H9A2,2,0,0,0,7,4V6H5A3,3,0,0,0,2,9V19A3,3,0,0,0,5,22ZM9,4h6V6H9ZM4,9A1,1,0,0,1,5,8H19a1,1,0,0,1,1,1V19a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1Z" />
 				</svg>
-				<p class="text-sm">Coming soon...</p>
+				<p class="text-sm">{text.empty}</p>
 			</div>
 		)
 	}

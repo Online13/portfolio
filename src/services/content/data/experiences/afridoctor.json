@@ -1,25 +1,61 @@
 {
-  "role": "Fullstack JS Developer",
+  "role": {
+    "en": "Fullstack JS Developer",
+    "fr": "Développeur Fullstack JS"
+  },
   "company": "Afridoctor",
   "start": "2021-11",
   "end": "2022-08",
   "type": "Full-time",
   "location": "Antananarivo, Madagascar",
-  "summary": "Worked on the AfriDoctor health platform with the in-house team, on the web app and a new mobile version.",
+  "summary": {
+    "en": "Worked on the AfriDoctor health platform with the in-house team, on the web app and a new mobile version.",
+    "fr": "Travail sur la plateforme de santé AfriDoctor avec l'équipe interne, sur l'application web et une nouvelle version mobile."
+  },
   "highlights": [
-    "Maintained the site with the AfriDoctor team: bug fixes and small improvements",
-    "Built new features across the React front end and the Node.js GraphQL API",
-    "Developed a mobile version of the site in Flutter",
-    "Worked with MongoDB for the platform's data"
+    {
+      "en": "Maintained the site with the AfriDoctor team: bug fixes and small improvements",
+      "fr": "Maintenance du site avec l'équipe AfriDoctor : corrections de bugs et petites améliorations"
+    },
+    {
+      "en": "Built new features across the React front end and the Node.js GraphQL API",
+      "fr": "Développement de nouvelles fonctionnalités sur le front-end React et l'API GraphQL Node.js"
+    },
+    {
+      "en": "Developed a mobile version of the site in Flutter",
+      "fr": "Développement d'une version mobile du site en Flutter"
+    },
+    {
+      "en": "Worked with MongoDB for the platform's data",
+      "fr": "Gestion des données de la plateforme avec MongoDB"
+    }
   ],
-  "technologies": ["React", "Node.js", "GraphQL", "MongoDB", "Flutter"],
+  "technologies": [
+    "React",
+    "Node.js",
+    "GraphQL",
+    "MongoDB",
+    "Flutter"
+  ],
   "metrics": [
-    { "value": "2", "label": "clients: web and mobile" }
+    {
+      "value": "2",
+      "label": {
+        "en": "clients: web and mobile",
+        "fr": "clients : web et mobile"
+      }
+    }
   ],
   "projects": [
     {
-      "name": "Mobile version",
-      "description": "Flutter app bringing the AfriDoctor site to phones."
+      "name": {
+        "en": "Mobile version",
+        "fr": "Version mobile"
+      },
+      "description": {
+        "en": "Flutter app bringing the AfriDoctor site to phones.",
+        "fr": "Application Flutter qui amène le site AfriDoctor sur téléphone."
+      }
     }
   ]
 }

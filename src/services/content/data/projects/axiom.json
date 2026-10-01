@@ -1,14 +1,34 @@
 {
 	"title": "Axiom",
 	"slug": "axiom",
-	"description": "Mobile-first component registry to kickstart React Native apps.",
-	"full_description": "Axiom is an open source system for building mobile experiences with React Native and Expo. It goes beyond components: behaviors, patterns and blocks cover gestures, loading states and full app sections. Code is copied into your project through a registry and a CLI, so you own it. Currently in pre-alpha.",
-	"technologies": ["React Native", "Expo", "TypeScript", "Astro"],
+	"description": {
+		"en": "Mobile-first component registry to kickstart React Native apps.",
+		"fr": "Registre de composants pensé mobile pour démarrer des apps React Native."
+	},
+	"full_description": {
+		"en": "Axiom is an open source system for building mobile experiences with React Native and Expo. It goes beyond components: behaviors, patterns and blocks cover gestures, loading states and full app sections. Code is copied into your project through a registry and a CLI, so you own it. Currently in pre-alpha.",
+		"fr": "Axiom est un système open source pour créer des expériences mobiles avec React Native et Expo. Il va au-delà des composants : comportements, patterns et blocs couvrent les gestes, les états de chargement et des sections d'app complètes. Le code est copié dans votre projet via un registre et une CLI, il vous appartient donc. Actuellement en pré-alpha."
+	},
+	"technologies": [
+		"React Native",
+		"Expo",
+		"TypeScript",
+		"Astro"
+	],
 	"link": "https://github.com/Online13/axiom",
 	"active": true,
-	"role": "Creator and maintainer",
+	"role": {
+		"en": "Creator and maintainer",
+		"fr": "Créateur et mainteneur"
+	},
 	"highlights": [
-		"Open source, currently in pre-alpha",
-		"Registry and CLI that copy code into your project, so you own it"
+		{
+			"en": "Open source, currently in pre-alpha",
+			"fr": "Open source, actuellement en pré-alpha"
+		},
+		{
+			"en": "Registry and CLI that copy code into your project, so you own it",
+			"fr": "Registre et CLI qui copient le code dans votre projet, il vous appartient donc"
+		}
 	]
 }

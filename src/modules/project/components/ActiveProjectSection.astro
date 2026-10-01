@@ -1,14 +1,17 @@
 ---
 import { getActiveProjects } from "@/services/content";
 import { ArrowUpRight } from "@lucide/astro";
+import { t, toLocale } from "@/services/i18n";
 import ProjectRow from "./ProjectRow.astro";
 
-const projects = await getActiveProjects();
+const locale = toLocale(Astro.currentLocale);
+const text = t(locale).projects;
+const projects = await getActiveProjects(locale);
 ---
 
 <div class="w-full space-y-8">
 	<h2 class="flex items-center text-lg font-semibold text-black">
-		Active projects
+		{text.heading}
 	</h2>
 	{
 		projects.length > 0 ? (
@@ -43,7 +46,7 @@ const projects = await getActiveProjects();
 						fill="#1C274C"
 					/>
 				</svg>
-				<p class="text-sm">No active projects at the moment.</p>
+				<p class="text-sm">{text.empty}</p>
 			</div>
 		)
 	}
@@ -53,7 +56,7 @@ const projects = await getActiveProjects();
 		rel="noreferrer"
 		class="group inline-flex items-center gap-1 text-sm text-gray-600 hover:text-black hover:underline transition-colors"
 	>
-		More open source work on GitHub
+		{text.github}
 		<ArrowUpRight class="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
 	</a>
 </div>

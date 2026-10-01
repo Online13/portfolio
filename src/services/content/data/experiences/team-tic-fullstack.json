@@ -1,22 +1,52 @@
 {
-  "role": "Fullstack JS Developer",
+  "role": {
+    "en": "Fullstack JS Developer",
+    "fr": "Développeur Fullstack JS"
+  },
   "company": "Team Tic",
   "start": "2023-12",
   "end": "2024-04",
   "type": "Consultant",
   "location": "Antananarivo, Madagascar",
-  "summary": "Built a web application for Catholic Relief Services to manage the information contained in the PERSUAP document.",
+  "summary": {
+    "en": "Built a web application for Catholic Relief Services to manage the information contained in the PERSUAP document.",
+    "fr": "Création d'une application web pour Catholic Relief Services afin de gérer les informations du document PERSUAP."
+  },
   "highlights": [
-    "Built the React and TypeScript front end and the Express API behind it",
-    "Modelled the PERSUAP document data in SQL Server",
-    "Added search and editing screens so staff can keep the information up to date",
-    "Delivered the full stack, from database schema to UI"
+    {
+      "en": "Built the React and TypeScript front end and the Express API behind it",
+      "fr": "Développement du front-end React et TypeScript et de l'API Express associée"
+    },
+    {
+      "en": "Modelled the PERSUAP document data in SQL Server",
+      "fr": "Modélisation des données du document PERSUAP dans SQL Server"
+    },
+    {
+      "en": "Added search and editing screens so staff can keep the information up to date",
+      "fr": "Écrans de recherche et d'édition pour que l'équipe garde les informations à jour"
+    },
+    {
+      "en": "Delivered the full stack, from database schema to UI",
+      "fr": "Livraison de toute la stack, du schéma de base de données à l'interface"
+    }
   ],
-  "technologies": ["React", "TypeScript", "Express", "Node.js", "SQL Server"],
+  "technologies": [
+    "React",
+    "TypeScript",
+    "Express",
+    "Node.js",
+    "SQL Server"
+  ],
   "projects": [
     {
-      "name": "PERSUAP manager",
-      "description": "Web app for Catholic Relief Services to store, browse and update PERSUAP data instead of a static document."
+      "name": {
+        "en": "PERSUAP manager",
+        "fr": "Gestionnaire PERSUAP"
+      },
+      "description": {
+        "en": "Web app for Catholic Relief Services to store, browse and update PERSUAP data instead of a static document.",
+        "fr": "Application web permettant à Catholic Relief Services de stocker, consulter et mettre à jour les données PERSUAP au lieu d'un document statique."
+      }
     }
   ]
 }

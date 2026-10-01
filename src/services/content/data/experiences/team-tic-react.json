@@ -1,22 +1,51 @@
 {
-  "role": "React Developer",
+  "role": {
+    "en": "React Developer",
+    "fr": "Développeur React"
+  },
   "company": "Team Tic",
   "start": "2023-07",
   "end": "2024-01",
   "type": "Consultant",
   "location": "Antananarivo, Madagascar",
-  "summary": "Built a web application that digitizes management processes for prison staff at the Ministry of Justice.",
+  "summary": {
+    "en": "Built a web application that digitizes management processes for prison staff at the Ministry of Justice.",
+    "fr": "Création d'une application web qui digitalise les processus de gestion du personnel pénitentiaire au Ministère de la Justice."
+  },
   "highlights": [
-    "Created the React and TypeScript front end of the application",
-    "Turned paper-based staff management procedures into forms and dashboards",
-    "Managed application state with Zustand and styled the UI with Tailwind CSS",
-    "Trained the ministry's IT department staff to use the application"
+    {
+      "en": "Created the React and TypeScript front end of the application",
+      "fr": "Développement du front-end React et TypeScript de l'application"
+    },
+    {
+      "en": "Turned paper-based staff management procedures into forms and dashboards",
+      "fr": "Transformation des procédures papier de gestion du personnel en formulaires et tableaux de bord"
+    },
+    {
+      "en": "Managed application state with Zustand and styled the UI with Tailwind CSS",
+      "fr": "Gestion de l'état avec Zustand et interface stylée avec Tailwind CSS"
+    },
+    {
+      "en": "Trained the ministry's IT department staff to use the application",
+      "fr": "Formation du personnel du service informatique du ministère à l'utilisation de l'application"
+    }
   ],
-  "technologies": ["React", "TypeScript", "Zustand", "Tailwind CSS"],
+  "technologies": [
+    "React",
+    "TypeScript",
+    "Zustand",
+    "Tailwind CSS"
+  ],
   "projects": [
     {
-      "name": "Prison staff management",
-      "description": "Web app replacing paper processes for managing prison staff at the Ministry of Justice."
+      "name": {
+        "en": "Prison staff management",
+        "fr": "Gestion du personnel pénitentiaire"
+      },
+      "description": {
+        "en": "Web app replacing paper processes for managing prison staff at the Ministry of Justice.",
+        "fr": "Application web remplaçant les processus papier de gestion du personnel pénitentiaire au Ministère de la Justice."
+      }
     }
   ]
 }

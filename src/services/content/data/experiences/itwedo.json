@@ -1,25 +1,67 @@
 {
-  "role": "Software Engineer",
+  "role": {
+    "en": "Software Engineer",
+    "fr": "Ingénieur logiciel"
+  },
   "company": "Itwedo",
   "start": "2025-04",
   "type": "Consultant",
-  "location": "Remote",
-  "summary": "Working on a mobile super app that groups several services in one React Native client, backed by Strapi and FastAPI.",
+  "location": {
+    "en": "Remote",
+    "fr": "À distance"
+  },
+  "summary": {
+    "en": "Working on a mobile super app that groups several services in one React Native client, backed by Strapi and FastAPI.",
+    "fr": "Travail sur une super app mobile qui regroupe plusieurs services dans un seul client React Native, adossé à Strapi et FastAPI."
+  },
   "highlights": [
-    "Contribute to the development of the super app on iOS and Android",
-    "Partially redesigned the existing app screens and navigation",
-    "Add new features and improve existing ones across the mobile client and its APIs",
-    "Take part in the technical evolution of the platform: architecture choices, dependencies and code quality"
+    {
+      "en": "Contribute to the development of the super app on iOS and Android",
+      "fr": "Contribution au développement de la super app sur iOS et Android"
+    },
+    {
+      "en": "Partially redesigned the existing app screens and navigation",
+      "fr": "Refonte partielle des écrans et de la navigation de l'application existante"
+    },
+    {
+      "en": "Add new features and improve existing ones across the mobile client and its APIs",
+      "fr": "Ajout de nouvelles fonctionnalités et amélioration de l'existant, sur le client mobile et ses API"
+    },
+    {
+      "en": "Take part in the technical evolution of the platform: architecture choices, dependencies and code quality",
+      "fr": "Participation à l'évolution technique de la plateforme : choix d'architecture, dépendances et qualité du code"
+    }
   ],
-  "technologies": ["React Native", "Expo", "TypeScript", "Strapi", "FastAPI"],
+  "technologies": [
+    "React Native",
+    "Expo",
+    "TypeScript",
+    "Strapi",
+    "FastAPI"
+  ],
   "metrics": [
-    { "value": "2", "label": "platforms: iOS and Android" },
-    { "value": "3", "label": "layers: app, CMS, API" }
+    {
+      "value": "2",
+      "label": {
+        "en": "platforms: iOS and Android",
+        "fr": "plateformes : iOS et Android"
+      }
+    },
+    {
+      "value": "3",
+      "label": {
+        "en": "layers: app, CMS, API",
+        "fr": "couches : app, CMS, API"
+      }
+    }
   ],
   "projects": [
     {
       "name": "Super App",
-      "description": "Mobile app bringing several everyday services together behind one account and one interface."
+      "description": {
+        "en": "Mobile app bringing several everyday services together behind one account and one interface.",
+        "fr": "Application mobile qui réunit plusieurs services du quotidien derrière un seul compte et une seule interface."
+      }
     }
   ]
 }

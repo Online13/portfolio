@@ -1,19 +1,76 @@
 {
 	"name": "Nekena Rayane Ratiarivelo",
-	"title": "Software Engineer",
+	"title": {
+		"en": "Software Engineer",
+		"fr": "Ingénieur logiciel"
+	},
 	"location": "Antananarivo, Madagascar",
-	"about": "Software engineer with 4+ years building web and mobile applications, recently focused on React Native. I have worked on digitalization projects for public and private sectors, from design through production, and care about scalable systems, clean architecture and performance. Available for remote collaborations.",
+	"about": {
+		"en": "Software engineer with 4+ years building web and mobile applications, recently focused on React Native. I have worked on digitalization projects for public and private sectors, from design through production, and care about scalable systems, clean architecture and performance. Available for remote collaborations.",
+		"fr": "Ingénieur logiciel avec plus de 4 ans d'expérience dans la création d'applications web et mobiles, récemment centré sur React Native. J'ai travaillé sur des projets de digitalisation pour les secteurs public et privé, de la conception à la mise en production, avec une attention portée aux systèmes évolutifs, à une architecture propre et à la performance. Disponible pour des collaborations à distance."
+	},
 	"tools": [
-		{ "label": "Frontend Web", "value": "TypeScript, JavaScript, React, Next.js, Astro, Vue.js, Tailwind CSS" },
-		{ "label": "Mobile", "value": "React Native, Expo" },
-		{ "label": "Desktop", "value": "" },
-		{ "label": "Backend", "value": "Node.js, Express, FastAPI, Strapi, Python" },
-		{ "label": "Software", "value": "Figma" },
-		{ "label": "Database", "value": "PostgreSQL, MongoDB, SQL Server, SQLite, Redis, Supabase" }
+		{
+			"label": "Frontend Web",
+			"value": "TypeScript, JavaScript, React, Next.js, Astro, Vue.js, Tailwind CSS"
+		},
+		{
+			"label": "Mobile",
+			"value": "React Native, Expo"
+		},
+		{
+			"label": "Desktop",
+			"value": ""
+		},
+		{
+			"label": "Backend",
+			"value": "Node.js, Express, FastAPI, Strapi, Python"
+		},
+		{
+			"label": {
+				"en": "Software",
+				"fr": "Logiciels"
+			},
+			"value": "Figma"
+		},
+		{
+			"label": {
+				"en": "Database",
+				"fr": "Bases de données"
+			},
+			"value": "PostgreSQL, MongoDB, SQL Server, SQLite, Redis, Supabase"
+		}
 	],
 	"languages": [
-		{ "name": "Malagasy", "level": "Native" },
-		{ "name": "French", "level": "Fluent" },
-		{ "name": "English", "level": "Intermediate" }
+		{
+			"name": {
+				"en": "Malagasy",
+				"fr": "Malgache"
+			},
+			"level": {
+				"en": "Native",
+				"fr": "Langue maternelle"
+			}
+		},
+		{
+			"name": {
+				"en": "French",
+				"fr": "Français"
+			},
+			"level": {
+				"en": "Fluent",
+				"fr": "Courant"
+			}
+		},
+		{
+			"name": {
+				"en": "English",
+				"fr": "Anglais"
+			},
+			"level": {
+				"en": "Intermediate",
+				"fr": "Intermédiaire"
+			}
+		}
 	]
 }

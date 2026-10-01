@@ -1,26 +1,62 @@
 {
-  "role": "Software Engineer",
+  "role": {
+    "en": "Software Engineer",
+    "fr": "Ingénieur logiciel"
+  },
   "company": "Tenafli",
   "start": "2023-07",
   "end": "2023-10",
   "type": "Full-time",
   "location": "Antananarivo, Madagascar",
-  "summary": "Took a mobile product from user research to a working app, with a Python microservices backend.",
+  "summary": {
+    "en": "Took a mobile product from user research to a working app, with a Python microservices backend.",
+    "fr": "Conduite d'un produit mobile de la recherche utilisateur jusqu'à une application fonctionnelle, avec un backend Python en microservices."
+  },
   "highlights": [
-    "Studied the existing system to understand the target users",
-    "Wrote a technical design document to choose the mobile libraries",
-    "Built the mobile app with React Native",
-    "Set up the server side in Python with FastAPI, as microservices"
-  ],
-  "technologies": ["React Native", "TypeScript", "FastAPI", "Python", "Microservices"],
-  "projects": [
     {
-      "name": "Technical design document",
-      "description": "Comparison of mobile libraries and architecture choices that the app was then built on."
+      "en": "Studied the existing system to understand the target users",
+      "fr": "Étude du système existant pour comprendre les utilisateurs cibles"
     },
     {
-      "name": "Mobile app and backend",
-      "description": "React Native client talking to FastAPI microservices."
+      "en": "Wrote a technical design document to choose the mobile libraries",
+      "fr": "Rédaction d'un document de conception technique pour choisir les bibliothèques mobiles"
+    },
+    {
+      "en": "Built the mobile app with React Native",
+      "fr": "Développement de l'application mobile avec React Native"
+    },
+    {
+      "en": "Set up the server side in Python with FastAPI, as microservices",
+      "fr": "Mise en place du côté serveur en Python avec FastAPI, en microservices"
+    }
+  ],
+  "technologies": [
+    "React Native",
+    "TypeScript",
+    "FastAPI",
+    "Python",
+    "Microservices"
+  ],
+  "projects": [
+    {
+      "name": {
+        "en": "Technical design document",
+        "fr": "Document de conception technique"
+      },
+      "description": {
+        "en": "Comparison of mobile libraries and architecture choices that the app was then built on.",
+        "fr": "Comparatif des bibliothèques mobiles et des choix d'architecture sur lesquels l'application a ensuite été construite."
+      }
+    },
+    {
+      "name": {
+        "en": "Mobile app and backend",
+        "fr": "Application mobile et backend"
+      },
+      "description": {
+        "en": "React Native client talking to FastAPI microservices.",
+        "fr": "Client React Native communiquant avec des microservices FastAPI."
+      }
     }
   ]
 }

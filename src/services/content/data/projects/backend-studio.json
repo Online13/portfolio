@@ -1,8 +1,14 @@
 {
 	"title": "Backend Studio",
 	"slug": "backend-studio",
-	"description": "A modern backend development studio for building scalable APIs.",
-	"full_description": "Backend studio is a robust suite designed to bootstrap, test, and containerize modular microservices. Integrated with modern developer tools, schema builders, and high-performance routing templates.",
+	"description": {
+		"en": "A modern backend development studio for building scalable APIs.",
+		"fr": "Un studio de développement backend moderne pour créer des API évolutives."
+	},
+	"full_description": {
+		"en": "Backend studio is a robust suite designed to bootstrap, test, and containerize modular microservices. Integrated with modern developer tools, schema builders, and high-performance routing templates.",
+		"fr": "Backend Studio est une suite robuste pour initialiser, tester et conteneuriser des microservices modulaires. Intégré aux outils de développement modernes, avec des générateurs de schémas et des templates de routage performants."
+	},
 	"technologies": [
 		"Node.js",
 		"Express",

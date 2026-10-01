@@ -4,9 +4,12 @@ import picture from "@/assets/images/picture.png";
 import { getResume } from "@/services/content";
 import { formatMonth } from "@/modules/resume/utils/dates";
 import FluidHover from "@/components/FluidHover.astro";
+import { t, toLocale } from "@/services/i18n";
 import ResumeSection from "./ResumeSection.astro";
 
-// The resume sheet: shown in the home page's full-screen overlay, and the only thing printed from it (public/cv.pdf).
+// The resume sheet: shown in the home page's full-screen overlay, and the only thing printed from it (public/cv*.pdf).
+const locale = toLocale(Astro.currentLocale);
+const text = t(locale).resume;
 const {
 	name,
 	title,
@@ -19,7 +22,7 @@ const {
 	projects,
 	education,
 	certifications,
-} = await getResume();
+} = await getResume(locale);
 ---
 
 <svg style="display: none" aria-hidden="true">
@@ -73,11 +76,11 @@ const {
 	<hr class="my-4 border-separator" />
 
 	<div class="space-y-4">
-		<ResumeSection label="About">
+		<ResumeSection label={text.about}>
 			<p class="text-sm leading-relaxed text-body p-4">{about}</p>
 		</ResumeSection>
 
-		<ResumeSection label="Experience">
+		<ResumeSection label={text.experience}>
 			<FluidHover class="space-y-4">
 				{
 					experiences.map((role) => (
@@ -89,7 +92,7 @@ const {
 								<h3 class="text-sm font-medium">{role.role}</h3>
 								<p class="text-[13px] text-body">{role.company}</p>
 								<p class="text-[13px] text-subtle">
-									{[role.type, role.city].filter(Boolean).join(" · ")}
+									{[role.type && text.jobTypes[role.type], role.city].filter(Boolean).join(" · ")}
 								</p>
 								<p class="text-[13px] text-subtle tabular-nums">
 									{role.years}
@@ -108,7 +111,7 @@ const {
 			</FluidHover>
 		</ResumeSection>
 
-		<ResumeSection label="Side projects">
+		<ResumeSection label={text.sideProjects}>
 			<FluidHover>
 				{
 					projects.map((project) => (
@@ -139,7 +142,7 @@ const {
 			</FluidHover>
 		</ResumeSection>
 
-		<ResumeSection label="Education">
+		<ResumeSection label={text.education}>
 			<FluidHover>
 				{
 					education.map((entry) => (
@@ -161,7 +164,7 @@ const {
 			</FluidHover>
 		</ResumeSection>
 
-		<ResumeSection label="Certifications">
+		<ResumeSection label={text.certifications}>
 			<FluidHover axis="xy" class="grid grid-cols-[1fr_1fr]">
 				{
 					certifications.map((entry) => (
@@ -180,7 +183,7 @@ const {
 								<h3 class="text-sm font-medium">{entry.title}</h3>
 							)}
 							<p class="text-[13px] text-subtle">
-								{[entry.issuer, formatMonth(entry.date)]
+								{[entry.issuer, formatMonth(entry.date, locale)]
 									.filter(Boolean)
 									.join(" · ")}
 							</p>
@@ -190,7 +193,7 @@ const {
 			</FluidHover>
 		</ResumeSection>
 
-		<ResumeSection label="Languages">
+		<ResumeSection label={text.languages}>
 			<p class="text-sm text-body p-4">
 				{
 					languages
@@ -200,7 +203,7 @@ const {
 			</p>
 		</ResumeSection>
 
-		<ResumeSection label="Tools">
+		<ResumeSection label={text.tools}>
 			<FluidHover class="flex flex-col break-inside-avoid">
 				{
 					tools.map(({ label, value }) => (

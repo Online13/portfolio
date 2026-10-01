@@ -1,26 +1,69 @@
 {
-  "role": "Mobile Developer",
+  "role": {
+    "en": "Mobile Developer",
+    "fr": "Développeur Mobile"
+  },
   "company": "EAM Consulting",
   "start": "2023-02",
   "end": "2025-02",
   "type": "Consultant",
   "location": "Antananarivo, Madagascar",
-  "summary": "Built and maintained a mobile app used to inventory public infrastructure across Madagascar for the Ministry of Public Works (MTP).",
+  "summary": {
+    "en": "Built and maintained a mobile app used to inventory public infrastructure across Madagascar for the Ministry of Public Works (MTP).",
+    "fr": "Création et maintenance d'une application mobile servant à inventorier les infrastructures publiques de Madagascar pour le Ministère des Travaux Publics (MTP)."
+  },
   "highlights": [
-    "Created the React Native app used by field agents to record roads, bridges and other infrastructure",
-    "Built data-entry forms with photos and GPS position for each surveyed asset",
-    "Made the app usable offline, with data sent to the server once a connection is back",
-    "Maintained and extended the app over two years as the ministry's needs changed"
+    {
+      "en": "Created the React Native app used by field agents to record roads, bridges and other infrastructure",
+      "fr": "Création de l'application React Native utilisée par les agents de terrain pour recenser routes, ponts et autres infrastructures"
+    },
+    {
+      "en": "Built data-entry forms with photos and GPS position for each surveyed asset",
+      "fr": "Formulaires de saisie avec photos et position GPS pour chaque ouvrage recensé"
+    },
+    {
+      "en": "Made the app usable offline, with data sent to the server once a connection is back",
+      "fr": "Application utilisable hors ligne, avec envoi des données au serveur au retour de la connexion"
+    },
+    {
+      "en": "Maintained and extended the app over two years as the ministry's needs changed",
+      "fr": "Maintenance et évolution de l'application pendant deux ans, au fil des besoins du ministère"
+    }
   ],
-  "technologies": ["React Native", "TypeScript", "SQLite"],
+  "technologies": [
+    "React Native",
+    "TypeScript",
+    "SQLite"
+  ],
   "metrics": [
-    { "value": "2 yrs", "label": "on the same product" },
-    { "value": "1", "label": "ministry client" }
+    {
+      "value": {
+        "en": "2 yrs",
+        "fr": "2 ans"
+      },
+      "label": {
+        "en": "on the same product",
+        "fr": "sur le même produit"
+      }
+    },
+    {
+      "value": "1",
+      "label": {
+        "en": "ministry client",
+        "fr": "ministère client"
+      }
+    }
   ],
   "projects": [
     {
-      "name": "MTP infrastructure inventory",
-      "description": "Field app for the Ministry of Public Works to survey and catalogue the country's infrastructure."
+      "name": {
+        "en": "MTP infrastructure inventory",
+        "fr": "Inventaire des infrastructures du MTP"
+      },
+      "description": {
+        "en": "Field app for the Ministry of Public Works to survey and catalogue the country's infrastructure.",
+        "fr": "Application de terrain du Ministère des Travaux Publics pour recenser et cataloguer les infrastructures du pays."
+      }
     }
   ]
 }

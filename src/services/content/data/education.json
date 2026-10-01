@@ -1,14 +1,23 @@
 [
 	{
 		"id": "master-misa",
-		"degree": "Master in Computer Mathematics and Applied Statistics (MISA)",
-		"school": "University of Antananarivo",
+		"degree": {
+			"en": "Master in Computer Mathematics and Applied Statistics (MISA)",
+			"fr": "Master en Mathématiques Informatique et Statistique Appliquées (MISA)"
+		},
+		"school": {
+			"en": "University of Antananarivo",
+			"fr": "Université d'Antananarivo"
+		},
 		"start": 2020,
 		"end": 2023
 	},
 	{
 		"id": "delf-b2",
-		"degree": "DELF B2, French language diploma",
+		"degree": {
+			"en": "DELF B2, French language diploma",
+			"fr": "DELF B2, diplôme de langue française"
+		},
 		"school": "Alliance Française",
 		"start": 2018
 	}

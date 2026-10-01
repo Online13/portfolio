@@ -1,16 +1,34 @@
 {
-  "role": "Software Auditor & Data Engineer",
+  "role": {
+    "en": "Software Auditor & Data Engineer",
+    "fr": "Auditeur logiciel & Data Engineer"
+  },
   "company": "MNDPT",
   "start": "2022-08",
   "end": "2023-03",
   "type": "Internship",
   "location": "Antananarivo, Madagascar",
-  "summary": "Internship at the Ministry of Digital Development, Posts and Telecommunications (MNDPT), auditing EDUTIC, the system the government uses to digitize higher education.",
+  "summary": {
+    "en": "Internship at the Ministry of Digital Development, Posts and Telecommunications (MNDPT), auditing EDUTIC, the system the government uses to digitize higher education.",
+    "fr": "Stage au Ministère du Développement Numérique, des Postes et des Télécommunications (MNDPT), pour auditer EDUTIC, le système utilisé par l'État pour digitaliser l'enseignement supérieur."
+  },
   "highlights": [
-    "Audited the EDUTIC system and reported on its weak points",
-    "Cleaned the EDUTIC database: duplicates, missing values and inconsistent records",
-    "Developed a matching algorithm to link related records in the database",
-    "Worked in Python with Pandas and scikit-learn"
+    {
+      "en": "Audited the EDUTIC system and reported on its weak points",
+      "fr": "Audit du système EDUTIC et rapport sur ses points faibles"
+    },
+    {
+      "en": "Cleaned the EDUTIC database: duplicates, missing values and inconsistent records",
+      "fr": "Nettoyage de la base de données EDUTIC : doublons, valeurs manquantes et enregistrements incohérents"
+    },
+    {
+      "en": "Developed a matching algorithm to link related records in the database",
+      "fr": "Développement d'un algorithme de rapprochement pour relier les enregistrements liés dans la base"
+    },
+    {
+      "en": "Worked in Python with Pandas and scikit-learn",
+      "fr": "Travail en Python avec Pandas et scikit-learn"
+    }
   ],
   "technologies": [
     "Python",
@@ -20,12 +38,24 @@
   ],
   "projects": [
     {
-      "name": "EDUTIC audit",
-      "description": "Review of the government platform for higher education, with findings and recommendations."
+      "name": {
+        "en": "EDUTIC audit",
+        "fr": "Audit d'EDUTIC"
+      },
+      "description": {
+        "en": "Review of the government platform for higher education, with findings and recommendations.",
+        "fr": "Revue de la plateforme publique de l'enseignement supérieur, avec constats et recommandations."
+      }
     },
     {
-      "name": "Record matching",
-      "description": "Algorithm to match related records in the EDUTIC database."
+      "name": {
+        "en": "Record matching",
+        "fr": "Rapprochement d'enregistrements"
+      },
+      "description": {
+        "en": "Algorithm to match related records in the EDUTIC database.",
+        "fr": "Algorithme pour rapprocher les enregistrements liés dans la base EDUTIC."
+      }
     }
   ]
 }
