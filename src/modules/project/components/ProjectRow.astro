@@ -34,10 +34,12 @@ const {
 	class="project-item group border-b border-gray-200 cursor-pointer hover:bg-stone-500/10"
 >
 	<td
-		class="py-3 pr-4 font-semibold text-black whitespace-nowrap group-hover:pl-4 transition-all duration-300"
-		>{title}</td
+		class="py-3 pr-4 font-semibold text-black sm:whitespace-nowrap group-hover:pl-4 transition-all duration-300"
 	>
-	<td class="py-3 pr-4 text-gray-700">{description}</td>
+		{title}
+		<span class="block pt-1 font-normal text-gray-700 sm:hidden">{description}</span>
+	</td>
+	<td class="hidden py-3 pr-4 text-gray-700 sm:table-cell">{description}</td>
 	<td
 		class="py-3 text-right text-gray-400 group-hover:text-gray-700 group-hover:pr-4 transition-all duration-300"
 	>

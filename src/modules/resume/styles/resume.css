@@ -18,6 +18,13 @@
 	background: #fff;
 }
 
+/* On phones the sheet's own margins give way to the screen's. */
+@media (width < 40rem) {
+	.resume-sheet {
+		padding: 24px 0;
+	}
+}
+
 .resume-sheet,
 .resume-sheet * {
 	font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
