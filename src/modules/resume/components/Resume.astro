@@ -39,7 +39,7 @@ const {
 	</symbol>
 </svg>
 <article class="resume-sheet text-pretty text-foreground antialiased">
-	<header>
+	<header class="max-sm:px-4">
 		<div class="flex items-center gap-5">
 			<Image
 				src={picture}
@@ -73,7 +73,7 @@ const {
 		</p>
 	</header>
 
-	<hr class="my-4 border-separator" />
+	<hr class="my-4 border-separator max-sm:mx-4" />
 
 	<div class="space-y-4">
 		<ResumeSection label={text.about}>
@@ -85,7 +85,7 @@ const {
 				{
 					experiences.map((role) => (
 						<div
-							class="grid grid-cols-[150px_1fr] gap-8 break-inside-avoid p-4"
+							class="grid grid-cols-[150px_1fr] gap-8 max-sm:grid-cols-1 max-sm:gap-3 break-inside-avoid p-4"
 							data-fluid-item
 						>
 							<div>
@@ -147,7 +147,7 @@ const {
 				{
 					education.map((entry) => (
 						<div class="break-inside-avoid p-4" data-fluid-item>
-							<div class="flex items-baseline gap-4">
+							<div class="flex flex-wrap items-baseline gap-x-4">
 								<h3 class="text-sm font-medium">{entry.school}</h3>
 								<p class="text-[13px] text-subtle tabular-nums">
 									{entry.end
@@ -165,7 +165,7 @@ const {
 		</ResumeSection>
 
 		<ResumeSection label={text.certifications}>
-			<FluidHover axis="xy" class="grid grid-cols-[1fr_1fr]">
+			<FluidHover axis="xy" class="grid grid-cols-[1fr_1fr] max-sm:grid-cols-1">
 				{
 					certifications.map((entry) => (
 						<div class="break-inside-avoid p-4" data-fluid-item>

@@ -6,12 +6,12 @@ const text = t(toLocale(Astro.currentLocale)).footer;
 
 <footer
 	id="site-footer"
-	class="w-full h-[50vh] fixed bottom-0 left-0 z-10 flex justify-center py-8 bg-black text-white"
+	class="w-full min-h-[50vh] fixed bottom-0 left-0 z-10 flex justify-center px-6 py-8 sm:px-8 bg-black text-white"
 >
 	<div class="w-full max-w-160">
-		<div class="w-full space-y-4 pt-12">
+		<div class="w-full space-y-4 pt-6 sm:pt-12">
 			<div class="w-full flex flex-col">
-				<h2 class="text-2xl font-semibold">
+				<h2 class="text-xl sm:text-2xl font-semibold">
 					{text.taglineStart} <u>{text.taglineEmphasis}</u>,
 					<br />
 					<span class="text-gray-300">
@@ -20,7 +20,7 @@ const text = t(toLocale(Astro.currentLocale)).footer;
 				</h2>
 			</div>
 		</div>
-		<div class="pt-20">
+		<div class="pt-12 sm:pt-20">
 			<p class="text-sm">
 				{text.credit}
 			</p>
