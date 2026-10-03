@@ -75,17 +75,17 @@ const {
 
 	<hr class="my-4 border-separator max-sm:mx-4" />
 
-	<div class="space-y-4">
+	<div class="space-y-2">
 		<ResumeSection label={text.about}>
-			<p class="text-sm leading-relaxed text-body p-4">{about}</p>
+			<p class="text-sm leading-relaxed text-body px-4 py-2.5">{about}</p>
 		</ResumeSection>
 
 		<ResumeSection label={text.experience}>
-			<FluidHover class="space-y-4">
+			<FluidHover class="space-y-1">
 				{
 					experiences.map((role) => (
 						<div
-							class="grid grid-cols-[150px_1fr] gap-8 max-sm:grid-cols-1 max-sm:gap-3 break-inside-avoid p-4"
+							class="grid grid-cols-[150px_1fr] gap-8 max-sm:grid-cols-1 max-sm:gap-3 break-inside-avoid px-4 py-2.5"
 							data-fluid-item
 						>
 							<div>
@@ -115,7 +115,7 @@ const {
 			<FluidHover>
 				{
 					projects.map((project) => (
-						<div class="break-inside-avoid p-4" data-fluid-item>
+						<div class="break-inside-avoid px-4 py-2.5" data-fluid-item>
 							<div>
 								<a
 									href={project.link}
@@ -146,7 +146,7 @@ const {
 			<FluidHover>
 				{
 					education.map((entry) => (
-						<div class="break-inside-avoid p-4" data-fluid-item>
+						<div class="break-inside-avoid px-4 py-2.5" data-fluid-item>
 							<div class="flex flex-wrap items-baseline gap-x-4">
 								<h3 class="text-sm font-medium">{entry.school}</h3>
 								<p class="text-[13px] text-subtle tabular-nums">
@@ -168,7 +168,7 @@ const {
 			<FluidHover axis="xy" class="grid grid-cols-[1fr_1fr] max-sm:grid-cols-1">
 				{
 					certifications.map((entry) => (
-						<div class="break-inside-avoid p-4" data-fluid-item>
+						<div class="break-inside-avoid px-4 py-2.5" data-fluid-item>
 							{entry.href ? (
 								<a
 									href={entry.href}
@@ -194,7 +194,7 @@ const {
 		</ResumeSection>
 
 		<ResumeSection label={text.languages}>
-			<p class="text-sm text-body p-4">
+			<p class="text-sm text-body px-4 py-2.5">
 				{
 					languages
 						.map(({ name, level }) => `${name} (${level})`)
@@ -207,7 +207,7 @@ const {
 			<FluidHover class="flex flex-col break-inside-avoid">
 				{
 					tools.map(({ label, value }) => (
-						<div class="p-4" data-fluid-item>
+						<div class="px-4 py-2.5" data-fluid-item>
 							<h3 class="text-sm font-medium">{label}</h3>
 							<p class="text-sm leading-relaxed text-body">{value}</p>
 						</div>
@@ -218,7 +218,7 @@ const {
 	</div>
 
 	<footer
-		class="mt-12 border-t border-separator pt-5 text-center text-[11px] tracking-wide text-subtle"
+		class="mt-8 border-t border-separator pt-5 text-center text-[11px] tracking-wide text-subtle"
 	>
 		{name} · nekena-rayane.com · rratiarivelo@gmail.com
 	</footer>
