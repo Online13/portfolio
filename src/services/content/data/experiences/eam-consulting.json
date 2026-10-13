@@ -9,60 +9,27 @@
   "type": "Consultant",
   "location": "Antananarivo, Madagascar",
   "summary": {
-    "en": "Built and maintained a mobile app used to inventory public infrastructure across Madagascar for the Ministry of Public Works (MTP).",
-    "fr": "Création et maintenance d'une application mobile servant à inventorier les infrastructures publiques de Madagascar pour le Ministère des Travaux Publics (MTP)."
+    "en": "Built a mobile app to inventory infrastructure in Madagascar for the Ministry of Public Works (MTP).",
+    "fr": "Création d'une application mobile pour inventorier les infrastructures de Madagascar pour le Ministère des Travaux Publics (MTP)."
   },
   "highlights": [
     {
-      "en": "Created the React Native app used by field agents to record roads, bridges and other infrastructure",
-      "fr": "Création de l'application React Native utilisée par les agents de terrain pour recenser routes, ponts et autres infrastructures"
-    },
-    {
-      "en": "Built data-entry forms with photos and GPS position for each surveyed asset",
-      "fr": "Formulaires de saisie avec photos et position GPS pour chaque ouvrage recensé"
-    },
-    {
-      "en": "Made the app usable offline, with data sent to the server once a connection is back",
-      "fr": "Application utilisable hors ligne, avec envoi des données au serveur au retour de la connexion"
-    },
-    {
-      "en": "Maintained and extended the app over two years as the ministry's needs changed",
-      "fr": "Maintenance et évolution de l'application pendant deux ans, au fil des besoins du ministère"
+      "en": "Created a React Native app to inventory infrastructure in Madagascar for the Ministry of Public Works (MTP)",
+      "fr": "Création d'une application React Native pour inventorier les infrastructures de Madagascar pour le Ministère des Travaux Publics (MTP)"
     }
   ],
   "technologies": [
-    "React Native",
-    "TypeScript",
-    "SQLite"
-  ],
-  "metrics": [
-    {
-      "value": {
-        "en": "2 yrs",
-        "fr": "2 ans"
-      },
-      "label": {
-        "en": "on the same product",
-        "fr": "sur le même produit"
-      }
-    },
-    {
-      "value": "1",
-      "label": {
-        "en": "ministry client",
-        "fr": "ministère client"
-      }
-    }
+    "React Native"
   ],
   "projects": [
     {
       "name": {
-        "en": "MTP infrastructure inventory",
-        "fr": "Inventaire des infrastructures du MTP"
+        "en": "Creation of an infrastructure inventory mobile app",
+        "fr": "Création d'une application mobile d'inventaire des infrastructures"
       },
       "description": {
-        "en": "Field app for the Ministry of Public Works to survey and catalogue the country's infrastructure.",
-        "fr": "Application de terrain du Ministère des Travaux Publics pour recenser et cataloguer les infrastructures du pays."
+        "en": "For the Ministry of Public Works (MTP), in Madagascar.",
+        "fr": "Pour le Ministère des Travaux Publics (MTP), à Madagascar."
       }
     }
   ]

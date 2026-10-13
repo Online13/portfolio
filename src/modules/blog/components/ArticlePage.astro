@@ -1,0 +1,44 @@
+---
+import "@/styles/global.css";
+import MainLayout from "@/layouts/MainLayout.astro";
+import ProFooter from "@/modules/pro/components/ProFooter.astro";
+import SiteHeader from "@/modules/pro/components/SiteHeader.astro";
+import { t, toLocale } from "@/services/i18n";
+import { formatArticleDate, type Article } from "../lib/blog";
+
+type Props = { article: Article };
+
+const { article } = Astro.props;
+const locale = toLocale(Astro.currentLocale);
+const text = t(locale).blog;
+const { Content } = await article.render();
+---
+
+<MainLayout title={article.title} description={article.description} noindex={article.draft}>
+	<div class="pro min-h-screen bg-neutral-900 text-neutral-200">
+		<!-- As on the home page: an opaque sheet over the footer, which shows once scrolled past it. -->
+		<div class="relative z-10 border-b border-white/10 bg-neutral-900">
+		<SiteHeader />
+
+		<article class="pb-20 md:pb-28">
+			<div class="pro-container space-y-6 py-16 md:py-20">
+				<h1 class="max-w-200 text-3xl font-semibold leading-[1.12] tracking-tight md:text-5xl">
+					<span class="block text-neutral-400">{text.categories[article.category].kicker}</span>
+					<span class="block">{article.title}</span>
+				</h1>
+				<p class="max-w-140 text-lg text-neutral-400">{article.description}</p>
+				<p class="flex items-center gap-3 text-sm text-neutral-400">
+					<time datetime={article.date.toISOString()}>{formatArticleDate(article.date, locale)}</time>
+					{article.draft && <span class="rounded-full border border-white/15 px-2.5 py-0.5 text-xs text-neutral-300">{text.draft}</span>}
+				</p>
+			</div>
+			<div class="border-t border-white/10 pt-12">
+				<div class="pro-container">
+					<div class="pro-prose max-w-160"><Content /></div>
+				</div>
+			</div>
+		</article>
+		</div>
+		<ProFooter />
+	</div>
+</MainLayout>

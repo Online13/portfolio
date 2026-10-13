@@ -8,15 +8,15 @@ const text = t(locale).notFound;
 ---
 
 <MainLayout title={text.title} noindex>
-	<div class="w-full min-h-screen flex justify-center">
-		<div class="w-full max-w-160 pt-30 pb-12 space-y-4">
-			<div class="space-y-1">
-				<h1 class="text-2xl font-bold">404</h1>
-				<p class="text-gray-700">{text.message}</p>
-			</div>
-			<p class="text-gray-600 max-w-130">
+	<div class="pro min-h-screen bg-neutral-900 text-neutral-200">
+		<div class="pro-container space-y-6 py-16 md:py-20">
+			<h1 class="text-3xl font-semibold leading-[1.12] tracking-tight md:text-5xl">
+				<span class="block text-neutral-400">404</span>
+				<span class="block">{text.message}</span>
+			</h1>
+			<p class="max-w-140 text-lg text-neutral-400">
 				{text.hint}{" "}
-				<a href={homePath(locale)} class="trigger text-gray-900 font-semibold">{text.back}</a>.
+				<a href={homePath(locale)} class="text-neutral-200 underline underline-offset-4 transition-colors hover:text-white">{text.back}</a>.
 			</p>
 		</div>
 	</div>

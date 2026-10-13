@@ -1,0 +1,79 @@
+---
+import FluidHover from "@/components/FluidHover.astro";
+import LanguageSwitch from "@/components/LanguageSwitch.astro";
+import { aboutPath } from "@/modules/about/lib/about";
+import { blogPath } from "@/modules/blog/lib/blog";
+import { homePath, t, toLocale } from "@/services/i18n";
+
+const locale = toLocale(Astro.currentLocale);
+const { nav } = t(locale).pro;
+const home = homePath(locale);
+const isHome = Astro.url.pathname === home;
+const links = [
+	{ href: aboutPath(locale), label: nav.about },
+	{ href: blogPath(locale), label: nav.blog },
+];
+---
+
+<!--
+	The same header on every page. Scrolled, it draws a rule under itself. On the home page it shows the name only
+	once the hero's has gone under it; elsewhere the name is always there, and leads home.
+-->
+<header
+	data-pro-header
+	data-named={isHome ? undefined : ""}
+	class="group sticky top-0 z-30 border-b border-transparent bg-neutral-900/70 backdrop-blur-md transition-colors duration-300 data-scrolled:border-white/10"
+>
+	<div class="pro-container flex items-center justify-between gap-3 py-4">
+		<!-- The name comes up from under the header's edge, as if the hero's had risen into it. -->
+		<a href={isHome ? "#" : home} data-pro-header-name inert={isHome} class="overflow-hidden font-semibold tracking-tight whitespace-nowrap">
+			<span
+				class="block translate-y-full opacity-0 transition duration-500 ease-spring group-data-named:translate-y-0 group-data-named:opacity-100 motion-reduce:transition-none"
+			>
+				Nekena Rayane
+			</span>
+		</a>
+		<nav class="flex items-center gap-3 text-sm">
+			<FluidHover axis="x" class="flex [--fluid-radius:9999px]">
+				{
+					links.map(({ href, label }) => (
+						<a
+							href={href}
+							data-fluid-item
+							aria-current={Astro.url.pathname.startsWith(href) ? "page" : undefined}
+							class="px-3 py-1.5 transition-colors aria-[current=page]:text-white data-fluid-active:text-white"
+						>
+							{label}
+						</a>
+					))
+				}
+			</FluidHover>
+			<a
+				href={`${home}#pro-contact`}
+				class="hidden rounded-full bg-neutral-200 px-4 py-1.5 font-medium text-neutral-900 transition duration-200 hover:bg-white active:scale-95 sm:block"
+			>
+				{nav.contact}
+			</a>
+			<LanguageSwitch class="ml-2" />
+		</nav>
+	</div>
+</header>
+
+<script>
+	const header = document.querySelector<HTMLElement>("[data-pro-header]")!;
+	const headerName = header.querySelector<HTMLElement>("[data-pro-header-name]")!;
+	// Only the home page has a hero carrying the name.
+	const heroName = document.querySelector<HTMLElement>("[data-pro-hero-name]");
+
+	function syncHeader() {
+		header.toggleAttribute("data-scrolled", window.scrollY > 0);
+		if (!heroName) return;
+		const named = heroName.getBoundingClientRect().bottom < header.getBoundingClientRect().bottom;
+		header.toggleAttribute("data-named", named);
+		// Hidden, the name is out of reach of the keyboard and of screen readers.
+		headerName.inert = !named;
+	}
+	syncHeader();
+	window.addEventListener("scroll", syncHeader, { passive: true });
+	window.addEventListener("resize", syncHeader);
+</script>

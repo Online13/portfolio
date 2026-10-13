@@ -1,22 +1,13 @@
 ---
 import { Font } from "astro:assets";
-import Footer from "@/components/Footer.astro";
-import LanguageSwitch from "@/components/LanguageSwitch.astro";
-import Clock from "@/modules/clock/components/Clock.astro";
-import TreeShadow from "@/modules/tree-shadow/components/TreeShadow.astro";
+import ResumeDialog from "@/modules/resume/components/ResumeDialog.astro";
 import PostHog from "@/services/analytics/PostHog.astro";
-import { lightTones, timeOfDay } from "@/modules/tree-shadow/lib/tree-shadow";
 import Seo, { type Props as SeoProps } from "@/services/seo/Seo.astro";
 import { LANGUAGE_TAGS, toLocale } from "@/services/i18n";
 
 type Props = SeoProps;
 
 const locale = toLocale(Astro.currentLocale);
-
-// The light's full-sun color for each local hour, for the head script below.
-const sunByHour = Array.from({ length: 24 }, (_, hour) =>
-  lightTones[timeOfDay(hour)].sun.map((c) => Math.round(c * 255)).join(" "),
-);
 ---
 
 <html lang={LANGUAGE_TAGS[locale]} class="w-full">
@@ -25,26 +16,19 @@ const sunByHour = Array.from({ length: 24 }, (_, hour) =>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <Seo {...Astro.props} />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#171717" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <Font cssVariable="--font-cabin" preload={[{ style: "normal" }]} />
-    <Font cssVariable="--font-inter" />
+    <Font cssVariable="--font-inter" preload />
 
     <PostHog />
-    <!-- The room is lit from the first paint: TreeShadow's canvas shows this color until WebGL draws over it. -->
-    <script is:inline define:vars={{ sunByHour }}>
-      document.documentElement.style.setProperty("--light-sun", `rgb(${sunByHour[new Date().getHours()]})`);
-    </script>
   </head>
-  <body class="w-full">
-    <!-- An opaque sheet over the fixed footer, which shows once scrolled past it (see Footer). -->
-    <main id="page" class="relative z-20 bg-white">
+  <body class="w-full bg-neutral-900">
+    <!-- The resume's print styles keep only what is inside #page (see resume.css). -->
+    <main id="page" class="relative min-h-screen">
       <slot />
+      <!-- Any link to #resume opens it over the page it is on. -->
+      <ResumeDialog />
     </main>
-    <Footer />
-    <TreeShadow />
-    <Clock />
-    <LanguageSwitch />
   </body>
 </html>

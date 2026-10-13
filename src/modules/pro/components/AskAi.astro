@@ -1,0 +1,84 @@
+---
+import { t, toLocale } from "@/services/i18n";
+import ChatgptLogo from "../icons/chatgpt.svg";
+import ClaudeLogo from "../icons/claude.svg";
+import GeminiLogo from "../icons/gemini.svg";
+import MistralLogo from "../icons/mistral.svg";
+
+const text = t(toLocale(Astro.currentLocale)).pro.ai;
+const query = encodeURIComponent(`${text.prompt} ${Astro.site}`);
+// Each assistant opens with the question already typed. Gemini's own app takes no question from a link, so it goes through Google's AI Mode.
+const assistants = [
+	{ name: "ChatGPT", href: `https://chatgpt.com/?q=${query}`, Logo: ChatgptLogo },
+	{ name: "Claude", href: `https://claude.ai/new?q=${query}`, Logo: ClaudeLogo },
+	{ name: "Mistral", href: `https://chat.mistral.ai/chat?q=${query}`, Logo: MistralLogo },
+	{ name: "Gemini", href: `https://www.google.com/search?udm=50&q=${query}`, Logo: GeminiLogo },
+];
+---
+
+<div data-ask-ai class="group relative inline-block">
+	<button
+		type="button"
+		aria-expanded="false"
+		aria-controls="ask-ai-assistants"
+		class="cursor-pointer rounded-full border border-white/20 px-5 py-2.5 text-sm font-medium transition duration-200 hover:border-white hover:bg-white/5 active:scale-95"
+	>
+		{text.ask}
+	</button>
+	<ul
+		id="ask-ai-assistants"
+		class="invisible absolute top-full left-0 z-10 mt-3 flex -translate-y-2 gap-2 opacity-0 transition-all duration-200 group-data-open:visible group-data-open:translate-y-0 group-data-open:opacity-100"
+	>
+		{
+			assistants.map(({ name, href, Logo }, index) => (
+				<li>
+					<a
+						href={href}
+						target="_blank"
+						rel="noopener"
+						aria-label={name}
+						title={name}
+						data-assistant={name}
+						style={`--i: ${index}`}
+						class="flex size-11 items-center justify-center rounded-full bg-white text-black shadow-lg transition-transform duration-200 hover:scale-110"
+					>
+						<Logo aria-hidden="true" class="size-5" />
+					</a>
+				</li>
+			))
+		}
+	</ul>
+</div>
+
+<style>
+	@keyframes ask-ai-float {
+		50% {
+			translate: 0 4px;
+		}
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		a {
+			animation: ask-ai-float 3s ease-in-out infinite;
+			animation-delay: calc(var(--i) * -0.6s);
+		}
+	}
+</style>
+
+<script>
+	const root = document.querySelector<HTMLElement>("[data-ask-ai]")!;
+	const button = root.querySelector("button")!;
+
+	function setOpen(open: boolean) {
+		root.toggleAttribute("data-open", open);
+		button.setAttribute("aria-expanded", String(open));
+	}
+
+	button.addEventListener("click", () => setOpen(!root.hasAttribute("data-open")));
+	document.addEventListener("click", (event) => {
+		if (!root.contains(event.target as Node)) setOpen(false);
+	});
+	document.addEventListener("keydown", (event) => {
+		if (event.key === "Escape") setOpen(false);
+	});
+</script>

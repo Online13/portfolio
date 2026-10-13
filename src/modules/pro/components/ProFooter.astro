@@ -1,0 +1,44 @@
+---
+import FluidHover from "@/components/FluidHover.astro";
+import { aboutPath } from "@/modules/about/lib/about";
+import { blogPath } from "@/modules/blog/lib/blog";
+import { homePath, t, toLocale } from "@/services/i18n";
+
+const locale = toLocale(Astro.currentLocale);
+const text = t(locale);
+const { nav, footer } = text.pro;
+// The sections are on the home page; the footer is also shown elsewhere.
+const home = homePath(locale);
+const links = [
+	{ href: `${home}#pro-services`, label: nav.services },
+	{ href: `${home}#pro-work`, label: nav.work },
+	{ href: aboutPath(locale), label: nav.about },
+	{ href: blogPath(locale), label: nav.blog },
+	{ href: `${home}#pro-contact`, label: nav.contact },
+	{ href: "#resume", label: text.resume.label },
+];
+---
+
+<!-- Stuck to the bottom of the screen, under the sheet of sections (see ProPage). -->
+<footer class="sticky bottom-0 pt-20 pb-8">
+<div class="pro-container space-y-16">
+	<div class="flex flex-wrap justify-between gap-12">
+		<p class="text-xl font-semibold tracking-tight">Nekena Rayane</p>
+		<nav aria-label={footer.navigate} class="space-y-3 text-sm">
+			<p class="text-xs uppercase tracking-wide text-neutral-500">{footer.navigate}</p>
+			<FluidHover class="-mx-2">
+			<ul>
+				{links.map(({ href, label }) => (
+					<li>
+						<a href={href} data-fluid-item class="block px-2 py-1 text-neutral-400 transition-colors data-fluid-active:text-white">
+							{label}
+						</a>
+					</li>
+				))}
+			</ul>
+			</FluidHover>
+		</nav>
+	</div>
+	<p class="text-xs text-neutral-500">© {new Date().getFullYear()} Nekena Rayane Ratiarivelo. {footer.rights}</p>
+</div>
+</footer>

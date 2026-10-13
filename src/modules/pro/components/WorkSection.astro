@@ -1,0 +1,214 @@
+---
+import FluidHover from "@/components/FluidHover.astro";
+import { ArrowRight, Plus } from "@lucide/astro";
+import { t, toLocale } from "@/services/i18n";
+import { getClientWork, getPersonalWork, workPath } from "../lib/work";
+import SectionHeading from "./SectionHeading.astro";
+import Tags from "./Tags.astro";
+import WorkImage from "./WorkImage.astro";
+
+const locale = toLocale(Astro.currentLocale);
+const text = t(locale).pro.work;
+// What was built for clients: each role's projects, newest role first.
+const clientWork = (await getClientWork(locale)).flatMap((work) =>
+	work.projects.map((project, i) => ({ ...project, work, panel: `pro-work-${work.slug}-${i}` })),
+);
+const personalWork = await getPersonalWork(locale);
+const row = "group cursor-pointer border-t border-white/10 py-6";
+const rowGrid = "pro-container grid gap-3 md:grid-cols-12 md:gap-6";
+const more = "inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-1.5 text-sm font-medium transition duration-200 hover:border-white hover:bg-white/5 active:scale-95";
+---
+
+<section id="pro-work" class="scroll-mt-16 space-y-12 pt-20 md:pt-28">
+	<div class="pro-container">
+		<SectionHeading kicker={text.kicker} title={text.title} />
+	</div>
+	<FluidHover class="[--fluid-radius:0]">
+	<ul class="border-b border-white/10">
+		{
+			clientWork.map(({ name, description, work, panel }) => (
+				<li data-fluid-item class={row}>
+					<div class={rowGrid}>
+					<p class="text-sm text-neutral-400 md:col-span-3">
+						<span class="block text-neutral-200">{work.title}</span>
+						{work.years}
+					</p>
+					<div class="space-y-1 md:col-span-6">
+						<h3 class="text-xl font-semibold tracking-tight">
+							<!-- A click anywhere on the row lands here (see FluidHover). -->
+							<button type="button" data-work-toggle aria-expanded="false" aria-controls={panel} class="inline-flex cursor-pointer items-center gap-2 text-left">
+								{name}
+								<Plus class="size-4 shrink-0 text-neutral-400 transition duration-300 group-data-open:rotate-45 group-data-fluid-active:text-white" />
+							</button>
+						</h3>
+						<p class="text-neutral-400">{description}</p>
+					</div>
+					<div class="md:col-span-3">
+						<Tags tags={work.technologies} />
+					</div>
+					</div>
+					<!-- Opened, the row grows to show the role behind the project. -->
+					<div
+						id={panel}
+						inert
+						data-fluid-inert
+						class="grid cursor-auto grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-spring group-data-open:grid-rows-[1fr] motion-reduce:transition-none"
+					>
+						<div class="overflow-hidden">
+							<div class:list={[rowGrid, "pt-6"]}>
+								<div class="space-y-5 md:col-span-6 md:col-start-4">
+									<WorkImage image={work.images[0]} title={work.title} class="aspect-16/10 w-full rounded-lg" />
+									{work.summary && <p class="text-neutral-300">{work.summary}</p>}
+									<ul class="list-disc space-y-1 pl-5 text-neutral-400 marker:text-neutral-600">
+										{work.highlights.slice(0, 3).map((highlight) => <li>{highlight}</li>)}
+									</ul>
+									<a href={workPath(locale, work.slug)} class={more}>
+										{text.more}
+										<ArrowRight class="size-4" />
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</li>
+			))
+		}
+	</ul>
+	</FluidHover>
+</section>
+
+<section class="space-y-12 pt-20 md:pt-28">
+	<div class="pro-container">
+		<SectionHeading kicker={text.personalKicker} title={text.personalTitle} />
+	</div>
+	<FluidHover class="[--fluid-radius:0]">
+	<ul data-work-previews class="border-b border-white/10">
+		{
+			personalWork.map(({ slug, title, summary, technologies }) => (
+				<li data-fluid-item data-preview={slug} class={row}>
+					<div class={rowGrid}>
+					<h3 class="text-xl font-semibold tracking-tight md:col-span-3">
+						<a href={workPath(locale, slug)} class="inline-flex items-center gap-1">
+							{title}
+							<ArrowRight class="size-4 text-neutral-400 transition group-data-fluid-active:translate-x-0.5 group-data-fluid-active:text-white" />
+						</a>
+					</h3>
+					<p class="text-neutral-400 md:col-span-6">{summary}</p>
+					<div class="md:col-span-3">
+						<Tags tags={technologies} />
+					</div>
+					</div>
+				</li>
+			))
+		}
+	</ul>
+	</FluidHover>
+	<!-- One card for the whole list: it follows the pointer and plays the screenshots of the project under it. -->
+	<div data-work-preview aria-hidden="true" class="work-preview fixed top-0 left-0 z-40 aspect-16/10 w-80 overflow-hidden rounded-lg border border-white/10 bg-neutral-800 shadow-2xl shadow-black/50">
+		{
+			personalWork.map(({ slug, title, images }) => (
+				<div data-preview-of={slug} hidden class="absolute inset-0">
+					{(images.length ? images : [undefined]).map((image, i) => (
+						<WorkImage
+							image={image}
+							title={title}
+							data-shown={i === 0 ? "" : undefined}
+							class="absolute inset-0 size-full opacity-0 transition-opacity duration-500 data-shown:opacity-100"
+						/>
+					))}
+				</div>
+			))
+		}
+	</div>
+</section>
+
+<style>
+	.work-preview {
+		opacity: 0;
+		scale: 0.96;
+		pointer-events: none;
+		transition:
+			opacity 150ms ease-out,
+			scale 150ms ease-out;
+	}
+
+	/* Shown, it trails the pointer a little instead of sticking to it. */
+	.work-preview.is-open {
+		opacity: 1;
+		scale: 1;
+		transition:
+			opacity 150ms ease-out,
+			scale 300ms var(--ease-spring),
+			translate 200ms ease-out;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.work-preview,
+		.work-preview.is-open {
+			scale: 1;
+			transition: opacity 150ms linear;
+		}
+	}
+</style>
+
+<script>
+	for (const toggle of document.querySelectorAll<HTMLElement>("[data-work-toggle]")) {
+		const panel = document.getElementById(toggle.getAttribute("aria-controls")!)!;
+		toggle.addEventListener("click", () => {
+			const open = toggle.getAttribute("aria-expanded") !== "true";
+			toggle.setAttribute("aria-expanded", `${open}`);
+			toggle.closest("li")!.toggleAttribute("data-open", open);
+			// Closed, what the panel holds is out of reach of the keyboard and of screen readers.
+			panel.inert = !open;
+		});
+	}
+
+	const SLIDE_DURATION = 1800;
+	// The card's offset from the pointer, and the room it keeps from the screen's edges.
+	const OFFSET = 24;
+	const MARGIN = 16;
+
+	const list = document.querySelector<HTMLElement>("[data-work-previews]")!;
+	const preview = document.querySelector<HTMLElement>("[data-work-preview]")!;
+	const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+	// The project in the card. It stays there while the card fades out.
+	let stack: HTMLElement | null = null;
+	let slideTimer: number | undefined;
+
+	function show(slug: string | undefined) {
+		const next = slug ? preview.querySelector<HTMLElement>(`[data-preview-of="${slug}"]`) : null;
+		const open = preview.classList.contains("is-open");
+		if (!next) {
+			clearInterval(slideTimer);
+			preview.classList.remove("is-open");
+			return;
+		}
+		if (next === stack && open) return;
+
+		clearInterval(slideTimer);
+		if (stack) stack.hidden = true;
+		stack = next;
+		stack.hidden = false;
+		const slides = [...stack.children];
+		let current = 0;
+		slides.forEach((slide, i) => slide.toggleAttribute("data-shown", i === 0));
+		if (slides.length > 1 && !reduceMotion.matches) {
+			slideTimer = window.setInterval(() => {
+				slides[current].removeAttribute("data-shown");
+				current = (current + 1) % slides.length;
+				slides[current].setAttribute("data-shown", "");
+			}, SLIDE_DURATION);
+		}
+		if (!open) preview.offsetWidth; // commit the card's place before it starts trailing the pointer
+		preview.classList.add("is-open");
+	}
+
+	list.addEventListener("pointermove", (event) => {
+		if (event.pointerType === "touch") return;
+		const x = Math.min(event.clientX + OFFSET, window.innerWidth - preview.offsetWidth - MARGIN);
+		const y = Math.min(event.clientY + OFFSET, window.innerHeight - preview.offsetHeight - MARGIN);
+		preview.style.translate = `${x}px ${y}px`;
+		show((event.target as Element).closest<HTMLElement>("[data-preview]")?.dataset.preview);
+	});
+	list.addEventListener("pointerleave", () => show(undefined));
+</script>

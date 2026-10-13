@@ -14,20 +14,8 @@
   },
   "highlights": [
     {
-      "en": "Built the React and TypeScript front end and the Express API behind it",
-      "fr": "Développement du front-end React et TypeScript et de l'API Express associée"
-    },
-    {
-      "en": "Modelled the PERSUAP document data in SQL Server",
-      "fr": "Modélisation des données du document PERSUAP dans SQL Server"
-    },
-    {
-      "en": "Added search and editing screens so staff can keep the information up to date",
-      "fr": "Écrans de recherche et d'édition pour que l'équipe garde les informations à jour"
-    },
-    {
-      "en": "Delivered the full stack, from database schema to UI",
-      "fr": "Livraison de toute la stack, du schéma de base de données à l'interface"
+      "en": "Created a web application to manage the information contained in the PERSUAP document for Catholic Relief Services",
+      "fr": "Création d'une application web pour gérer les informations du document PERSUAP pour Catholic Relief Services"
     }
   ],
   "technologies": [
@@ -40,12 +28,12 @@
   "projects": [
     {
       "name": {
-        "en": "PERSUAP manager",
-        "fr": "Gestionnaire PERSUAP"
+        "en": "Creation of a web app for Catholic Relief Services",
+        "fr": "Création d'une application web pour Catholic Relief Services"
       },
       "description": {
-        "en": "Web app for Catholic Relief Services to store, browse and update PERSUAP data instead of a static document.",
-        "fr": "Application web permettant à Catholic Relief Services de stocker, consulter et mettre à jour les données PERSUAP au lieu d'un document statique."
+        "en": "Manages the information of the PERSUAP document.",
+        "fr": "Gère les informations du document PERSUAP."
       }
     }
   ]

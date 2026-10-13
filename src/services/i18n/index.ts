@@ -11,6 +11,12 @@ export const toLocale = (value: string | undefined): Locale =>
 // The home page of each language.
 export const homePath = (locale: Locale) => (locale === DEFAULT_LOCALE ? "/" : `/${locale}/`);
 
+// The same page in another language: /work/axiom and /fr/work/axiom.
+export const localizePath = (pathname: string, locale: Locale) => {
+	const path = pathname.replace(new RegExp(`^/(${LOCALES.join("|")})(?=/|$)`), "") || "/";
+	return locale === DEFAULT_LOCALE ? path : `/${locale}${path}`;
+};
+
 // BCP 47 tags, for <html lang>, dates and og:locale.
 export const LANGUAGE_TAGS: Record<Locale, string> = { en: "en-US", fr: "fr-FR" };
 

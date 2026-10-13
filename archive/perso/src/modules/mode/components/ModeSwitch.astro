@@ -1,0 +1,129 @@
+---
+import { MODE_PARAM, MODES } from "@/modules/mode/lib/mode";
+import { t, toLocale } from "@/services/i18n";
+
+const { label, names } = t(toLocale(Astro.currentLocale)).mode;
+
+// Two broken rings, drawn in a 200 by 200 box around the center. Each mode owns one arc of each ring.
+const RINGS = [
+	{ radius: 40, gap: 30 },
+	{ radius: 96, gap: 12 },
+];
+const LABEL_RADIUS = 68;
+const sweep = 360 / MODES.length;
+
+// Angles in degrees, clockwise from the top.
+const point = (radius: number, angle: number) => {
+	const radians = ((angle - 90) * Math.PI) / 180;
+	return `${(radius * Math.cos(radians)).toFixed(2)} ${(radius * Math.sin(radians)).toFixed(2)}`;
+};
+const arc = (radius: number, from: number, to: number) =>
+	`M ${point(radius, from)} A ${radius} ${radius} 0 0 1 ${point(radius, to)}`;
+
+const sectors = MODES.map((mode, i) => {
+	const from = (i - 0.5) * sweep;
+	const to = (i + 0.5) * sweep;
+	const [inner, outer] = RINGS.map((ring) => ring.radius);
+	const [x, y] = point(LABEL_RADIUS, i * sweep).split(" ");
+	return {
+		mode,
+		x,
+		y,
+		arcs: RINGS.map(({ radius, gap }) => arc(radius, from + gap / 2, to - gap / 2)),
+		// The whole slice between the rings takes the pointer, gaps included.
+		area: `${arc(outer, from, to)} L ${point(inner, to)} A ${inner} ${inner} 0 0 0 ${point(inner, from)} Z`,
+	};
+});
+---
+
+<!--
+	Closed, a small mark at the bottom of the screen; pointing at it (or focusing it) opens the rings to pick a mode.
+	White blended by difference, so it reads on any mode's background. Outside #page, so it is never printed.
+-->
+<nav
+	aria-label={label}
+	class="group fixed bottom-4 left-1/2 z-40 size-56 -translate-x-1/2 origin-bottom scale-20 text-white mix-blend-difference transition-transform duration-500 ease-spring hover:scale-100 focus-within:scale-100 motion-reduce:transition-none"
+>
+	<svg viewBox="-100 -100 200 200" class="size-full overflow-visible">
+		{
+			sectors.map(({ mode, x, y, arcs, area }) => (
+				<a
+					href={`?${MODE_PARAM}=${mode}`}
+					data-mode-link={mode}
+					class="pointer-events-none group-hover:pointer-events-auto"
+				>
+					<path d={area} fill="transparent" />
+					{arcs.map((d) => (
+						<path d={d} class="arc" />
+					))}
+					<text
+						x={x}
+						y={y}
+						class="opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
+					>
+						{names[mode]}
+					</text>
+				</a>
+			))
+		}
+	</svg>
+</nav>
+
+<style>
+	a {
+		outline: none;
+	}
+
+	/* Kept at their width while the rings scale. */
+	.arc {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.25;
+		stroke-linecap: round;
+		vector-effect: non-scaling-stroke;
+		transition: stroke-width 150ms ease-out;
+	}
+
+	a:is(:hover, :focus-visible) .arc {
+		stroke-width: 2.5;
+	}
+
+	a[aria-current] .arc {
+		stroke-width: 4;
+	}
+
+	text {
+		fill: currentColor;
+		font-size: 11px;
+		text-anchor: middle;
+		dominant-baseline: central;
+	}
+
+	a[aria-current] text {
+		font-weight: 700;
+	}
+</style>
+
+<script>
+	import { currentMode, MODE_CHANGE, setMode, toMode } from "@/modules/mode/lib/mode";
+
+	const links = document.querySelectorAll<SVGAElement>("[data-mode-link]");
+
+	function markCurrent() {
+		for (const link of links) {
+			if (link.dataset.modeLink === currentMode()) link.setAttribute("aria-current", "true");
+			else link.removeAttribute("aria-current");
+		}
+	}
+
+	// The modes share the page: picking one swaps it in place instead of following the link.
+	for (const link of links) {
+		link.addEventListener("click", (event) => {
+			event.preventDefault();
+			setMode(toMode(link.dataset.modeLink));
+		});
+	}
+
+	window.addEventListener(MODE_CHANGE, markCurrent);
+	markCurrent();
+</script>

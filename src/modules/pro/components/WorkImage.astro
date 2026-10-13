@@ -1,0 +1,23 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+// A work's screenshot. Until one is added (see getWorkImages), a plate carrying the work's name holds its place.
+type Props = { image?: ImageMetadata; title: string; class?: string; [attribute: `data-${string}`]: unknown };
+
+const { image, title, class: className, ...attributes } = Astro.props;
+---
+
+{
+	image ? (
+		<Image src={image} alt={title} widths={[640, 1280, 1920]} sizes="(min-width: 768px) 60vw, 100vw" class:list={["object-cover", className]} {...attributes} />
+	) : (
+		<div
+			aria-hidden="true"
+			class:list={["flex items-end bg-linear-to-br from-neutral-700 to-neutral-800 p-5 text-lg font-semibold tracking-tight text-neutral-400", className]}
+			{...attributes}
+		>
+			{title}
+		</div>
+	)
+}

@@ -12,42 +12,32 @@
     "fr": "À distance"
   },
   "summary": {
-    "en": "Short consulting mission to build the Datakanto company website, from design to production.",
-    "fr": "Courte mission de conseil pour créer le site web de Datakanto, de la maquette à la mise en production."
+    "en": "Consulting mission to design, integrate and deploy the Datakanto company website.",
+    "fr": "Mission de conseil pour concevoir, intégrer et déployer le site web de Datakanto."
   },
   "highlights": [
     {
-      "en": "Designed the pages and turned the mockups into a static Astro site",
-      "fr": "Conception des pages et intégration des maquettes en site statique Astro"
+      "en": "Designed the company website and integrated it with Astro",
+      "fr": "Conception du site de l'entreprise et intégration avec Astro"
     },
     {
-      "en": "Built responsive, reusable page sections so the team can add content without touching layout code",
-      "fr": "Création de sections de page responsives et réutilisables, pour que l'équipe ajoute du contenu sans toucher au code de mise en page"
-    },
-    {
-      "en": "Set up the build and deployment of the site",
-      "fr": "Mise en place du build et du déploiement du site"
-    },
-    {
-      "en": "Kept the pages light and fast to load on mobile connections",
-      "fr": "Pages légères et rapides à charger sur les connexions mobiles"
+      "en": "Deployed the site",
+      "fr": "Déploiement du site"
     }
   ],
   "technologies": [
     "Astro",
-    "Node.js",
-    "TypeScript",
-    "Tailwind CSS"
+    "Node.js"
   ],
   "projects": [
     {
       "name": {
-        "en": "Company website",
-        "fr": "Site de l'entreprise"
+        "en": "Creation of the Datakanto website",
+        "fr": "Création du site web de Datakanto"
       },
       "description": {
-        "en": "Marketing site presenting Datakanto's services, designed, integrated and deployed in one month.",
-        "fr": "Site vitrine présentant les services de Datakanto, conçu, intégré et déployé en un mois."
+        "en": "Design, integration and deployment of the company website.",
+        "fr": "Conception, intégration et déploiement du site de l'entreprise."
       }
     }
   ]

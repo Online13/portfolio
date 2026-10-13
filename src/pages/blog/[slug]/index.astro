@@ -1,0 +1,8 @@
+---
+import ArticlePage from "@/modules/blog/components/ArticlePage.astro";
+import { getArticlePaths } from "@/modules/blog/lib/blog";
+
+export const getStaticPaths = () => getArticlePaths("en");
+---
+
+<ArticlePage article={Astro.props.article} />

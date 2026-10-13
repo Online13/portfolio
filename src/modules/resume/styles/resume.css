@@ -7,6 +7,23 @@
 	--color-separator: #0000001f;
 }
 
+/* On screen the resume is a dark sheet, like the rest of the site. Printed (the PDFs), it keeps the ink-on-paper colors above. */
+@media screen {
+	#resume {
+		--color-foreground: #fafafa;
+		--color-body: #d4d4d4;
+		--color-muted: #a3a3a3;
+		--color-subtle: #8a8a8a;
+		--color-separator: #ffffff1f;
+		--fluid-color: rgb(255 255 255 / 0.06);
+	}
+
+	#resume ::selection {
+		background-color: #ededed;
+		color: #171717;
+	}
+}
+
 /* Sized in px so it keeps its proportions under the site's 18px root. */
 .resume-sheet {
 	--spacing: 4px;
@@ -15,12 +32,6 @@
 	width: 100%;
 	max-width: 760px;
 	padding: 56px 40px;
-	background: #fff;
-}
-
-.resume-sheet,
-.resume-sheet * {
-	font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Hovering "Download PDF" shows the sheet as the paper it downloads. */
@@ -31,8 +42,8 @@
 }
 
 #resume:has([data-resume-download]:is(:hover, :focus-visible)) .resume-sheet {
-	border-color: #e5e5e5;
-	box-shadow: 0 1px 3px #0000000f, 0 8px 24px -8px #0000001a;
+	border-color: #ffffff26;
+	box-shadow: 0 1px 3px #0000004d, 0 8px 24px -8px #00000080;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -78,6 +89,7 @@ html:has(#resume[open]) {
 		max-width: none;
 		max-height: none;
 		padding: 0;
+		background: #fff;
 	}
 
 	#resume .resume-sheet {

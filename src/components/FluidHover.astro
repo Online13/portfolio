@@ -1,6 +1,9 @@
 ---
 // A list whose hover highlight glides to the item nearest the pointer, gaps included, instead of blinking
-// between items (after fluidfunctionalism.com/docs/fluid-hover). Mark each item with data-fluid-item.
+// between items (after fluidfunctionalism.com/docs/fluid-hover). Mark each item with data-fluid-item: the lit one
+// carries data-fluid-active, and a click anywhere on it goes to its first link or button, except inside a part
+// marked data-fluid-inert. --fluid-color and --fluid-radius restyle the highlight; --fluid-z: 1 lays it over items
+// that have a background of their own.
 interface Props {
 	// "y" for vertical lists, "x" for horizontal strips, "xy" for grids.
 	axis?: "x" | "y" | "xy";
@@ -21,9 +24,9 @@ const { axis = "y", class: className } = Astro.props;
 		position: absolute;
 		top: 0;
 		left: 0;
-		z-index: -1;
-		border-radius: var(--radius-md, 6px);
-		background: color-mix(in oklab, var(--color-stone-500, oklch(55.3% 0.013 58.071)) 10%, transparent);
+		z-index: var(--fluid-z, -1);
+		border-radius: var(--fluid-radius, var(--radius-md, 6px));
+		background: var(--fluid-color, color-mix(in oklab, var(--color-stone-500, oklch(55.3% 0.013 58.071)) 10%, transparent));
 		opacity: 0;
 		pointer-events: none;
 		/* A fast spring, slight overshoot included. */
@@ -99,13 +102,31 @@ const { axis = "y", class: className } = Astro.props;
 				highlight.offsetWidth; // commit the jump before re-enabling the glide
 				highlight.classList.remove("is-placing");
 			}
+			active?.removeAttribute("data-fluid-active");
 			active = nearest;
+			active.setAttribute("data-fluid-active", "");
 			container.classList.add("is-hovered");
 		});
 
 		container.addEventListener("pointerleave", () => {
+			active?.removeAttribute("data-fluid-active");
 			active = null;
 			container.classList.remove("is-hovered");
 		});
+
+		container.addEventListener("click", (event) => {
+			if ((event.target as Element).closest("a, button, input, textarea, [data-fluid-inert]")) return;
+			const control = active?.matches("a[href], button") ? active : active?.querySelector<HTMLElement>("a[href], button");
+			control?.click();
+		});
+
+		// An item that grows or moves (a row opening) takes its highlight along, without the glide.
+		new ResizeObserver(() => {
+			if (!active) return;
+			highlight.classList.add("is-placing");
+			moveTo(active);
+			highlight.offsetWidth;
+			highlight.classList.remove("is-placing");
+		}).observe(container);
 	}
 </script>

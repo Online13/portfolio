@@ -19,14 +19,6 @@ export default defineConfig({
   fonts: [
     {
       provider: fontProviders.google(),
-      name: 'Cabin',
-      cssVariable: '--font-cabin',
-      weights: ['400 700'],
-      styles: ['normal', 'italic'],
-      fallbacks: ['sans-serif'],
-    },
-    {
-      provider: fontProviders.google(),
       name: 'Inter',
       cssVariable: '--font-inter',
       weights: ['400 700'],

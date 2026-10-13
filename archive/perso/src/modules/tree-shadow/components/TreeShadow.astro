@@ -25,6 +25,7 @@
 	import { createSakuraBranch } from "@/modules/tree-shadow/lib/sakura-branch";
 	import { createWeather, flows } from "@/modules/tree-shadow/lib/weather";
 	import { CLOCK_CHANGE, type ClockChange } from "@/modules/clock/lib/events";
+	import { currentMode, MODE_CHANGE } from "@/modules/mode/lib/mode";
 	import {
 		lightTones,
 		timeOfDay,
@@ -165,10 +166,25 @@
 			}
 		});
 
+		// Nothing is drawn while another mode hides the canvas.
+		window.addEventListener(MODE_CHANGE, function drawInPersoModeOnly() {
+			if (currentMode() !== "perso") return renderer.setAnimationLoop(null);
+			resize();
+			if (!reducedMotion) renderer.setAnimationLoop(animateFrame);
+		});
+
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 		resize();
 		if (!reducedMotion) renderer.setAnimationLoop(animateFrame);
 	}
 
-	if (hasHardwareWebGL()) start(new WebGLRenderer({ canvas, alpha: false, antialias: false }));
+	// The tree belongs to the perso mode: WebGL starts the first time that mode is shown.
+	function startInPersoMode() {
+		if (currentMode() !== "perso") return;
+		window.removeEventListener(MODE_CHANGE, startInPersoMode);
+		if (hasHardwareWebGL()) start(new WebGLRenderer({ canvas, alpha: false, antialias: false }));
+	}
+
+	window.addEventListener(MODE_CHANGE, startInPersoMode);
+	startInPersoMode();
 </script>

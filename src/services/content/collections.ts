@@ -19,19 +19,6 @@ const projects = defineCollection({
 	}),
 });
 
-const articles = defineCollection({
-	loader: glob({ pattern: "**/*.md", base: "src/services/content/data/articles" }),
-	schema: z.object({
-		title: text,
-		slug: z.string(),
-		description: text,
-		date: z.coerce.date(),
-		// Unfinished articles stay listed, flagged "(in progress)".
-		draft: z.boolean().default(false),
-		tags: z.array(z.string()).default([]),
-	}),
-});
-
 const experiences = defineCollection({
 	loader: glob({ pattern: "**/*.json", base: "src/services/content/data/experiences" }),
 	schema: z.object({
@@ -66,6 +53,21 @@ const certifications = defineCollection({
 		issuer: z.string().optional(),
 		date: z.coerce.date(),
 		href: z.string().url().optional(),
+	}),
+});
+
+// The blog's two shelves: things I am trying out, and what a project taught me.
+export const ARTICLE_CATEGORIES = ["exploration", "retour"] as const;
+
+// One file per language: articles/<locale>/<slug>.md. An article exists in the languages it is written in.
+const articles = defineCollection({
+	loader: glob({ pattern: "*/*.md", base: "src/services/content/data/articles" }),
+	schema: z.object({
+		title: z.string(),
+		description: z.string(),
+		category: z.enum(ARTICLE_CATEGORIES),
+		date: z.coerce.date(),
+		draft: z.boolean().default(false),
 	}),
 });
 

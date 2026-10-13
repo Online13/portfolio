@@ -1,0 +1,8 @@
+---
+import WorkDetail from "@/modules/pro/components/WorkDetail.astro";
+import { getWorkPaths } from "@/modules/pro/lib/work";
+
+export const getStaticPaths = () => getWorkPaths("fr");
+---
+
+<WorkDetail work={Astro.props.work} />

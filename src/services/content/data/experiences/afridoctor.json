@@ -9,52 +9,34 @@
   "type": "Full-time",
   "location": "Antananarivo, Madagascar",
   "summary": {
-    "en": "Worked on the AfriDoctor health platform with the in-house team, on the web app and a new mobile version.",
-    "fr": "Travail sur la plateforme de santé AfriDoctor avec l'équipe interne, sur l'application web et une nouvelle version mobile."
+    "en": "Worked on the AfriDoctor site with the in-house team.",
+    "fr": "Travail sur le site AfriDoctor avec l'équipe interne."
   },
   "highlights": [
     {
-      "en": "Maintained the site with the AfriDoctor team: bug fixes and small improvements",
-      "fr": "Maintenance du site avec l'équipe AfriDoctor : corrections de bugs et petites améliorations"
+      "en": "Maintained the site with the AfriDoctor team",
+      "fr": "Maintenance du site avec l'équipe AfriDoctor"
     },
     {
-      "en": "Built new features across the React front end and the Node.js GraphQL API",
-      "fr": "Développement de nouvelles fonctionnalités sur le front-end React et l'API GraphQL Node.js"
-    },
-    {
-      "en": "Developed a mobile version of the site in Flutter",
-      "fr": "Développement d'une version mobile du site en Flutter"
-    },
-    {
-      "en": "Worked with MongoDB for the platform's data",
-      "fr": "Gestion des données de la plateforme avec MongoDB"
+      "en": "Built new features",
+      "fr": "Développement de nouvelles fonctionnalités"
     }
   ],
   "technologies": [
     "React",
     "Node.js",
     "GraphQL",
-    "MongoDB",
-    "Flutter"
-  ],
-  "metrics": [
-    {
-      "value": "2",
-      "label": {
-        "en": "clients: web and mobile",
-        "fr": "clients : web et mobile"
-      }
-    }
+    "MongoDB"
   ],
   "projects": [
     {
       "name": {
-        "en": "Mobile version",
-        "fr": "Version mobile"
+        "en": "Maintenance and new features on the AfriDoctor site",
+        "fr": "Maintenance et nouvelles fonctionnalités du site AfriDoctor"
       },
       "description": {
-        "en": "Flutter app bringing the AfriDoctor site to phones.",
-        "fr": "Application Flutter qui amène le site AfriDoctor sur téléphone."
+        "en": "With the AfriDoctor team.",
+        "fr": "Avec l'équipe AfriDoctor."
       }
     }
   ]

@@ -1,27 +1,27 @@
 ---
-import { homePath, LOCALES, t, toLocale } from "@/services/i18n";
+import { localizePath, LOCALES, t, toLocale } from "@/services/i18n";
+
+// Each page places and colors its own switch; the links take the text color, dimmed unless current.
+type Props = { class?: string };
 
 const locale = toLocale(Astro.currentLocale);
 const { label, names } = t(locale).language;
 ---
 
-<!-- Each language is its own page (/ and /fr/); outside #page, so it is never printed. -->
-<nav
-	aria-label={label}
-	class="fixed top-4 right-8 z-40 flex items-center gap-1 text-sm text-gray-600"
->
+<!-- Each language is its own page (/ and /fr/): the links lead to this page in the other one. -->
+<nav aria-label={label} class:list={["flex items-center gap-1 text-sm", Astro.props.class]}>
 	{
 		LOCALES.map((option, i) => (
 			<>
-				{i > 0 && <span aria-hidden="true" class="text-gray-300">/</span>}
+				{i > 0 && <span aria-hidden="true" class="opacity-30">/</span>}
 				<a
-					href={homePath(option)}
+					href={localizePath(Astro.url.pathname, option)}
 					hreflang={option}
 					lang={option}
 					title={names[option]}
 					aria-current={option === locale ? "page" : undefined}
 					data-language-switch
-					class="uppercase hover:text-black aria-[current=page]:font-semibold aria-[current=page]:text-black"
+					class="uppercase opacity-60 hover:opacity-100 aria-[current=page]:font-semibold aria-[current=page]:opacity-100"
 				>
 					{option}
 				</a>
@@ -31,7 +31,7 @@ const { label, names } = t(locale).language;
 </nav>
 
 <script>
-	// Keep the open resume (#resume) open in the other language.
+	// Keep the open resume (#resume) in the other language.
 	for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-language-switch]")) {
 		link.addEventListener("click", () => {
 			link.hash = location.hash;

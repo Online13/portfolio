@@ -11,56 +11,41 @@
     "fr": "À distance"
   },
   "summary": {
-    "en": "Working on a mobile super app that groups several services in one React Native client, backed by Strapi and FastAPI.",
-    "fr": "Travail sur une super app mobile qui regroupe plusieurs services dans un seul client React Native, adossé à Strapi et FastAPI."
+    "en": "Working on a mobile super app built with React Native, Strapi and FastAPI.",
+    "fr": "Travail sur une super app mobile construite avec React Native, Strapi et FastAPI."
   },
   "highlights": [
     {
-      "en": "Contribute to the development of the super app on iOS and Android",
-      "fr": "Contribution au développement de la super app sur iOS et Android"
+      "en": "Contribute to the development of a mobile super app",
+      "fr": "Contribution au développement d'une super app mobile"
     },
     {
-      "en": "Partially redesigned the existing app screens and navigation",
-      "fr": "Refonte partielle des écrans et de la navigation de l'application existante"
+      "en": "Partially redesigned the existing application",
+      "fr": "Refonte partielle de l'application existante"
     },
     {
-      "en": "Add new features and improve existing ones across the mobile client and its APIs",
-      "fr": "Ajout de nouvelles fonctionnalités et amélioration de l'existant, sur le client mobile et ses API"
+      "en": "Add new features and improve existing ones",
+      "fr": "Ajout de nouvelles fonctionnalités et amélioration de l'existant"
     },
     {
-      "en": "Take part in the technical evolution of the platform: architecture choices, dependencies and code quality",
-      "fr": "Participation à l'évolution technique de la plateforme : choix d'architecture, dépendances et qualité du code"
+      "en": "Take part in the technical evolution of the platform",
+      "fr": "Participation à l'évolution technique de la plateforme"
     }
   ],
   "technologies": [
     "React Native",
-    "Expo",
-    "TypeScript",
     "Strapi",
     "FastAPI"
   ],
-  "metrics": [
-    {
-      "value": "2",
-      "label": {
-        "en": "platforms: iOS and Android",
-        "fr": "plateformes : iOS et Android"
-      }
-    },
-    {
-      "value": "3",
-      "label": {
-        "en": "layers: app, CMS, API",
-        "fr": "couches : app, CMS, API"
-      }
-    }
-  ],
   "projects": [
     {
-      "name": "Super App",
+      "name": {
+        "en": "Development and redesign of the Super App mobile app",
+        "fr": "Développement et refonte de l'application mobile Super App"
+      },
       "description": {
-        "en": "Mobile app bringing several everyday services together behind one account and one interface.",
-        "fr": "Application mobile qui réunit plusieurs services du quotidien derrière un seul compte et une seule interface."
+        "en": "New features, improvements and technical evolution of the platform.",
+        "fr": "Nouvelles fonctionnalités, améliorations et évolution technique de la plateforme."
       }
     }
   ]

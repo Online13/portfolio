@@ -1,0 +1,31 @@
+---
+import FluidHover from "@/components/FluidHover.astro";
+import { getResume } from "@/services/content";
+import { t, toLocale } from "@/services/i18n";
+import SectionHeading from "./SectionHeading.astro";
+
+const locale = toLocale(Astro.currentLocale);
+const text = t(locale).pro.tools;
+// The same list as the resume.
+const { tools } = await getResume(locale);
+---
+
+<section class="space-y-12 border-t border-white/10 pt-20 md:pt-28">
+	<div class="pro-container">
+		<SectionHeading kicker={text.kicker} title={text.title} />
+	</div>
+	<FluidHover class="[--fluid-radius:0]">
+	<dl class="border-b border-white/10">
+		{
+			tools.map(({ label, value }) => (
+				<div data-fluid-item class="group border-t border-white/10 py-5">
+					<div class="pro-container grid gap-1 md:grid-cols-12 md:gap-6">
+						<dt class="text-sm text-neutral-400 transition-colors group-data-fluid-active:text-neutral-200 md:col-span-3">{label}</dt>
+						<dd class="text-lg md:col-span-9">{value}</dd>
+					</div>
+				</div>
+			))
+		}
+	</dl>
+	</FluidHover>
+</section>

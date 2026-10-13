@@ -10,4 +10,24 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://nekena-rayane.com/" />
     <xhtml:link rel="alternate" hreflang="fr" href="https://nekena-rayane.com/fr/" />
   </url>
+  <url>
+    <loc>https://nekena-rayane.com/about/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nekena-rayane.com/about/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://nekena-rayane.com/fr/about/" />
+  </url>
+  <url>
+    <loc>https://nekena-rayane.com/fr/about/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nekena-rayane.com/about/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://nekena-rayane.com/fr/about/" />
+  </url>
+  <url>
+    <loc>https://nekena-rayane.com/blog/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nekena-rayane.com/blog/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://nekena-rayane.com/fr/blog/" />
+  </url>
+  <url>
+    <loc>https://nekena-rayane.com/fr/blog/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://nekena-rayane.com/blog/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://nekena-rayane.com/fr/blog/" />
+  </url>
 </urlset>

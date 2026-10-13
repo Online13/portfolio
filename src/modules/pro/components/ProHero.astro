@@ -1,0 +1,25 @@
+---
+import { getResume } from "@/services/content";
+import { t, toLocale } from "@/services/i18n";
+
+const locale = toLocale(Astro.currentLocale);
+const { hero } = t(locale).pro;
+// The same title as the resume.
+const { title } = await getResume(locale);
+const button = "rounded-full font-medium transition duration-200 active:scale-95";
+---
+
+<section class="pro-container flex flex-col gap-6 py-16 md:py-20">
+	<h1 class="text-2xl font-bold leading-[1.1] tracking-tight md:text-4xl">
+		<span data-pro-hero-name class="block">Nekena Rayane</span>
+		<span class="block text-neutral-500">{title}</span>
+	</h1>
+	<div class="max-w-140 space-y-6">
+		<p class="text-lg text-neutral-400">{hero.intro}</p>
+		<div class="flex flex-wrap gap-3 text-sm font-medium">
+			<a href="#pro-contact" class:list={[button, "bg-neutral-200 px-5 py-2.5 text-neutral-900 hover:bg-white"]}>{hero.cta}</a>
+			<a href="#resume" class:list={[button, "border border-white/20 px-5 py-2.5 hover:border-white hover:bg-white/5"]}>{hero.resume}</a>
+		</div>
+	</div>
+</section>
+

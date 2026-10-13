@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@import "../modules/resume/styles/resume.css";
+@import "../modules/pro/styles/pro.css";
+
+@theme {
+  /* Damped spring: picks up speed, overshoots by ~4%, then settles. Used for the site's motion. */
+  --ease-spring: linear(0, 0.034, 0.119, 0.233, 0.358, 0.483, 0.599, 0.703, 0.791, 0.864, 0.921, 0.964, 0.995, 1.016, 1.029, 1.036, 1.038, 1.037, 1.034, 1.03, 1.025, 1.021, 1.016, 1.012, 1.008, 1.006, 1.003, 1.002, 1, 0.999, 0.999, 0.999, 1);
+}
+
+html {
+  font-size: 18px;
+  scroll-behavior: smooth;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Clipped, not hidden: hidden would make the body a scroll container, and nothing sticky would stick to the screen. */
+body {
+  overflow-x: clip;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f3f4f6; }
+::-webkit-scrollbar-thumb { background: #d1d5db; }
+
+* {
+  font-family: var(--font-cabin);
+}
+
+/* The perso mode is set in Libron, on trial. :where keeps it as weak as the rule above, under each sheet's own font. */
+:where(html[data-mode="perso"]) * {
+  font-family: var(--font-libron);
+}
+
+*::selection {
+  background-color: black;
+  color: white;
+}
+
+b {
+  @apply text-gray-900 font-semibold;
+}
+
+.trigger {
+  @apply cursor-pointer;
+}
+
+.trigger:hover {
+  @apply underline decoration-dashed;
+}

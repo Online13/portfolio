@@ -1,10 +1,12 @@
-import { getCollection } from "astro:content";
-import { resolve, type Locale } from "@/services/i18n";
+import { getCollection, render } from "astro:content";
+import type { Locale } from "@/services/i18n";
 
-/** All articles, newest first. */
-export async function getArticles(locale: Locale) {
-	const articles = await getCollection("articles");
-	return articles
+// The articles written in the locale, newest first.
+export const getArticles = async (locale: Locale) =>
+	(await getCollection("articles", ({ id }) => id.startsWith(`${locale}/`)))
 		.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-		.map(({ data }) => resolve(data, locale));
-}
+		.map((entry) => ({
+			...entry.data,
+			slug: entry.id.slice(locale.length + 1),
+			render: () => render(entry),
+		}));

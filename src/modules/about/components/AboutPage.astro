@@ -1,0 +1,95 @@
+---
+import "@/styles/global.css";
+import { Image } from "astro:assets";
+import { ArrowUpRight } from "@lucide/astro";
+import picture from "@/assets/images/picture.png";
+import FluidHover from "@/components/FluidHover.astro";
+import MainLayout from "@/layouts/MainLayout.astro";
+import ProFooter from "@/modules/pro/components/ProFooter.astro";
+import SiteHeader from "@/modules/pro/components/SiteHeader.astro";
+import SectionHeading from "@/modules/pro/components/SectionHeading.astro";
+import { getEducation, getExperienceYears, getGalleryImages } from "@/services/content";
+import { t, toLocale } from "@/services/i18n";
+
+const locale = toLocale(Astro.currentLocale);
+const { about: text, pro, seo } = t(locale);
+const [intro, ...story] = text.story(await getExperienceYears());
+// My portrait takes the place of {avatar} in the first sentence.
+const [beforeAvatar, afterAvatar] = intro.split("{avatar}");
+const education = await getEducation(locale);
+const gallery = getGalleryImages();
+---
+
+<MainLayout title={pro.nav.about} description={intro.replace(" {avatar}", "")}>
+	<div class="pro min-h-screen bg-neutral-900 text-neutral-200">
+		<!-- As on the home page: an opaque sheet over the footer, which shows once scrolled past it. -->
+		<div class="relative z-10 border-b border-white/10 bg-neutral-900">
+		<SiteHeader />
+
+		<section class="pro-container py-16 md:py-20">
+			<h1 class="sr-only">{pro.nav.about}</h1>
+			<div class="max-w-160 space-y-5 text-lg text-neutral-400">
+				<p>
+					<!-- On one line: a line break would put a space between the portrait and the full stop. -->
+					{beforeAvatar}<Image src={picture} alt={seo.imageAlt} width={56} height={56} class="inline size-7 rounded-full object-cover align-text-bottom" />{afterAvatar}
+				</p>
+				{story.map((paragraph) => <p>{paragraph}</p>)}
+				<p>
+					{text.available}{" "}
+					<a href="#resume" class="group inline-flex items-center gap-1 text-neutral-200 underline underline-offset-4 transition-colors hover:text-white">
+						{text.resume}
+						<ArrowUpRight class="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+					</a>
+				</p>
+			</div>
+		</section>
+
+		<section class="space-y-12 border-t border-white/10 pt-20 md:pt-28">
+			<div class="pro-container">
+				<SectionHeading kicker={text.education.kicker} title={text.education.title} />
+			</div>
+			<FluidHover class="[--fluid-radius:0]">
+				<ul class="border-b border-white/10">
+					{
+						education.map(({ degree, school, start, end }) => (
+							<li data-fluid-item class="border-t border-white/10 py-5">
+								<div class="pro-container grid gap-1 md:grid-cols-12 md:gap-6">
+									<p class="text-sm text-neutral-400 md:col-span-3">{end ? `${start} – ${end}` : start}</p>
+									<div class="md:col-span-9">
+										<h3 class="text-lg">{degree}</h3>
+										<p class="text-neutral-400">{school}</p>
+									</div>
+								</div>
+							</li>
+						))
+					}
+				</ul>
+			</FluidHover>
+		</section>
+
+		<section class="space-y-12 py-20 md:py-28">
+			<div class="pro-container">
+				<SectionHeading kicker={text.gallery.kicker} title={text.gallery.title} />
+			</div>
+			<!-- Every picture dropped in src/assets/images/gallery/ shows up here. -->
+			<ul class="pro-container grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+				{
+					gallery.map(({ image, alt }) => (
+						<li>
+							<Image
+								src={image}
+								alt={alt}
+								width={960}
+								widths={[480, 960, 1440]}
+								sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+								class="aspect-4/3 w-full rounded-lg object-cover"
+							/>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+		</div>
+		<ProFooter />
+	</div>
+</MainLayout>

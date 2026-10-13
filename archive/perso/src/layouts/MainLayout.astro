@@ -1,0 +1,80 @@
+---
+import { Font } from "astro:assets";
+import Footer from "@/components/Footer.astro";
+import LanguageSwitch from "@/components/LanguageSwitch.astro";
+import Clock from "@/modules/clock/components/Clock.astro";
+import ModeSwitch from "@/modules/mode/components/ModeSwitch.astro";
+import { DEFAULT_MODE, MODE_PARAM, MODES, type Mode } from "@/modules/mode/lib/mode";
+import TreeShadow from "@/modules/tree-shadow/components/TreeShadow.astro";
+import PostHog from "@/services/analytics/PostHog.astro";
+import { lightTones, timeOfDay } from "@/modules/tree-shadow/lib/tree-shadow";
+import Seo, { type Props as SeoProps } from "@/services/seo/Seo.astro";
+import { LANGUAGE_TAGS, toLocale } from "@/services/i18n";
+
+// mode pins the page to one mode (the not-found page); without it the visitor picks, and the URL carries the pick.
+type Props = SeoProps & { mode?: Mode };
+
+const { mode: pinnedMode, ...seo } = Astro.props;
+// Hides whatever belongs to another mode than the shown one.
+const modeStyles = MODES.map((mode) => `html:not([data-mode="${mode}"]) [data-mode-only="${mode}"]{display:none}`).join("");
+
+const locale = toLocale(Astro.currentLocale);
+
+// The light's full-sun color for each local hour, for the head script below.
+const sunByHour = Array.from({ length: 24 }, (_, hour) =>
+  lightTones[timeOfDay(hour)].sun.map((c) => Math.round(c * 255)).join(" "),
+);
+---
+
+<html lang={LANGUAGE_TAGS[locale]} data-mode={pinnedMode ?? DEFAULT_MODE} class="w-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <Seo {...seo} />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Inter sets the pro mode, the one a visitor lands on. -->
+    <Font cssVariable="--font-inter" preload />
+    <Font cssVariable="--font-cabin" />
+    <Font cssVariable="--font-libron" />
+
+    <style is:inline set:html={modeStyles}></style>
+    {
+      !pinnedMode && (
+        // Before the first paint: shows the mode the URL asks for, and writes the default one into a URL without any.
+        <script is:inline define:vars={{ modes: MODES, fallback: DEFAULT_MODE, param: MODE_PARAM }}>
+          const url = new URL(location.href);
+          const asked = url.searchParams.get(param);
+          const mode = modes.includes(asked) ? asked : fallback;
+          document.documentElement.dataset.mode = mode;
+          if (asked !== mode) {
+            url.searchParams.set(param, mode);
+            history.replaceState(history.state, "", url);
+          }
+        </script>
+      )
+    }
+
+    <PostHog />
+    <!-- The room is lit from the first paint: TreeShadow's canvas shows this color until WebGL draws over it. -->
+    <script is:inline define:vars={{ sunByHour }}>
+      document.documentElement.style.setProperty("--light-sun", `rgb(${sunByHour[new Date().getHours()]})`);
+    </script>
+  </head>
+  <body class="w-full">
+    <!-- An opaque sheet over the fixed footer, which shows once scrolled past it (see Footer). -->
+    <main id="page" class="relative z-20 min-h-screen bg-white">
+      <slot />
+    </main>
+    <!-- The perso mode's room: its footer, the tree and its clock, and its language switch. Outside #page, so never printed. -->
+    <div data-mode-only="perso">
+      <Footer />
+      <TreeShadow />
+      <Clock />
+      <LanguageSwitch class="fixed top-4 right-8 z-40 text-black" />
+    </div>
+    {!pinnedMode && <ModeSwitch />}
+  </body>
+</html>

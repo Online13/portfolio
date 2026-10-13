@@ -1,0 +1,19 @@
+---
+import { t, toLocale } from "@/services/i18n";
+import AskAi from "./AskAi.astro";
+import SectionHeading from "./SectionHeading.astro";
+
+const text = t(toLocale(Astro.currentLocale)).pro.ai;
+---
+
+<section class="py-20 md:py-28">
+	<div class="pro-container grid gap-12 md:grid-cols-2">
+		<div class="space-y-8">
+			<SectionHeading kicker={text.kicker} title={text.title} />
+			<AskAi />
+		</div>
+		<div class="space-y-5 text-lg text-neutral-400">
+			{text.story.map((paragraph) => <p>{paragraph}</p>)}
+		</div>
+	</div>
+</section>

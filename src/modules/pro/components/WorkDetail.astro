@@ -1,0 +1,136 @@
+---
+import "@/styles/global.css";
+import { ArrowUpRight } from "@lucide/astro";
+import MainLayout from "@/layouts/MainLayout.astro";
+import { t, toLocale } from "@/services/i18n";
+import type { Work } from "../lib/work";
+import SiteHeader from "./SiteHeader.astro";
+import Tags from "./Tags.astro";
+import WorkImage from "./WorkImage.astro";
+
+// A work's own page: a client role or a personal project (see lib/work).
+type Props = { work: Work };
+
+const { work } = Astro.props;
+const locale = toLocale(Astro.currentLocale);
+const text = t(locale);
+const labels = { ...text.projects, ...text.pro.work };
+const [cover, ...images] = work.images;
+const row = "border-t border-white/10 py-8";
+const rowGrid = "pro-container grid gap-3 md:grid-cols-12 md:gap-6";
+const label = "text-sm text-neutral-400 md:col-span-3";
+const bullets = "list-disc space-y-2 pl-5 marker:text-neutral-600";
+---
+
+<MainLayout title={work.title} description={work.summary}>
+	<div class="pro min-h-screen bg-neutral-900 text-neutral-200">
+		<SiteHeader />
+
+		<article class="pb-20 md:pb-28">
+			<div class="pro-container space-y-6 py-16 md:py-20">
+				<h1 class="text-3xl font-semibold leading-[1.12] tracking-tight md:text-5xl">
+					<span class="block text-neutral-400">{work.kicker}</span>
+					<span class="block">{work.title}</span>
+				</h1>
+				{work.summary && <p class="max-w-140 text-lg text-neutral-400">{work.summary}</p>}
+			</div>
+
+			<div class="pro-container grid gap-4 pb-16 md:grid-cols-2 md:pb-20">
+				<WorkImage image={cover} title={work.title} class="aspect-16/10 w-full rounded-lg md:col-span-2" />
+				{images.map((image) => <WorkImage image={image} title={work.title} class="aspect-16/10 w-full rounded-lg" />)}
+			</div>
+
+			{
+				work.role && (
+					<section class={row}>
+						<div class={rowGrid}>
+							<h2 class={label}>{labels.role}</h2>
+							<p class="md:col-span-6">{work.role}</p>
+						</div>
+					</section>
+				)
+			}
+			{
+				work.body && (
+					<section class={row}>
+						<div class={rowGrid}>
+							<h2 class={label}>{labels.description}</h2>
+							<p class="leading-relaxed text-neutral-300 md:col-span-6">{work.body}</p>
+						</div>
+					</section>
+				)
+			}
+			{
+				work.metrics.length > 0 && (
+					<section class={row}>
+						<div class={rowGrid}>
+							<h2 class={label}>{labels.results}</h2>
+							<dl class="grid grid-cols-2 gap-6 md:col-span-9 md:grid-cols-3">
+								{work.metrics.map((metric) => (
+									<div class="flex flex-col-reverse gap-1">
+										<dt class="text-sm text-neutral-400">{metric.label}</dt>
+										<dd class="text-3xl font-semibold tracking-tight">{metric.value}</dd>
+									</div>
+								))}
+							</dl>
+						</div>
+					</section>
+				)
+			}
+			{
+				work.projects.length > 0 && (
+					<section class={row}>
+						<div class={rowGrid}>
+							<h2 class={label}>{labels.built}</h2>
+							<ul class="space-y-6 md:col-span-6">
+								{work.projects.map((project) => (
+									<li class="space-y-1">
+										<h3 class="text-xl font-semibold tracking-tight">{project.name}</h3>
+										<p class="text-neutral-400">{project.description}</p>
+									</li>
+								))}
+							</ul>
+						</div>
+					</section>
+				)
+			}
+			{
+				work.highlights.length > 0 && (
+					<section class={row}>
+						<div class={rowGrid}>
+							<h2 class={label}>{labels.highlights}</h2>
+							<ul class:list={[bullets, "text-neutral-300 md:col-span-6"]}>
+								{work.highlights.map((highlight) => <li>{highlight}</li>)}
+							</ul>
+						</div>
+					</section>
+				)
+			}
+			<section class={row}>
+				<div class={rowGrid}>
+					<h2 class={label}>{labels.technologies}</h2>
+					<div class="md:col-span-6">
+						<Tags tags={work.technologies} />
+					</div>
+				</div>
+			</section>
+			{
+				work.link && (
+					<section class={row}>
+						<div class="pro-container">
+							<a
+								href={work.link}
+								target="_blank"
+								rel="noreferrer"
+								class="group inline-flex items-center gap-1.5 rounded-full bg-neutral-200 px-5 py-2.5 text-sm font-medium text-neutral-900 transition duration-200 hover:bg-white active:scale-95"
+							>
+								{labels.viewOnGithub}
+								<ArrowUpRight class="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+							</a>
+						</div>
+					</section>
+				)
+			}
+		</article>
+	</div>
+</MainLayout>

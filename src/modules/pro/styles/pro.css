@@ -1,0 +1,51 @@
+/* The site: a dark sheet set in Inter (see global.css), after significa.co. */
+.pro ::selection {
+	background-color: #ededed;
+	color: #171717;
+}
+
+/* Rules run edge to edge, as on significa.co: sections take the full width and only their content sits in this column. */
+.pro-container {
+	@apply mx-auto w-full max-w-300 px-5 md:px-8;
+}
+
+/* FluidHover's highlight, tinted for the dark sheet. */
+.pro {
+	--fluid-color: rgb(255 255 255 / 0.06);
+}
+
+/* An article's body, written in Markdown. */
+.pro-prose {
+	@apply space-y-5 text-lg leading-relaxed text-neutral-300;
+
+	h2 {
+		@apply pt-6 text-2xl font-semibold tracking-tight text-neutral-200;
+	}
+	h3 {
+		@apply pt-3 text-xl font-semibold tracking-tight text-neutral-200;
+	}
+	a {
+		@apply text-neutral-200 underline underline-offset-4 transition-colors hover:text-white;
+	}
+	ul {
+		@apply list-disc space-y-2 pl-5 marker:text-neutral-600;
+	}
+	ol {
+		@apply list-decimal space-y-2 pl-5 marker:text-neutral-500;
+	}
+	blockquote {
+		@apply border-l-2 border-white/20 pl-4 text-neutral-400;
+	}
+	code {
+		@apply rounded bg-white/10 px-1.5 py-0.5 text-[0.9em];
+	}
+	pre {
+		@apply overflow-x-auto rounded-lg border border-white/10 p-4 text-sm;
+	}
+	pre code {
+		@apply bg-transparent p-0;
+	}
+	img {
+		@apply rounded-lg;
+	}
+}

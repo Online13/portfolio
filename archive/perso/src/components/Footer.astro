@@ -28,6 +28,9 @@ const text = t(toLocale(Astro.currentLocale)).footer;
 	</div>
 </footer>
 <script>
+	import { MODE_CHANGE } from "@/modules/mode/lib/mode";
+
+	// The footer is the perso mode's: in another mode it is hidden, and takes no room.
 	function syncFooterMargin() {
 		const footer = document.getElementById("site-footer");
 		const page = document.getElementById("page");
@@ -36,4 +39,5 @@ const text = t(toLocale(Astro.currentLocale)).footer;
 	}
 	syncFooterMargin();
 	window.addEventListener("resize", syncFooterMargin);
+	window.addEventListener(MODE_CHANGE, syncFooterMargin);
 </script>

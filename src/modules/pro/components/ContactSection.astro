@@ -1,0 +1,56 @@
+---
+import { SOCIAL_LINKS } from "@/data";
+import SocialNetworkLinks from "@/modules/social/components/SocialNetworkLinks.astro";
+import { t, toLocale } from "@/services/i18n";
+import SectionHeading from "./SectionHeading.astro";
+
+const text = t(toLocale(Astro.currentLocale)).pro.contact;
+const email = SOCIAL_LINKS.find((link) => link.type === "email")!;
+const fields = [
+	{ name: "name", label: text.name, type: "text", autocomplete: "name" },
+	{ name: "email", label: text.email, type: "email", autocomplete: "email" },
+];
+const field = "w-full border-b border-white/20 bg-transparent py-2 outline-none transition-colors hover:border-white/50 focus:border-white";
+---
+
+<section id="pro-contact" class="scroll-mt-16 py-20 md:py-28">
+<div class="pro-container grid gap-12 md:grid-cols-2">
+	<div class="space-y-6">
+		<SectionHeading kicker={text.kicker} title={text.title} />
+		<!-- Shifted so the first one lines up with the title above. -->
+		<div class="-ml-2 text-neutral-200">
+			<SocialNetworkLinks />
+		</div>
+	</div>
+	<form data-contact-form data-to={email.handle} data-subject={text.subject} class="space-y-6">
+		{
+			fields.map(({ name, label, type, autocomplete }) => (
+				<label class="block space-y-1 text-sm text-neutral-400">
+					{label}
+					<input name={name} type={type} autocomplete={autocomplete} required class:list={[field, "text-base text-neutral-200"]} />
+				</label>
+			))
+		}
+		<label class="block space-y-1 text-sm text-neutral-400">
+			{text.message}
+			<textarea name="message" rows="4" required class:list={[field, "resize-y text-base text-neutral-200"]}></textarea>
+		</label>
+		<button type="submit" class="cursor-pointer rounded-full bg-neutral-200 px-5 py-2.5 text-sm font-medium text-neutral-900 transition duration-200 hover:bg-white active:scale-95">
+			{text.send}
+		</button>
+	</form>
+</div>
+</section>
+
+<script>
+	// Until a Cloudflare Worker sends it (see docs/DIRECTION.md), the message opens in the visitor's mail app.
+	const form = document.querySelector<HTMLFormElement>("[data-contact-form]")!;
+
+	form.addEventListener("submit", function openInMailApp(event) {
+		event.preventDefault();
+		const data = new FormData(form);
+		const body = `${data.get("message")}\n\n${data.get("name")}\n${data.get("email")}`;
+		const query = `subject=${encodeURIComponent(form.dataset.subject!)}&body=${encodeURIComponent(body)}`;
+		location.href = `mailto:${form.dataset.to}?${query}`;
+	});
+</script>
