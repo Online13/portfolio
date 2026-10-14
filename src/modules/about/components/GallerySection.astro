@@ -1,0 +1,32 @@
+---
+import { Image } from "astro:assets";
+import SectionHeading from "@/modules/pro/components/SectionHeading.astro";
+import { getGalleryImages } from "@/services/content";
+import { t, toLocale } from "@/services/i18n";
+
+const text = t(toLocale(Astro.currentLocale)).about.gallery;
+const gallery = getGalleryImages();
+---
+
+<section class="space-y-12 py-20 md:py-28">
+	<div class="pro-container">
+		<SectionHeading kicker={text.kicker} title={text.title} />
+	</div>
+	<!-- Every picture dropped in src/assets/images/gallery/ shows up here. -->
+	<ul class="pro-container grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+		{
+			gallery.map(({ image, alt }) => (
+				<li>
+					<Image
+						src={image}
+						alt={alt}
+						width={960}
+						widths={[480, 960, 1440]}
+						sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+						class="aspect-4/3 w-full rounded-lg object-cover"
+					/>
+				</li>
+			))
+		}
+	</ul>
+</section>

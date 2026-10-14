@@ -20,49 +20,49 @@ const categories = Object.entries(text.categories).map(([category, heading]) => 
 ---
 
 <MainLayout title={pro.nav.blog} description={text.title}>
-	<div class="pro min-h-screen bg-neutral-900 text-neutral-200">
+	<div class="pro min-h-screen bg-surface text-ink">
 		<!-- As on the home page: an opaque sheet over the footer, which shows once scrolled past it. -->
-		<div class="relative z-10 border-b border-white/10 bg-neutral-900">
+		<div class="relative z-10 border-b border-ink/10 bg-surface">
 		<SiteHeader />
 
 		<div class="pro-container py-12 md:py-16 md:pb-8">
 			<h1 class="text-xl font-semibold leading-tight tracking-tight md:text-2xl">
-				<span class="block text-neutral-400">{text.kicker}</span>
+				<span class="block text-ink-muted">{text.kicker}</span>
 				<span class="block">{text.title}</span>
 			</h1>
 		</div>
 
 		{
 			categories.map(({ heading, articles }) => (
-				<section class="border-t border-white/10 py-12 md:py-16">
+				<section class="border-t border-ink/10 py-12 md:py-16">
 					<!-- The category's title on the left, its articles on the right. -->
 					<div class="pro-container grid gap-8 md:grid-cols-12 md:gap-6">
 						<div class="md:col-span-4">
 							<!-- Small, so the articles' titles are what stands out. -->
 							<h2 class="font-semibold leading-snug tracking-tight">
-								<span class="block text-neutral-400">{heading.kicker}</span>
+								<span class="block text-ink-muted">{heading.kicker}</span>
 								<span class="block">{heading.title}</span>
 							</h2>
 						</div>
 						<div class="md:col-span-8">
-							{articles.length === 0 && <p class="text-neutral-400">{text.empty}</p>}
+							{articles.length === 0 && <p class="text-ink-muted">{text.empty}</p>}
 							<!-- Pulled out by the rows' padding, so their text lines up with the column. -->
 							<FluidHover class="-mx-4">
 								<ul>
 									{articles.map(({ slug, title, description, date, draft }) => (
 										<li data-fluid-item class="group cursor-pointer space-y-2 px-4 py-5">
-											<p class="flex items-center gap-3 text-sm text-neutral-400">
+											<p class="flex items-center gap-3 text-sm text-ink-muted">
 												<time datetime={date.toISOString()}>{formatArticleDate(date, locale)}</time>
-												{draft && <span class="rounded-full border border-white/15 px-2.5 py-0.5 text-xs text-neutral-300">{text.draft}</span>}
+												{draft && <span class="rounded-full border border-ink/15 px-2.5 py-0.5 text-xs text-ink-muted">{text.draft}</span>}
 											</p>
 											<h3 class="text-2xl font-semibold leading-tight tracking-tight md:text-3xl">
 												<!-- A click anywhere on the row lands here (see FluidHover). -->
 												<a href={articlePath(locale, slug)} class="inline-flex items-center gap-2">
 													{title}
-													<ArrowRight class="size-5 shrink-0 text-neutral-400 transition group-data-fluid-active:translate-x-0.5 group-data-fluid-active:text-white" />
+													<ArrowRight class="size-5 shrink-0 text-ink-muted transition group-data-fluid-active:translate-x-0.5 group-data-fluid-active:text-ink" />
 												</a>
 											</h3>
-											<p class="text-neutral-400">{description}</p>
+											<p class="text-ink-muted">{description}</p>
 										</li>
 									))}
 								</ul>

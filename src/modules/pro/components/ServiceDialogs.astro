@@ -1,0 +1,79 @@
+---
+import { X } from "@lucide/astro";
+import { t, toLocale } from "@/services/i18n";
+
+const ui = t(toLocale(Astro.currentLocale));
+const text = ui.pro.services;
+const items = text.items.map((item, i) => ({ ...item, dialog: `pro-service-${i}` }));
+const row = "border-t border-ink/10 py-8";
+const rowGrid = "pro-container grid gap-3 md:grid-cols-12 md:gap-6";
+const label = "text-sm text-ink-muted md:col-span-3";
+---
+
+<!-- A service, opened from its card in the hero (data-service-open): a sheet over the whole page that scrolls through the tools and the steps of the work. -->
+{
+	items.map(({ title, description, tools, testing, steps, dialog }) => (
+		<dialog
+			id={dialog}
+			aria-labelledby={`${dialog}-title`}
+			class="fixed inset-0 size-full max-h-none max-w-none overflow-y-auto overscroll-contain bg-surface text-ink opacity-0 transition duration-300 ease-out open:opacity-100 starting:open:translate-y-4 starting:open:opacity-0 motion-reduce:transition-none"
+		>
+			<div class="sticky top-0 z-10 bg-surface/70 backdrop-blur-md">
+				<form method="dialog" class="pro-container flex justify-end py-4">
+					<button class="inline-flex cursor-pointer items-center gap-1.5 text-sm text-ink-muted transition-colors hover:text-ink">
+						{ui.projects.close}
+						<X class="size-4" />
+					</button>
+				</form>
+			</div>
+			<div class="pro-container space-y-6 py-16 md:py-20">
+				<h3 id={`${dialog}-title`} class="text-xl font-semibold leading-[1.12] tracking-tight md:text-3xl">
+					<span class="block text-ink-muted">{text.kicker}</span>
+					<span class="block">{title}</span>
+				</h3>
+				<p class="max-w-140 text-lg text-ink-muted">{description}</p>
+			</div>
+			<section class={row}>
+				<div class={rowGrid}>
+					<h4 class={label}>{text.labels.tools}</h4>
+					<div class="space-y-10 md:col-span-6">
+						{[{ name: undefined, list: tools }, { name: text.labels.testing, list: testing }].map((group) => (
+							<div class="space-y-3">
+								{group.name && <h5 class="text-sm text-ink-faint">{group.name}</h5>}
+								<ul class="divide-y divide-ink/10 border-y border-ink/10">
+									{group.list.map((tool) => (
+										<li class="space-y-1 py-4">
+											<p class="text-xl font-semibold tracking-tight">{tool.name}</p>
+											<p class="text-ink-muted">{tool.text}</p>
+										</li>
+									))}
+								</ul>
+							</div>
+						))}
+					</div>
+				</div>
+			</section>
+			<section class:list={[row, "pb-20 md:pb-28"]}>
+				<div class={rowGrid}>
+					<h4 class={label}>{text.labels.process}</h4>
+					<ol class="space-y-10 md:col-span-6">
+						{steps.map((step, i) => (
+							<li class="space-y-1">
+								<p class="text-sm text-ink-faint tabular-nums">{String(i + 1).padStart(2, "0")}</p>
+								<p class="text-xl font-semibold tracking-tight">{step.title}</p>
+								<p class="text-ink-muted">{step.text}</p>
+							</li>
+						))}
+					</ol>
+				</div>
+			</section>
+		</dialog>
+	))
+}
+
+<script>
+	for (const opener of document.querySelectorAll<HTMLElement>("[data-service-open]")) {
+		const dialog = document.getElementById(opener.dataset.serviceOpen!) as HTMLDialogElement;
+		opener.addEventListener("click", () => dialog.showModal());
+	}
+</script>

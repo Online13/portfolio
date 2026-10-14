@@ -1,0 +1,33 @@
+---
+import FluidHover from "@/components/FluidHover.astro";
+import SectionHeading from "@/modules/pro/components/SectionHeading.astro";
+import { getEducation } from "@/services/content";
+import { t, toLocale } from "@/services/i18n";
+
+const locale = toLocale(Astro.currentLocale);
+const text = t(locale).about.education;
+const education = await getEducation(locale);
+---
+
+<section class="space-y-12 border-t border-ink/10 pt-20 md:pt-28">
+	<div class="pro-container">
+		<SectionHeading kicker={text.kicker} title={text.title} />
+	</div>
+	<FluidHover class="[--fluid-radius:0]">
+		<ul class="border-b border-ink/10">
+			{
+				education.map(({ degree, school, start, end }) => (
+					<li data-fluid-item class="border-t border-ink/10 py-5">
+						<div class="pro-container grid gap-1 md:grid-cols-12 md:gap-6">
+							<p class="text-sm text-ink-muted md:col-span-3">{end ? `${start} – ${end}` : start}</p>
+							<div class="md:col-span-9">
+								<h3 class="text-lg">{degree}</h3>
+								<p class="text-brand">{school}</p>
+							</div>
+						</div>
+					</li>
+				))
+			}
+		</ul>
+	</FluidHover>
+</section>

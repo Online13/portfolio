@@ -1,24 +1,28 @@
 ---
+// import EducationSection from "@/modules/about/components/EducationSection.astro";
+import GallerySection from "@/modules/about/components/GallerySection.astro";
 import AiSection from "./AiSection.astro";
 import ContactSection from "./ContactSection.astro";
 import ProFooter from "./ProFooter.astro";
 import ProHero from "./ProHero.astro";
-import SiteHeader from "./SiteHeader.astro";
 import ServicesSection from "./ServicesSection.astro";
+import SiteHeader from "./SiteHeader.astro";
 import ToolsSection from "./ToolsSection.astro";
 import WorkSection from "./WorkSection.astro";
 ---
 
-<!-- The site (see docs/DIRECTION.md): what I offer and what I have built, for someone looking to work with me. -->
-<div class="pro min-h-screen bg-neutral-900 text-neutral-200">
+<!-- The site (see docs/DIRECTION.md): who I am, what I offer and what I have built, for someone looking to work with me. -->
+<div class="pro min-h-screen bg-surface text-ink">
 	<!-- An opaque sheet over the footer, which stays at the bottom of the screen and shows once scrolled past the sheet. -->
-	<div class="relative z-10 border-b border-white/10 bg-neutral-900">
+	<div class="relative z-10 border-b border-ink/10 bg-surface">
 		<SiteHeader />
 		<ProHero />
 		<ServicesSection />
 		<WorkSection />
 		<AiSection />
 		<ToolsSection />
+		{/* <EducationSection /> */}
+		<GallerySection />
 		<ContactSection />
 	</div>
 	<ProFooter />

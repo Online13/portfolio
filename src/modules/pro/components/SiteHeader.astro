@@ -1,7 +1,6 @@
 ---
 import FluidHover from "@/components/FluidHover.astro";
 import LanguageSwitch from "@/components/LanguageSwitch.astro";
-import { aboutPath } from "@/modules/about/lib/about";
 import { blogPath } from "@/modules/blog/lib/blog";
 import { homePath, t, toLocale } from "@/services/i18n";
 
@@ -10,7 +9,6 @@ const { nav } = t(locale).pro;
 const home = homePath(locale);
 const isHome = Astro.url.pathname === home;
 const links = [
-	{ href: aboutPath(locale), label: nav.about },
 	{ href: blogPath(locale), label: nav.blog },
 ];
 ---
@@ -22,7 +20,7 @@ const links = [
 <header
 	data-pro-header
 	data-named={isHome ? undefined : ""}
-	class="group sticky top-0 z-30 border-b border-transparent bg-neutral-900/70 backdrop-blur-md transition-colors duration-300 data-scrolled:border-white/10"
+	class="group sticky top-0 z-30 border-b border-transparent bg-surface/70 backdrop-blur-md transition-colors duration-300 data-scrolled:border-ink/10"
 >
 	<div class="pro-container flex items-center justify-between gap-3 py-4">
 		<!-- The name comes up from under the header's edge, as if the hero's had risen into it. -->
@@ -41,7 +39,7 @@ const links = [
 							href={href}
 							data-fluid-item
 							aria-current={Astro.url.pathname.startsWith(href) ? "page" : undefined}
-							class="px-3 py-1.5 transition-colors aria-[current=page]:text-white data-fluid-active:text-white"
+							class="px-3 py-1.5 transition-colors aria-[current=page]:text-ink data-fluid-active:text-ink"
 						>
 							{label}
 						</a>
@@ -50,7 +48,7 @@ const links = [
 			</FluidHover>
 			<a
 				href={`${home}#pro-contact`}
-				class="hidden rounded-full bg-neutral-200 px-4 py-1.5 font-medium text-neutral-900 transition duration-200 hover:bg-white active:scale-95 sm:block"
+				class="hidden rounded-full bg-ink px-4 py-1.5 font-medium text-surface transition duration-200 hover:bg-ink/85 active:scale-95 sm:block"
 			>
 				{nav.contact}
 			</a>

@@ -1,25 +1,43 @@
 ---
-import { getResume } from "@/services/content";
+import { ArrowUpRight } from "@lucide/astro";
+import SocialNetworkLinks from "@/modules/social/components/SocialNetworkLinks.astro";
+import { getExperienceYears } from "@/services/content";
 import { t, toLocale } from "@/services/i18n";
 
-const locale = toLocale(Astro.currentLocale);
-const { hero } = t(locale).pro;
-// The same title as the resume.
-const { title } = await getResume(locale);
-const button = "rounded-full font-medium transition duration-200 active:scale-95";
+const { about, pro } = t(toLocale(Astro.currentLocale));
+const story = about.story(await getExperienceYears());
 ---
 
-<section class="pro-container flex flex-col gap-6 py-16 md:py-20">
+<!-- Who I am: my name and role, what I do, what I did, then where I live and how to reach me. -->
+<section class="pro-container py-16 md:py-24">
 	<h1 class="text-2xl font-bold leading-[1.1] tracking-tight md:text-4xl">
-		<span data-pro-hero-name class="block">Nekena Rayane</span>
-		<span class="block text-neutral-500">{title}</span>
+		<span class="mb-2 block text-sm font-medium text-ink-muted md:text-base"
+			>{pro.hero.greeting}</span
+		>
+		<span data-pro-hero-name class="block text-ink-muted"
+			>Nekena <span class="text-ink">Rayane.</span></span
+		>
+		<span class="mt-2 block text-lg font-semibold text-brand md:text-2xl"
+			>{pro.hero.role}</span
+		>
 	</h1>
-	<div class="max-w-140 space-y-6">
-		<p class="text-lg text-neutral-400">{hero.intro}</p>
-		<div class="flex flex-wrap gap-3 text-sm font-medium">
-			<a href="#pro-contact" class:list={[button, "bg-neutral-200 px-5 py-2.5 text-neutral-900 hover:bg-white"]}>{hero.cta}</a>
-			<a href="#resume" class:list={[button, "border border-white/20 px-5 py-2.5 hover:border-white hover:bg-white/5"]}>{hero.resume}</a>
+	<div class="mt-10 max-w-160 space-y-5 text-lg text-ink-muted">
+		{story.map((paragraph) => <p>{paragraph}</p>)}
+		<div class="space-y-4">
+			<p>
+				{about.location}
+				{about.available}{" "}
+				<a
+					href="#resume"
+					class="group inline-flex items-center gap-1 text-brand underline decoration-brand/30 underline-offset-4 transition-colors hover:decoration-brand"
+				>
+					{about.resume}
+					<ArrowUpRight
+						class="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+					/>
+				</a>
+			</p>
+			<SocialNetworkLinks />
 		</div>
 	</div>
 </section>
-

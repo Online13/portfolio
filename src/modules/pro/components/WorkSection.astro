@@ -14,9 +14,9 @@ const clientWork = (await getClientWork(locale)).flatMap((work) =>
 	work.projects.map((project, i) => ({ ...project, work, panel: `pro-work-${work.slug}-${i}` })),
 );
 const personalWork = await getPersonalWork(locale);
-const row = "group cursor-pointer border-t border-white/10 py-6";
+const row = "group cursor-pointer border-t border-ink/10 py-6";
 const rowGrid = "pro-container grid gap-3 md:grid-cols-12 md:gap-6";
-const more = "inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-1.5 text-sm font-medium transition duration-200 hover:border-white hover:bg-white/5 active:scale-95";
+const more = "inline-flex items-center gap-1.5 rounded-full border border-ink/20 px-4 py-1.5 text-sm font-medium transition duration-200 hover:border-ink hover:bg-ink/5 active:scale-95";
 ---
 
 <section id="pro-work" class="scroll-mt-16 space-y-12 pt-20 md:pt-28">
@@ -24,13 +24,13 @@ const more = "inline-flex items-center gap-1.5 rounded-full border border-white/
 		<SectionHeading kicker={text.kicker} title={text.title} />
 	</div>
 	<FluidHover class="[--fluid-radius:0]">
-	<ul class="border-b border-white/10">
+	<ul class="border-b border-ink/10">
 		{
 			clientWork.map(({ name, description, work, panel }) => (
 				<li data-fluid-item class={row}>
 					<div class={rowGrid}>
-					<p class="text-sm text-neutral-400 md:col-span-3">
-						<span class="block text-neutral-200">{work.title}</span>
+					<p class="text-sm text-ink-muted md:col-span-3">
+						<span class="block text-brand">{work.title}</span>
 						{work.years}
 					</p>
 					<div class="space-y-1 md:col-span-6">
@@ -38,10 +38,10 @@ const more = "inline-flex items-center gap-1.5 rounded-full border border-white/
 							<!-- A click anywhere on the row lands here (see FluidHover). -->
 							<button type="button" data-work-toggle aria-expanded="false" aria-controls={panel} class="inline-flex cursor-pointer items-center gap-2 text-left">
 								{name}
-								<Plus class="size-4 shrink-0 text-neutral-400 transition duration-300 group-data-open:rotate-45 group-data-fluid-active:text-white" />
+								<Plus class="size-4 shrink-0 text-ink-muted transition duration-300 group-data-open:rotate-45 group-data-fluid-active:text-ink" />
 							</button>
 						</h3>
-						<p class="text-neutral-400">{description}</p>
+						<p class="text-ink-muted">{description}</p>
 					</div>
 					<div class="md:col-span-3">
 						<Tags tags={work.technologies} />
@@ -58,8 +58,8 @@ const more = "inline-flex items-center gap-1.5 rounded-full border border-white/
 							<div class:list={[rowGrid, "pt-6"]}>
 								<div class="space-y-5 md:col-span-6 md:col-start-4">
 									<WorkImage image={work.images[0]} title={work.title} class="aspect-16/10 w-full rounded-lg" />
-									{work.summary && <p class="text-neutral-300">{work.summary}</p>}
-									<ul class="list-disc space-y-1 pl-5 text-neutral-400 marker:text-neutral-600">
+									{work.summary && <p class="text-ink-muted">{work.summary}</p>}
+									<ul class="list-disc space-y-1 pl-5 text-ink-muted marker:text-ink-faint">
 										{work.highlights.slice(0, 3).map((highlight) => <li>{highlight}</li>)}
 									</ul>
 									<a href={workPath(locale, work.slug)} class={more}>
@@ -82,18 +82,18 @@ const more = "inline-flex items-center gap-1.5 rounded-full border border-white/
 		<SectionHeading kicker={text.personalKicker} title={text.personalTitle} />
 	</div>
 	<FluidHover class="[--fluid-radius:0]">
-	<ul data-work-previews class="border-b border-white/10">
+	<ul data-work-previews class="border-b border-ink/10">
 		{
 			personalWork.map(({ slug, title, summary, technologies }) => (
 				<li data-fluid-item data-preview={slug} class={row}>
 					<div class={rowGrid}>
-					<h3 class="text-xl font-semibold tracking-tight md:col-span-3">
+					<h3 class="text-xl font-semibold tracking-tight text-brand md:col-span-3">
 						<a href={workPath(locale, slug)} class="inline-flex items-center gap-1">
 							{title}
-							<ArrowRight class="size-4 text-neutral-400 transition group-data-fluid-active:translate-x-0.5 group-data-fluid-active:text-white" />
+							<ArrowRight class="size-4 text-ink-muted transition group-data-fluid-active:translate-x-0.5 group-data-fluid-active:text-ink" />
 						</a>
 					</h3>
-					<p class="text-neutral-400 md:col-span-6">{summary}</p>
+					<p class="text-ink-muted md:col-span-6">{summary}</p>
 					<div class="md:col-span-3">
 						<Tags tags={technologies} />
 					</div>
@@ -104,7 +104,7 @@ const more = "inline-flex items-center gap-1.5 rounded-full border border-white/
 	</ul>
 	</FluidHover>
 	<!-- One card for the whole list: it follows the pointer and plays the screenshots of the project under it. -->
-	<div data-work-preview aria-hidden="true" class="work-preview fixed top-0 left-0 z-40 aspect-16/10 w-80 overflow-hidden rounded-lg border border-white/10 bg-neutral-800 shadow-2xl shadow-black/50">
+	<div data-work-preview aria-hidden="true" class="work-preview fixed top-0 left-0 z-40 aspect-16/10 w-80 overflow-hidden rounded-lg border border-ink/10 bg-surface-raised shadow-2xl shadow-black/15">
 		{
 			personalWork.map(({ slug, title, images }) => (
 				<div data-preview-of={slug} hidden class="absolute inset-0">

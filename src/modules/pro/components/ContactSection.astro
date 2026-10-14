@@ -10,7 +10,7 @@ const fields = [
 	{ name: "name", label: text.name, type: "text", autocomplete: "name" },
 	{ name: "email", label: text.email, type: "email", autocomplete: "email" },
 ];
-const field = "w-full border-b border-white/20 bg-transparent py-2 outline-none transition-colors hover:border-white/50 focus:border-white";
+const field = "w-full border-b border-ink/20 bg-transparent py-2 outline-none transition-colors hover:border-ink/50 focus:border-ink";
 ---
 
 <section id="pro-contact" class="scroll-mt-16 py-20 md:py-28">
@@ -18,24 +18,24 @@ const field = "w-full border-b border-white/20 bg-transparent py-2 outline-none 
 	<div class="space-y-6">
 		<SectionHeading kicker={text.kicker} title={text.title} />
 		<!-- Shifted so the first one lines up with the title above. -->
-		<div class="-ml-2 text-neutral-200">
+		<div class="-ml-2 text-ink">
 			<SocialNetworkLinks />
 		</div>
 	</div>
 	<form data-contact-form data-to={email.handle} data-subject={text.subject} class="space-y-6">
 		{
 			fields.map(({ name, label, type, autocomplete }) => (
-				<label class="block space-y-1 text-sm text-neutral-400">
+				<label class="block space-y-1 text-sm text-ink-muted">
 					{label}
-					<input name={name} type={type} autocomplete={autocomplete} required class:list={[field, "text-base text-neutral-200"]} />
+					<input name={name} type={type} autocomplete={autocomplete} required class:list={[field, "text-base text-ink"]} />
 				</label>
 			))
 		}
-		<label class="block space-y-1 text-sm text-neutral-400">
+		<label class="block space-y-1 text-sm text-ink-muted">
 			{text.message}
-			<textarea name="message" rows="4" required class:list={[field, "resize-y text-base text-neutral-200"]}></textarea>
+			<textarea name="message" rows="4" required class:list={[field, "resize-y text-base text-ink"]}></textarea>
 		</label>
-		<button type="submit" class="cursor-pointer rounded-full bg-neutral-200 px-5 py-2.5 text-sm font-medium text-neutral-900 transition duration-200 hover:bg-white active:scale-95">
+		<button type="submit" class="cursor-pointer rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-surface transition duration-200 hover:bg-ink/85 active:scale-95">
 			{text.send}
 		</button>
 	</form>

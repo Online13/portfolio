@@ -17,7 +17,7 @@ const pdf = locale === "en" ? "/cv.pdf" : `/cv-${locale}.pdf`;
 	id="resume"
 	aria-label={text.label}
 	aria-modal="true"
-	class="fixed inset-0 z-50 m-0 size-full max-h-none max-w-none translate-y-6 overflow-y-auto overscroll-contain border-0 bg-neutral-900 p-0 opacity-0 transition-[opacity,translate,display] transition-discrete duration-300 ease-out open:translate-y-0 open:opacity-100 starting:open:translate-y-6 starting:open:opacity-0 motion-reduce:transition-none"
+	class="fixed inset-0 z-50 m-0 size-full max-h-none max-w-none translate-y-6 overflow-y-auto overscroll-contain border-0 bg-surface-sunken p-0 opacity-0 transition-[opacity,translate,display] transition-discrete duration-300 ease-out open:translate-y-0 open:opacity-100 starting:open:translate-y-6 starting:open:opacity-0 motion-reduce:transition-none"
 >
 	<div class="mx-auto flex max-w-190 flex-col gap-3 px-4 py-10 sm:py-16 print:max-w-none print:p-0">
 		<div data-resume-toolbar class="flex items-center justify-between">
@@ -25,7 +25,7 @@ const pdf = locale === "en" ? "/cv.pdf" : `/cv-${locale}.pdf`;
 				type="button"
 				data-resume-close
 				aria-label={text.close}
-				class="rounded-full border border-white/15 p-2 text-neutral-400 transition-colors hover:bg-white/5 hover:text-white"
+				class="rounded-full border border-ink/15 p-2 text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink"
 			>
 				<X class="size-4" aria-hidden="true" />
 			</button>
@@ -33,7 +33,7 @@ const pdf = locale === "en" ? "/cv.pdf" : `/cv-${locale}.pdf`;
 				href={pdf}
 				download={`CV-Nekena-Rayane-Ratiarivelo-${locale.toUpperCase()}.pdf`}
 				data-resume-download
-				class="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-neutral-200 transition-colors hover:bg-white/5"
+				class="inline-flex items-center gap-2 rounded-full border border-ink/15 px-4 py-2 text-sm text-ink transition-colors hover:bg-ink/5"
 			>
 				<Download class="size-4" aria-hidden="true" />
 				{text.download}

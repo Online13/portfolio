@@ -12,7 +12,7 @@ const text = t(toLocale(Astro.currentLocale)).pro.ai;
 			<SectionHeading kicker={text.kicker} title={text.title} />
 			<AskAi />
 		</div>
-		<div class="space-y-5 text-lg text-neutral-400">
+		<div class="space-y-5 text-lg text-ink-muted">
 			{text.story.map((paragraph) => <p>{paragraph}</p>)}
 		</div>
 	</div>

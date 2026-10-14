@@ -14,7 +14,7 @@ const { image, title, class: className, ...attributes } = Astro.props;
 	) : (
 		<div
 			aria-hidden="true"
-			class:list={["flex items-end bg-linear-to-br from-neutral-700 to-neutral-800 p-5 text-lg font-semibold tracking-tight text-neutral-400", className]}
+			class:list={["flex items-end bg-linear-to-br from-surface-raised to-surface-sunken p-5 text-lg font-semibold tracking-tight text-ink-muted", className]}
 			{...attributes}
 		>
 			{title}

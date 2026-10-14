@@ -13,20 +13,23 @@ const en = {
 		names: { en: "English", fr: "Français" },
 	},
 	pro: {
-		nav: { services: "Services", work: "Work", about: "About", blog: "Blog", contact: "Contact" },
+		nav: { services: "Services", work: "Work", blog: "Blog", contact: "Contact" },
 		hero: {
-			intro:
-				"I'm Nekena Rayane, a software engineer based in Antananarivo, Madagascar. I take a product from the first idea to production.",
-			cta: "Start a project",
-			resume: "View resume",
+			greeting: "Hi, I'm",
+			role: "Software Engineer / React Native Enthusiast",
 		},
 		services: {
 			kicker: "Services.",
 			title: "What I can build for you.",
+			previous: "Previous service",
+			next: "Next service",
+			details: "Read more",
 			labels: { tools: "Tools", testing: "Testing", process: "Process" },
 			items: [
 				{
 					title: "Mobile apps",
+					lead: "I",
+					phrase: "turn ideas into mobile apps",
 					description: "iOS and Android apps from one React Native codebase, from the first screen to the stores.",
 					tags: ["React Native", "Expo", "TypeScript"],
 					tools: [
@@ -46,6 +49,8 @@ const en = {
 				},
 				{
 					title: "Landing pages",
+					lead: "I",
+					phrase: "tell your story in landing pages",
 					description: "A fast page that presents your product or company, from the design to going online.",
 					tags: ["Astro", "Tailwind CSS", "TypeScript"],
 					tools: [
@@ -64,6 +69,8 @@ const en = {
 				},
 				{
 					title: "Fullstack apps",
+					lead: "I",
+					phrase: "connect interface and data in fullstack apps",
 					description: "A web application built end to end: the interface people use, and the server and data behind it.",
 					tags: ["React", "Node.js", "PostgreSQL"],
 					tools: [
@@ -83,6 +90,8 @@ const en = {
 				},
 				{
 					title: "SaaS",
+					lead: "I",
+					phrase: "launch SaaS products from scratch",
 					description: "A complete web product: interface, accounts, data and everything needed to put it online.",
 					tags: ["React", "Next.js", "Supabase"],
 					tools: [
@@ -136,11 +145,10 @@ const en = {
 	},
 	about: {
 		story: (years: number) => [
-			"Hi, I'm Rayane {avatar}. I was born in Antananarivo, Madagascar, and I still live there. Curious by nature, I like to understand how things are built, and then to make them better.",
-			`I'm a software engineer with ${years} years of experience building web and mobile applications. I care about systems that scale, clean architecture and performance.`,
-			"Lately I've been focused on mobile applications with React Native. I work as a consultant at Itwedo, and I build a personal project on the side.",
-			"Before that, I worked on digitalization projects for the public and private sectors, and took part in the frontend refactoring of large-scale applications.",
+			`I'm a software engineer and consultant at Itwedo, with ${years} years of experience building web and mobile applications. I focus on mobile with React Native, and I care about systems that scale, clean architecture and performance.`,
+			"Before that, I worked on digitalization projects for the public and private sectors, and on the frontend refactoring of large-scale applications. Right now, I'm also building a personal project on the side.",
 		],
+		location: "Born and based in Antananarivo, Madagascar.",
 		available: "Available for remote collaborations.",
 		resume: "View full resume",
 		education: { kicker: "Education.", title: "Where I studied." },
@@ -198,20 +206,23 @@ const fr: typeof en = {
 		names: { en: "English", fr: "Français" },
 	},
 	pro: {
-		nav: { services: "Services", work: "Réalisations", about: "À propos", blog: "Blog", contact: "Contact" },
+		nav: { services: "Services", work: "Réalisations", blog: "Blog", contact: "Contact" },
 		hero: {
-			intro:
-				"Je suis Nekena Rayane, ingénieur logiciel basé à Antananarivo, Madagascar. J'accompagne un produit de la première idée à la mise en production.",
-			cta: "Démarrer un projet",
-			resume: "Voir le CV",
+			greeting: "Bonjour, je suis",
+			role: "Ingénieur logiciel / Passionné de React Native",
 		},
 		services: {
 			kicker: "Services.",
 			title: "Ce que je peux construire pour vous.",
+			previous: "Service précédent",
+			next: "Service suivant",
+			details: "En savoir plus",
 			labels: { tools: "Outils", testing: "Tests", process: "Process" },
 			items: [
 				{
 					title: "Applications mobiles",
+					lead: "Je",
+					phrase: "transforme vos idées en applications mobiles",
 					description: "Des applications iOS et Android à partir d'une seule base React Native, du premier écran aux stores.",
 					tags: ["React Native", "Expo", "TypeScript"],
 					tools: [
@@ -231,6 +242,8 @@ const fr: typeof en = {
 				},
 				{
 					title: "Landing pages",
+					lead: "Je",
+					phrase: "raconte votre histoire en landing pages",
 					description: "Une page rapide qui présente votre produit ou votre entreprise, du design à la mise en ligne.",
 					tags: ["Astro", "Tailwind CSS", "TypeScript"],
 					tools: [
@@ -249,6 +262,8 @@ const fr: typeof en = {
 				},
 				{
 					title: "Applications fullstack",
+					lead: "Je",
+					phrase: "relie interface et données dans des applications fullstack",
 					description: "Une application web construite de bout en bout : l'interface que les gens utilisent, puis le serveur et les données derrière.",
 					tags: ["React", "Node.js", "PostgreSQL"],
 					tools: [
@@ -268,6 +283,8 @@ const fr: typeof en = {
 				},
 				{
 					title: "SaaS",
+					lead: "Je",
+					phrase: "lance des produits SaaS en partant de zéro",
 					description: "Un produit web complet : interface, comptes, données et tout ce qu'il faut pour le mettre en ligne.",
 					tags: ["React", "Next.js", "Supabase"],
 					tools: [
@@ -321,11 +338,10 @@ const fr: typeof en = {
 	},
 	about: {
 		story: (years: number) => [
-			"Bonjour, je suis Rayane {avatar}. Je suis né à Antananarivo, à Madagascar, et j'y vis toujours. Curieux de nature, j'aime comprendre comment les choses sont construites, puis les améliorer.",
-			`Je suis ingénieur logiciel, avec ${years} ans d'expérience dans la création d'applications web et mobiles. Je m'attache aux systèmes évolutifs, à une architecture propre et à la performance.`,
-			"Ces derniers temps, je me concentre sur les applications mobiles avec React Native. Je travaille comme consultant chez Itwedo, et je développe un projet personnel à côté.",
-			"Auparavant, j'ai travaillé sur des projets de digitalisation pour les secteurs public et privé, et participé à la refonte frontend d'applications à grande échelle.",
+			`Je suis ingénieur logiciel et consultant chez Itwedo, avec ${years} ans d'expérience dans la création d'applications web et mobiles. Je me concentre sur le mobile avec React Native, et je m'attache aux systèmes évolutifs, à une architecture propre et à la performance.`,
+			"Auparavant, j'ai travaillé sur des projets de digitalisation pour les secteurs public et privé, et sur la refonte frontend d'applications à grande échelle. En ce moment, je développe aussi un projet personnel à côté.",
 		],
+		location: "Né à Antananarivo, à Madagascar, où je vis toujours.",
 		available: "Disponible pour des collaborations à distance.",
 		resume: "Voir le CV complet",
 		education: { kicker: "Formation.", title: "Où j'ai étudié." },

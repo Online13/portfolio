@@ -16,23 +16,23 @@ const locale = toLocale(Astro.currentLocale);
 const text = t(locale);
 const labels = { ...text.projects, ...text.pro.work };
 const [cover, ...images] = work.images;
-const row = "border-t border-white/10 py-8";
+const row = "border-t border-ink/10 py-8";
 const rowGrid = "pro-container grid gap-3 md:grid-cols-12 md:gap-6";
-const label = "text-sm text-neutral-400 md:col-span-3";
-const bullets = "list-disc space-y-2 pl-5 marker:text-neutral-600";
+const label = "text-sm text-ink-muted md:col-span-3";
+const bullets = "list-disc space-y-2 pl-5 marker:text-ink-faint";
 ---
 
 <MainLayout title={work.title} description={work.summary}>
-	<div class="pro min-h-screen bg-neutral-900 text-neutral-200">
+	<div class="pro min-h-screen bg-surface text-ink">
 		<SiteHeader />
 
 		<article class="pb-20 md:pb-28">
 			<div class="pro-container space-y-6 py-16 md:py-20">
 				<h1 class="text-3xl font-semibold leading-[1.12] tracking-tight md:text-5xl">
-					<span class="block text-neutral-400">{work.kicker}</span>
+					<span class="block text-ink-muted">{work.kicker}</span>
 					<span class="block">{work.title}</span>
 				</h1>
-				{work.summary && <p class="max-w-140 text-lg text-neutral-400">{work.summary}</p>}
+				{work.summary && <p class="max-w-140 text-lg text-ink-muted">{work.summary}</p>}
 			</div>
 
 			<div class="pro-container grid gap-4 pb-16 md:grid-cols-2 md:pb-20">
@@ -55,7 +55,7 @@ const bullets = "list-disc space-y-2 pl-5 marker:text-neutral-600";
 					<section class={row}>
 						<div class={rowGrid}>
 							<h2 class={label}>{labels.description}</h2>
-							<p class="leading-relaxed text-neutral-300 md:col-span-6">{work.body}</p>
+							<p class="leading-relaxed text-ink-muted md:col-span-6">{work.body}</p>
 						</div>
 					</section>
 				)
@@ -68,7 +68,7 @@ const bullets = "list-disc space-y-2 pl-5 marker:text-neutral-600";
 							<dl class="grid grid-cols-2 gap-6 md:col-span-9 md:grid-cols-3">
 								{work.metrics.map((metric) => (
 									<div class="flex flex-col-reverse gap-1">
-										<dt class="text-sm text-neutral-400">{metric.label}</dt>
+										<dt class="text-sm text-ink-muted">{metric.label}</dt>
 										<dd class="text-3xl font-semibold tracking-tight">{metric.value}</dd>
 									</div>
 								))}
@@ -86,7 +86,7 @@ const bullets = "list-disc space-y-2 pl-5 marker:text-neutral-600";
 								{work.projects.map((project) => (
 									<li class="space-y-1">
 										<h3 class="text-xl font-semibold tracking-tight">{project.name}</h3>
-										<p class="text-neutral-400">{project.description}</p>
+										<p class="text-ink-muted">{project.description}</p>
 									</li>
 								))}
 							</ul>
@@ -99,7 +99,7 @@ const bullets = "list-disc space-y-2 pl-5 marker:text-neutral-600";
 					<section class={row}>
 						<div class={rowGrid}>
 							<h2 class={label}>{labels.highlights}</h2>
-							<ul class:list={[bullets, "text-neutral-300 md:col-span-6"]}>
+							<ul class:list={[bullets, "text-ink-muted md:col-span-6"]}>
 								{work.highlights.map((highlight) => <li>{highlight}</li>)}
 							</ul>
 						</div>
@@ -122,7 +122,7 @@ const bullets = "list-disc space-y-2 pl-5 marker:text-neutral-600";
 								href={work.link}
 								target="_blank"
 								rel="noreferrer"
-								class="group inline-flex items-center gap-1.5 rounded-full bg-neutral-200 px-5 py-2.5 text-sm font-medium text-neutral-900 transition duration-200 hover:bg-white active:scale-95"
+								class="group inline-flex items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-surface transition duration-200 hover:bg-ink/85 active:scale-95"
 							>
 								{labels.viewOnGithub}
 								<ArrowUpRight class="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

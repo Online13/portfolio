@@ -1,112 +1,238 @@
 ---
-import FluidHover from "@/components/FluidHover.astro";
-import { Plus, X } from "@lucide/astro";
+import { ArrowLeft, ArrowRight } from "@lucide/astro";
 import { t, toLocale } from "@/services/i18n";
-import SectionHeading from "./SectionHeading.astro";
-import Tags from "./Tags.astro";
+import ServiceDialogs from "./ServiceDialogs.astro";
 
-const ui = t(toLocale(Astro.currentLocale));
-const text = ui.pro.services;
-const items = text.items.map((item, i) => ({ ...item, dialog: `pro-service-${i}` }));
-const row = "border-t border-white/10 py-8";
-const rowGrid = "pro-container grid gap-3 md:grid-cols-12 md:gap-6";
-const label = "text-sm text-neutral-400 md:col-span-3";
+const { services } = t(toLocale(Astro.currentLocale)).pro;
+const items = services.items.map((item, i) => ({ ...item, dialog: `pro-service-${i}` }));
+// The track repeats the services so there is always a card on either side, however wide the screen. It rests on
+// the middle copy and comes back to it, unseen, after each move.
+const copies = 5;
+const start = Math.floor(copies / 2) * items.length;
+const cards = Array.from({ length: copies }, () => items).flat();
+const control =
+	"grid size-10 cursor-pointer place-items-center rounded-full border border-ink/20 transition duration-200 hover:border-ink hover:bg-ink/5 active:scale-95";
 ---
 
-<section id="pro-services" class="scroll-mt-16 space-y-12 border-t border-white/10 pt-20 md:pt-28">
-	<div class="pro-container">
-		<SectionHeading kicker={text.kicker} title={text.title} />
-	</div>
-	<!-- The gaps let the grid's background through as hairlines between the cards. -->
-	<div class="border-y border-white/10">
-		<div class="pro-container">
-			<FluidHover axis="xy" class="[--fluid-radius:0] [--fluid-z:1]">
-			<!-- Pulled out by the cards' padding, so the first card's text lines up with the heading. -->
-			<ul class="grid gap-px bg-white/10 md:-mx-6 md:grid-cols-2 xl:grid-cols-4">
-		{
-			items.map(({ title, description, tags, dialog }) => (
-				<li data-fluid-item class="group flex cursor-pointer flex-col gap-4 bg-neutral-900 py-8 md:px-6">
-					<h3 class="text-xl font-semibold tracking-tight">
-						<!-- A click anywhere on the card lands here (see FluidHover). -->
-						<button type="button" data-service-open={dialog} aria-haspopup="dialog" class="flex w-full cursor-pointer items-center justify-between gap-2 text-left">
-							{title}
-							<Plus class="size-4 shrink-0 text-neutral-400 transition group-data-fluid-active:rotate-90 group-data-fluid-active:text-white" />
+<!-- A carousel of what I build, under a title whose second line follows the card in front. -->
+<section id="pro-services" data-carousel class="scroll-mt-16 space-y-12 overflow-x-clip border-t border-ink/10 py-20 md:py-28">
+	<h2 class="pro-container text-3xl font-semibold leading-[1.12] tracking-tight md:text-4xl">
+		<span class="block text-ink-muted">{services.kicker}</span>
+		<!-- Every line sits in the same cell, so the title keeps its height while they swap. -->
+		<span class="grid">
+			{
+				items.map(({ lead, phrase }, i) => (
+					<span
+						data-carousel-phrase
+						data-active={i === 0 ? "" : undefined}
+						aria-hidden={i === 0 ? "false" : "true"}
+						class="col-start-1 row-start-1 translate-y-2 opacity-0 transition duration-500 ease-spring data-active:translate-y-0 data-active:opacity-100 motion-reduce:transition-none"
+					>
+						{lead} <span class="text-brand">{phrase}</span>.
+					</span>
+				))
+			}
+		</span>
+	</h2>
+	<div class="pro-container space-y-8">
+		<!-- Wider than its column: the cards run off both edges of the screen. -->
+		<ul data-carousel-track style={`--index: ${start}`} aria-label={services.title} class="carousel-track flex touch-pan-y">
+			{
+				cards.map(({ title, description, tags, dialog }, i) => (
+					<li
+						data-carousel-card
+						data-active={i === start ? "" : undefined}
+						class="group flex shrink-0 cursor-pointer rounded-lg bg-surface-raised transition-[width,background-color] duration-500 hover:bg-ink/10 data-active:cursor-auto data-active:bg-brand motion-reduce:transition-none"
+					>
+						<!-- Out of reach until its card is in front: a click on the card then brings it there. -->
+						<div inert={i !== start} class="flex min-h-72 w-full flex-col gap-4 p-6">
+							<h3 class="text-xl font-semibold tracking-tight group-data-active:text-surface">{title}</h3>
+							<p class="text-ink-muted group-data-active:text-surface/80">{description}</p>
+							<ul class="flex flex-wrap gap-1.5">
+								{tags.map((tag) => (
+									<li class="rounded-full border border-ink/15 px-2.5 py-0.5 text-xs text-ink-muted group-data-active:border-surface/20 group-data-active:text-surface/80">
+										{tag}
+									</li>
+								))}
+							</ul>
+							<button
+								type="button"
+								data-service-open={dialog}
+								aria-haspopup="dialog"
+								class="group/more mt-auto inline-flex cursor-pointer items-center gap-1.5 self-start pt-4 text-sm font-medium group-data-active:text-surface"
+							>
+								{services.details}
+								<ArrowRight class="size-4 transition-transform group-hover/more:translate-x-0.5" />
+							</button>
+						</div>
+					</li>
+				))
+			}
+		</ul>
+		<div class="flex items-center gap-3">
+			<button type="button" data-carousel-step="-1" aria-label={services.previous} class={control}><ArrowLeft class="size-4" /></button>
+			<button type="button" data-carousel-step="1" aria-label={services.next} class={control}><ArrowRight class="size-4" /></button>
+			<div class="ml-3 flex items-center">
+				{
+					items.map(({ title }, i) => (
+						<button type="button" data-carousel-dot aria-label={title} aria-current={i === 0 ? "true" : undefined} class="group/dot cursor-pointer p-1.5">
+							<!-- The dot in front stretches into a bar that fills until the next card comes. -->
+							<span class="block h-1.5 w-1.5 overflow-hidden rounded-full bg-ink/25 transition-[width] duration-300 group-hover/dot:bg-ink/50 group-aria-[current]/dot:w-8">
+								<span data-carousel-fill class="carousel-fill block size-full rounded-full bg-ink" />
+							</span>
 						</button>
-					</h3>
-					<p class="grow text-neutral-400">{description}</p>
-					<Tags tags={tags} />
-				</li>
-			))
-		}
-			</ul>
-			</FluidHover>
+					))
+				}
+			</div>
 		</div>
 	</div>
-	<!-- A service, opened: a sheet over the whole page that scrolls through the tools and the steps of the work. -->
-	{
-		items.map(({ title, description, tools, testing, steps, dialog }) => (
-			<dialog
-				id={dialog}
-				aria-labelledby={`${dialog}-title`}
-				class="fixed inset-0 size-full max-h-none max-w-none overflow-y-auto overscroll-contain bg-neutral-900 text-neutral-200 opacity-0 transition duration-300 ease-out open:opacity-100 starting:open:translate-y-4 starting:open:opacity-0 motion-reduce:transition-none"
-			>
-				<div class="sticky top-0 z-10 bg-neutral-900/70 backdrop-blur-md">
-					<form method="dialog" class="pro-container flex justify-end py-4">
-						<button class="inline-flex cursor-pointer items-center gap-1.5 text-sm text-neutral-400 transition-colors hover:text-white">
-							{ui.projects.close}
-							<X class="size-4" />
-						</button>
-					</form>
-				</div>
-				<div class="pro-container space-y-6 py-16 md:py-20">
-					<h3 id={`${dialog}-title`} class="text-xl font-semibold leading-[1.12] tracking-tight md:text-3xl">
-						<span class="block text-neutral-400">{text.kicker}</span>
-						<span class="block">{title}</span>
-					</h3>
-					<p class="max-w-140 text-lg text-neutral-400">{description}</p>
-				</div>
-				<section class={row}>
-					<div class={rowGrid}>
-						<h4 class={label}>{text.labels.tools}</h4>
-						<div class="space-y-10 md:col-span-6">
-							{[{ name: undefined, list: tools }, { name: text.labels.testing, list: testing }].map((group) => (
-								<div class="space-y-3">
-									{group.name && <h5 class="text-sm text-neutral-500">{group.name}</h5>}
-									<ul class="divide-y divide-white/10 border-y border-white/10">
-										{group.list.map((tool) => (
-											<li class="space-y-1 py-4">
-												<p class="text-xl font-semibold tracking-tight">{tool.name}</p>
-												<p class="text-neutral-400">{tool.text}</p>
-											</li>
-										))}
-									</ul>
-								</div>
-							))}
-						</div>
-					</div>
-				</section>
-				<section class:list={[row, "pb-20 md:pb-28"]}>
-					<div class={rowGrid}>
-						<h4 class={label}>{text.labels.process}</h4>
-						<ol class="space-y-10 md:col-span-6">
-							{steps.map((step, i) => (
-								<li class="space-y-1">
-									<p class="text-sm text-neutral-500 tabular-nums">{String(i + 1).padStart(2, "0")}</p>
-									<p class="text-xl font-semibold tracking-tight">{step.title}</p>
-									<p class="text-neutral-400">{step.text}</p>
-								</li>
-							))}
-						</ol>
-					</div>
-				</section>
-			</dialog>
-		))
-	}
+	<ServiceDialogs />
 </section>
 
-<script>
-	for (const opener of document.querySelectorAll<HTMLElement>("[data-service-open]")) {
-		const dialog = document.getElementById(opener.dataset.serviceOpen!) as HTMLDialogElement;
-		opener.addEventListener("click", () => dialog.showModal());
+<style>
+	.carousel-track {
+		--card: min(78vw, 21rem);
+		--gap: 1rem;
+		gap: var(--gap);
+		translate: calc(var(--index) * -1 * (var(--card) + var(--gap))) 0;
+		transition: translate 700ms var(--ease-spring);
 	}
+
+	.carousel-track > li {
+		width: var(--card);
+	}
+
+	/* The card in front is 15% wider. The cards before it keep their width, so the track's offset still lands on it. */
+	.carousel-track > li[data-active] {
+		width: calc(var(--card) * 1.15);
+	}
+
+	/* Back to the middle copy: the same picture from another place on the track, so nothing may be seen moving. */
+	[data-settling] .carousel-track,
+	[data-settling] .carousel-track * {
+		transition: none;
+	}
+
+	.carousel-fill {
+		transform-origin: left;
+		scale: 0 1;
+	}
+
+	/* The timer of the carousel: the next card comes when the bar is full (see the script). */
+	[aria-current] .carousel-fill {
+		animation: carousel-fill 6s linear forwards;
+	}
+
+	/* It waits while a card has the keyboard, and while a sheet (a service, the resume) covers the page. */
+	[data-carousel]:has(.carousel-track :focus-visible) .carousel-fill,
+	:global(:root:has(dialog[open])) .carousel-fill {
+		animation-play-state: paused;
+	}
+
+	/* And while the pointer reads a card. */
+	@media (hover: hover) {
+		[data-carousel]:has(.carousel-track:hover) .carousel-fill {
+			animation-play-state: paused;
+		}
+	}
+
+	@keyframes carousel-fill {
+		to {
+			scale: 1 1;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.carousel-track {
+			transition: none;
+		}
+
+		[aria-current] .carousel-fill {
+			animation: none;
+			scale: 1 1;
+		}
+	}
+</style>
+
+<script>
+	const carousel = document.querySelector<HTMLElement>("[data-carousel]")!;
+	const track = carousel.querySelector<HTMLElement>("[data-carousel-track]")!;
+	const cards = [...carousel.querySelectorAll<HTMLElement>("[data-carousel-card]")];
+	const phrases = carousel.querySelectorAll<HTMLElement>("[data-carousel-phrase]");
+	const dots = [...carousel.querySelectorAll<HTMLElement>("[data-carousel-dot]")];
+	const count = dots.length;
+	// First card of the middle copy.
+	const start = Number(track.style.getPropertyValue("--index"));
+	// The card in front, counted along the whole track.
+	let index = start;
+
+	function render() {
+		const service = index % count;
+		track.style.setProperty("--index", String(index));
+		cards.forEach((card, i) => {
+			card.toggleAttribute("data-active", i === index);
+			(card.firstElementChild as HTMLElement).inert = i !== index;
+		});
+		phrases.forEach((phrase, i) => {
+			phrase.toggleAttribute("data-active", i === service);
+			phrase.ariaHidden = String(i !== service);
+		});
+		dots.forEach((dot, i) => (i === service ? dot.setAttribute("aria-current", "true") : dot.removeAttribute("aria-current")));
+	}
+
+	// Swap the card in front for its twin in the middle copy, without any transition.
+	function settle() {
+		const twin = start + (index % count);
+		if (twin === index) return;
+		carousel.setAttribute("data-settling", "");
+		index = twin;
+		render();
+		track.offsetWidth; // commit the jump before re-enabling the transitions
+		carousel.removeAttribute("data-settling");
+	}
+
+	function go(delta: number) {
+		// A move may start before the last one has ended and settled.
+		settle();
+		index += delta;
+		render();
+	}
+
+	track.addEventListener("transitionend", (event) => {
+		if (event.target === track) settle();
+	});
+	// The bar of the dot in front is full.
+	carousel.addEventListener("animationend", (event) => {
+		if ((event.target as Element).matches("[data-carousel-fill]")) go(1);
+	});
+
+	for (const button of carousel.querySelectorAll<HTMLElement>("[data-carousel-step]")) {
+		button.addEventListener("click", () => go(Number(button.dataset.carouselStep)));
+	}
+	dots.forEach((dot, i) =>
+		dot.addEventListener("click", () => {
+			// The shorter way round.
+			const delta = i - (index % count);
+			go(delta > count / 2 ? delta - count : delta < -count / 2 ? delta + count : delta);
+		}),
+	);
+
+	// A swipe moves one card; the click that ends a mouse drag is not a click on a card.
+	let downX = 0;
+	let swiped = false;
+	track.addEventListener("pointerdown", (event) => {
+		downX = event.clientX;
+		swiped = false;
+	});
+	track.addEventListener("pointerup", (event) => {
+		const dx = event.clientX - downX;
+		if (Math.abs(dx) < 40) return;
+		swiped = true;
+		go(dx < 0 ? 1 : -1);
+	});
+	cards.forEach((card, i) =>
+		card.addEventListener("click", () => {
+			if (!swiped && i !== index) go(i - index);
+		}),
+	);
 </script>
